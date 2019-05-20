@@ -32,19 +32,72 @@ namespace BnB_ChipLibraryGui
                         var line = chipFile.ReadLine();
                         line.Trim();
                         var input = line.Split(':');
-                        uint count = uint.Parse(input[1]);
-                        uint used = uint.Parse(input[2]);
+                        int count = int.Parse(input[1]);
+                        int used = int.Parse(input[2]);
                         Chip toModify = ChipLibrary.instance.GetChip(input[0]);
-                        if(toModify == null)
+                        if (toModify == null)
                         {
                             MessageBox.Show("The chip " + input[0] + " doesn't exist, ignoring", "ChipLibrary", MessageBoxButton.OK);
                         }
-                        toModify.chipCount = count;
-                        toModify.usedInBattle = used;
+                        toModify.ChipCount = count;
+                        toModify.UsedInBattle = used;
                     }
                 }
             }
 
         }
+
+        private void LoadChips()
+        {
+            //UserChips.ItemsSource = ChipLibrary.instance.getList( );
+        }
+       private void ButtonClick(object sender, RoutedEventArgs e)
+        {
+            FrameworkElement feSource = e.Source as FrameworkElement;
+            switch (feSource.Name)
+            {
+                case "Add Chip":
+                    AddChip();
+                    break;
+            }
+
+        }
+
+        private void ShowOwned(object sender, RoutedEventArgs e)
+        {
+            LoadChips();
+        }
+
+        private void AddChip()
+        {
+            if(ChipNameEntered.Text != string.Empty)
+            {
+                var chip = ChipLibrary.instance.GetChip(ChipNameEntered.Text);
+                if(chip != null)
+                {
+                    chip++;
+
+                }
+                else
+                {
+                    var chips = ChipLibrary.instance.Search(ChipNameEntered.Text);
+                    if(chips.Count == 0)
+                    {
+                        FoundChips.Text = "No chips were returned";
+                        return;
+                    }
+                    StringBuilder possibleChips = new StringBuilder();
+                    foreach(var possibleChip in chips)
+                    {
+                        possibleChips.Append(possibleChip);
+                        possibleChips.Append('\n');
+                    }
+                    FoundChips.Text = possibleChips.ToString();
+                }
+
+
+            }
+        }
+
     }
 }
