@@ -7,6 +7,18 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <DataGrid HorizontalAlignment="Left" Height="399" Margin="339,10,0,0" VerticalAlignment="Top" Width="443"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="91*"/>
+            <RowDefinition Height="328*"/>
+        </Grid.RowDefinitions>
+        <DataGrid Name="UserChips" ItemsSource="{Binding}" HorizontalAlignment="Left" Height="399" Margin="339,10,0,0" VerticalAlignment="Top" Width="443" Grid.RowSpan="2"/>
+        <TextBox HorizontalAlignment="Left" Height="22" Margin="214,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <Label Content="SortBy" HorizontalAlignment="Left" Margin="159,253,0,0" VerticalAlignment="Top" Height="26" Width="48" Grid.Row="1" RenderTransformOrigin="0.584,1.591"/>
+        <Button Content="Add Chip" HorizontalAlignment="Left" Margin="275,32,0,0" VerticalAlignment="Top" Width="60"/>
+        <Button Content="Remove" HorizontalAlignment="Left" Margin="215,32,0,0" VerticalAlignment="Top" Width="60"/>
+        <Button Content="Name" HorizontalAlignment="Left" Margin="107,284,0,0" VerticalAlignment="Top" Width="75" Grid.Row="1"/>
+        <Button Content="Damage" HorizontalAlignment="Left" Margin="182,284,0,0" Grid.Row="1" VerticalAlignment="Top" Width="76"/>
+        <Button Content="Count" HorizontalAlignment="Left" Margin="258,284,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75"/>
+        <Button Content="Skill" HorizontalAlignment="Left" Margin="32,284,0,0" VerticalAlignment="Top" Width="75" Grid.Row="1"/>
     </Grid>
 </Window>

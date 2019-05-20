@@ -1,29 +1,50 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace BnB_ChipLibraryGui
 {
-    class Chip
+    public class Chip
     {
-        readonly string name;
-        readonly string range;
-        readonly string skill;
-        readonly string damage;
-        readonly string element;
-        readonly string description;
-        public uint ChipCount { get; private set; }
+        public readonly string name;
+        public readonly string range;
+        public readonly string skill;
+        public readonly string damage;
+        public readonly string element;
+        public readonly string type;
+        public readonly string description;
+        public readonly string all;
+        public uint chipCount;
+        public uint usedInBattle;
 
-        public Chip(string name, string range, string skill, string damage, string element, string description, uint chipCount = 0)
+        [JsonConstructor]
+        public Chip(string name, string range, string skill, string damage, string element, string type , string description, string All)
         {
             this.name = name ?? throw new ArgumentNullException(nameof(name));
             this.range = range ?? throw new ArgumentNullException(nameof(range));
-            this.skill = skill ?? throw new ArgumentNullException(nameof(skill));
-            this.damage = damage ?? throw new ArgumentNullException(nameof(damage));
+            this.skill = skill ?? "N/A";
+            this.damage = damage ?? "N/A";
+            this.element = element ?? throw new ArgumentNullException(nameof(element));
+            this.type = type ?? "Standard";
+            this.description = description ?? throw new ArgumentNullException(nameof(description));
+            this.all = All ?? throw new ArgumentNullException(nameof(All));
+            this.chipCount = 0;
+            this.usedInBattle = 0;
+        }
+
+        public Chip(string name, string range, string skill, string damage, string element, string type, string description, string All, uint ChipCount, uint usedInBattle = 0)
+        {
+            this.name = name ?? throw new ArgumentNullException(nameof(name));
+            this.range = range ?? throw new ArgumentNullException(nameof(range));
+            this.skill = skill ?? "N/A";
+            this.damage = damage ?? "N/A";
             this.element = element ?? throw new ArgumentNullException(nameof(element));
             this.description = description ?? throw new ArgumentNullException(nameof(description));
-            this.ChipCount = chipCount;
+            this.all = All ?? throw new ArgumentNullException(nameof(All));
+            this.chipCount = ChipCount;
+            this.usedInBattle = usedInBattle;
         }
 
         /// <summary>
@@ -33,7 +54,7 @@ namespace BnB_ChipLibraryGui
         /// <returns></returns>
         public static Chip operator++(Chip chip)
         {
-            chip.ChipCount++;
+            chip.chipCount++;
             return chip;
         }
 
@@ -44,9 +65,9 @@ namespace BnB_ChipLibraryGui
         /// <returns>The chip</returns>
         public static Chip operator--(Chip chip)
         {
-            if(chip.ChipCount > 0)
+            if(chip.chipCount > 0)
             {
-                chip.ChipCount--;
+                chip.chipCount--;
             }
             return chip;
         }
@@ -58,41 +79,7 @@ namespace BnB_ChipLibraryGui
         /// <returns>The chip as a string like the documentation has it</returns>
         public override string ToString()
         {
-            StringBuilder toReturn = new StringBuilder(this.name);
-            toReturn.Append(" - ");
-            bool commaNeeded = false;
-            if(this.skill != "N/A")
-            {
-                toReturn.Append(this.skill);
-                commaNeeded = true;
-            }
-            
-            if(this.range != "N/A")
-            {
-                if(commaNeeded)
-                {
-                    toReturn.Append(", ");
-                }
-                toReturn.Append(this.range);
-                commaNeeded = true;
-            }
-
-            if(this.damage != "N/A")
-            {
-                if (commaNeeded)
-                {
-                    toReturn.Append(", ");
-                }
-                toReturn.Append(this.damage);
-            }
-
-            toReturn.Append(". ");
-            toReturn.Append(this.description);
-            toReturn.Append(" (");
-            toReturn.Append(this.element);
-            toReturn.Append(')');
-
-            return toReturn.ToString();
+            return this.all;
         }
 
 
