@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BnB_ChipLibraryGui"
         mc:Ignorable="d"
-        Title="ChipLibrary" Height="450" Width="600">
+        Closing="ExitClicked"
+        Title="ChipLibrary" Height="500" Width="600">
     <Window.Resources>
         <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -16,33 +17,39 @@
             <RowDefinition Height="91*"/>
             <RowDefinition Height="328*"/>
         </Grid.RowDefinitions>
-        <DataGrid Name="UserChips" AutoGenerateColumns="false" SelectionMode="Single" HorizontalAlignment="Left" Height="399" Margin="10,8,0,0" VerticalAlignment="Top" Width="337" Grid.RowSpan="2">
+        <DataGrid Name="UserChips" AutoGenerateColumns="false" SelectionMode="Single" 
+                  HorizontalAlignment="Left" Height="451" Margin="10,8,0,0" VerticalAlignment="Top" 
+                  Width="397" Grid.RowSpan="2" CanUserSortColumns="False" CanUserAddRows="False" 
+                  CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="80" HeaderStyle="{StaticResource CenterGridHeaderStyle}"/>
                 <DataGridTextColumn Header="Range" Binding="{Binding Range}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Damage" Binding="{Binding Damage}" IsReadOnly="True" Width="80" HeaderStyle="{StaticResource CenterGridHeaderStyle}"/>
                 <DataGridTextColumn Header="Element" Binding="{Binding Element}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Class" Binding="{Binding ChipClass}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Count" Binding="{Binding ChipCount}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Used" Binding="{Binding UsedInBattle}" IsReadOnly="False"/>
+                <DataGridTextColumn Header="Used" Binding="{Binding UsedInBattle, NotifyOnTargetUpdated=True}" IsReadOnly="False"/>
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
                     <TextBlock Background="Orange" Text="{Binding Description}" TextWrapping="Wrap"
-                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="300"/>
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
         </DataGrid>
-        <TextBox Name="ChipNameEntered" HorizontalAlignment="Left" Height="22" Margin="442,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-        <Label Content="SortBy" HorizontalAlignment="Left" Margin="367,108,0,0" VerticalAlignment="Top" Height="26" Width="48" Grid.Row="1" RenderTransformOrigin="0.584,1.591"/>
-        <StackPanel Name="SortButtons" Margin="353,134,158,85" Grid.Row="1">
+        <TextBox Name="ChipNameEntered" HorizontalAlignment="Left" Height="22" Margin="442,11,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Label Content="SortBy" HorizontalAlignment="Left" Margin="427,130,0,0" VerticalAlignment="Top" Height="26" Width="48" Grid.Row="1" RenderTransformOrigin="0.584,1.591"/>
+        <StackPanel Name="SortButtons" Margin="413,156,63,63" Grid.Row="1">
             <RadioButton GroupName="SortOption" Name="SortByName" Content="Name" IsChecked="True" Checked="ButtonClick"/>
-            <RadioButton GroupName="SortOption" Name="SortByDamage" Content="Damage" Checked="ButtonClick"/>
+            <RadioButton GroupName="SortOption" Name="SortByAvgDamage" Content="AvgDamage" Checked="ButtonClick"/>
+            <RadioButton GroupName="SortOption" Name="SortByMaxDamage" Content="MaxDamage" Checked="ButtonClick"/>
             <RadioButton GroupName="SortOption" Name="SortByOwned" Content="Owned" Checked="ButtonClick"/>
             <RadioButton GroupName="SortOption" Name="SortByElement" Content="Element" Checked="ButtonClick"/>
         </StackPanel>
-        <Button Name="Add"  Content="Add Chip" HorizontalAlignment="Left" Margin="442,32,0,0" VerticalAlignment="Top" Width="60" Click="ButtonClick"/>
-        <Button Name="Remove" Content="Remove" HorizontalAlignment="Left" Margin="503,32,0,0" VerticalAlignment="Top" Width="59" Click="ButtonClick"/>
-        <TextBlock Name="FoundChips" HorizontalAlignment="Left" Margin="442,57,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="117" Grid.RowSpan="2" Width="120"/>
-        <CheckBox Name="ShowNotOwned" Content="Show Owned Chips Only" HorizontalAlignment="Left" Margin="352,88,0,0" VerticalAlignment="Top" Checked="ShowOwned" Unchecked="ShowOwned" Grid.Row="1"/>
+        <Button Name="Add"  Content="Add Chip" HorizontalAlignment="Left" Margin="442,33,0,0" VerticalAlignment="Top" Width="60" Click="ButtonClick"/>
+        <Button Name="Remove" Content="Remove" HorizontalAlignment="Left" Margin="503,33,0,0" VerticalAlignment="Top" Width="59" Click="ButtonClick"/>
+        <TextBlock Name="FoundChips" HorizontalAlignment="Left" Margin="442,58,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="117" Grid.RowSpan="2" Width="120"/>
+        <CheckBox Name="ShowNotOwned" Content="Show Owned Chips Only" HorizontalAlignment="Left" Margin="412,89,0,0" VerticalAlignment="Top" Checked="ShowOwned" Unchecked="ShowOwned" Grid.Row="1" IsChecked="True"/>
+        <CheckBox x:Name="Invert" Content="InvertSort" HorizontalAlignment="Left" Margin="412,104,0,0" VerticalAlignment="Top" Checked="InvertSort" Unchecked="InvertSort" Grid.Row="1"/>
     </Grid>
 </Window>

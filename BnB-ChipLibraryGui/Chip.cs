@@ -1,8 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace BnB_ChipLibraryGui
 {
@@ -46,6 +43,7 @@ namespace BnB_ChipLibraryGui
                 if (value == null || value == "N/A" || value == string.Empty)
                 {
                     this.AverageDamage = 0;
+                    this.MaxDamage = 0;
                 }
                 else
                 {
@@ -53,6 +51,7 @@ namespace BnB_ChipLibraryGui
                     uint numDice = uint.Parse(avg[0]);
                     uint dieSize = uint.Parse(avg[1]);
                     this.AverageDamage = ((dieSize / 2m) + 0.5m) * numDice;
+                    this.MaxDamage = dieSize * numDice;
                 }
                 this._damage = value;
             }
@@ -61,6 +60,7 @@ namespace BnB_ChipLibraryGui
         public ChipElements ChipElement { get; private set; }
         public ChipTypes ChipType { get; private set; }
         public decimal AverageDamage { get; private set; }
+        public uint MaxDamage { get; private set; }
 
         [JsonProperty("Description")]
         public string Description { get; set; }
@@ -118,6 +118,10 @@ namespace BnB_ChipLibraryGui
                     this.ChipType = (ChipTypes)Enum.Parse(typeof(ChipTypes), value);
                 }
             }
+        }
+
+        public char ChipClass {
+            get => ChipType.ToString()[0];
         }
 
         public Chip()

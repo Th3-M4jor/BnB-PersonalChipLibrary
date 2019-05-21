@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Text;
 using System.Windows;
+using System.IO;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Newtonsoft.Json;
 
 namespace BnB_ChipLibraryGui
 {
@@ -21,6 +12,7 @@ namespace BnB_ChipLibraryGui
     public partial class MainWindow : Window
     {
         private ChipLibrary.LibrarySortOptions sortOption;
+        private bool invert = false;
         public MainWindow()
         {
             this.sortOption = ChipLibrary.LibrarySortOptions.Name;
@@ -50,6 +42,18 @@ namespace BnB_ChipLibraryGui
 
         }
 
+        private void ExitClicked(object sender, CancelEventArgs e)
+        {
+            var toSave = ChipLibrary.instance.getList(ChipLibrary.ChipListOptions.DisplayOwned, ChipLibrary.LibrarySortOptions.Name, false);
+            using (var chipFile = new StreamWriter(new FileStream("./userChips.dat", System.IO.FileMode.Create)))
+            {
+               foreach(Chip chip in toSave)
+                {
+                    chipFile.WriteLine("{0}:{1}:{2}",chip.Name,chip.ChipCount,chip.UsedInBattle);
+                }
+            }
+        }
+
         private void LoadChips()
         {
             ChipLibrary.ChipListOptions listAll = ChipLibrary.ChipListOptions.DisplayAll;
@@ -58,7 +62,23 @@ namespace BnB_ChipLibraryGui
             {
                 listAll = ChipLibrary.ChipListOptions.DisplayOwned;
             }
-            UserChips.ItemsSource = ChipLibrary.instance.getList(listAll, this.sortOption);
+            UserChips.ItemsSource = ChipLibrary.instance.getList(listAll, this.sortOption, this.invert);
+        }
+
+
+        //SelectionChanged="TextBox_TextChanged"
+        private void TextBox_TextChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DataGrid dataGrid = sender as DataGrid;
+            DataGridRow row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(dataGrid.SelectedIndex);
+            DataGridCell chipUsed = dataGrid.Columns[dataGrid.Columns.Count - 1].GetCellContent(row).Parent as DataGridCell;
+            DataGridCell chipName = dataGrid.Columns[0].GetCellContent(row).Parent as DataGridCell;
+            string numChipsUsed = ((TextBlock)chipUsed.Content).Text;
+            string changedChipName = ((TextBlock)chipName.Content).Text;
+
+            Chip toUpdate = ChipLibrary.instance.GetChip(changedChipName);
+            //toUpdate.UsedInBattle = int.Parse(numChipsUsed);
+
         }
        private void ButtonClick(object sender, RoutedEventArgs e)
        {
@@ -74,8 +94,11 @@ namespace BnB_ChipLibraryGui
                 case "SortByName":
                     this.sortOption = ChipLibrary.LibrarySortOptions.Name;
                     break;
-                case "SortByDamage":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.Damage;
+                case "SortByAvgDamage":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.AvgDamage;
+                    break;
+                case "SortByMaxDamage":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.MaxDamage;
                     break;
                 case "SortByOwned":
                     this.sortOption = ChipLibrary.LibrarySortOptions.Owned;
@@ -93,13 +116,20 @@ namespace BnB_ChipLibraryGui
             LoadChips();
         }
 
+        private void InvertSort(object sender, RoutedEventArgs e)
+        {
+            invert = !invert;
+            LoadChips();
+        }
+
         private void AddChip()
         {
             if(ChipNameEntered.Text != string.Empty)
             {
-                var chip = ChipLibrary.instance.GetChip(ChipNameEntered.Text.ToLower());
+                var chip = ChipLibrary.instance.GetChip(ChipNameEntered.Text);
                 if(chip != null)
                 {
+                    ChipNameEntered.Text = string.Empty;
                     FoundChips.Text = string.Empty;
                     chip++;
 
@@ -129,6 +159,7 @@ namespace BnB_ChipLibraryGui
                 var chip = ChipLibrary.instance.GetChip(ChipNameEntered.Text);
                 if (chip != null)
                 {
+                    ChipNameEntered.Text = string.Empty;
                     FoundChips.Text = string.Empty;
                     chip--;
                 }

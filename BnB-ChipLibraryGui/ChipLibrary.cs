@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
@@ -17,7 +16,7 @@ namespace BnB_ChipLibraryGui
 
         public enum LibrarySortOptions
         {
-            Name, Element, Damage, Owned
+            Name, Element, AvgDamage, Owned, MaxDamage
         }
 
         public static readonly ChipLibrary instance = new ChipLibrary();
@@ -27,6 +26,7 @@ namespace BnB_ChipLibraryGui
             using (System.Net.WebClient wc = new System.Net.WebClient())
             {
                 var json = wc.DownloadString("http://spartan364.hopto.org/chips.json");
+                json = json.Replace("â€™", "'");
                 var result = JsonConvert.DeserializeObject<List<Chip>>(json);
                 this.Library = new Dictionary<string, Chip>(result.Count);
                 result.ForEach(delegate (Chip aChip)
@@ -38,7 +38,7 @@ namespace BnB_ChipLibraryGui
 
         public Chip GetChip(string name)
         {
-            bool exists = this.Library.TryGetValue(name, out Chip toReturn);
+            bool exists = this.Library.TryGetValue(name.ToLower(), out Chip toReturn);
             if (exists) return toReturn;
             else return null;
         }
@@ -57,7 +57,7 @@ namespace BnB_ChipLibraryGui
             return toReturn;
         }
 
-        public List<Chip> getList(ChipListOptions AllOrOwned, LibrarySortOptions sortOptions)
+        public List<Chip> getList(ChipListOptions AllOrOwned, LibrarySortOptions sortOptions, bool invert)
         {
             List<Chip> toReturn = new List<Chip>();
             foreach (var item in this.Library)
@@ -70,14 +70,21 @@ namespace BnB_ChipLibraryGui
             //toReturn.OrderBy(a => a.Name).ThenBy(a => a.averageDamage);
             switch (sortOptions)
             {
-                case LibrarySortOptions.Damage:
+                case LibrarySortOptions.AvgDamage:
+                    if(invert) return toReturn.OrderBy(a => a.AverageDamage).ThenBy(a => a.Name).ToList();
                     return toReturn.OrderByDescending(a => a.AverageDamage).ThenBy(a => a.Name).ToList();
                 case LibrarySortOptions.Owned:
-                    return toReturn.OrderByDescending(a => a.ChipCount).ThenBy(a => a.Name).ToList();
+                    if(invert) return toReturn.OrderBy(a => a.ChipType).ThenBy(a => a.ChipCount).ThenBy(a => a.Name).ToList();
+                    return toReturn.OrderBy(a => a.ChipType).ThenByDescending(a => a.ChipCount).ThenBy(a => a.Name).ToList();
                 case LibrarySortOptions.Element:
+                    if(invert) toReturn.OrderByDescending(a => a.ChipElement).ThenBy(a => a.ChipType).ThenBy(a => a.Name).ToList();
                     return toReturn.OrderBy(a => a.ChipElement).ThenBy(a => a.Name).ToList();
+                case LibrarySortOptions.MaxDamage:
+                    if (invert) return toReturn.OrderBy(a => a.MaxDamage).ThenBy(a => a.Name).ToList();
+                    return toReturn.OrderByDescending(a => a.MaxDamage).ThenBy(a => a.Name).ToList();
                 default:
-                    return toReturn.OrderBy(a => a.Name).ToList();
+                    if(invert) return toReturn.OrderByDescending(a => a.ChipType).ThenByDescending(a => a.Name).ToList();
+                    return toReturn.OrderBy(a => a.ChipType).ThenBy(a => a.Name).ToList();
             }
 
         }
