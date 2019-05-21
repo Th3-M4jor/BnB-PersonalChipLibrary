@@ -7,17 +7,19 @@ using Newtonsoft.Json;
 namespace BnB_ChipLibraryGui
 {
 
-    public enum ChipListOptions
-    {
-        DisplayOwned,DisplayAll
-    }
 
-    public enum LibrarySortOptions
-    {
-        Name,Element,Damage,Owned
-    }
     public sealed class ChipLibrary
     {
+        public enum ChipListOptions
+        {
+            DisplayOwned, DisplayAll
+        }
+
+        public enum LibrarySortOptions
+        {
+            Name, Element, Damage, Owned
+        }
+
         public static readonly ChipLibrary instance = new ChipLibrary();
         private readonly Dictionary<string, Chip> Library;
         private ChipLibrary()
@@ -69,9 +71,9 @@ namespace BnB_ChipLibraryGui
             switch (sortOptions)
             {
                 case LibrarySortOptions.Damage:
-                    return toReturn.OrderBy(a => a.AverageDamage).ThenBy(a => a.Name).ToList();
+                    return toReturn.OrderByDescending(a => a.AverageDamage).ThenBy(a => a.Name).ToList();
                 case LibrarySortOptions.Owned:
-                    return toReturn.OrderBy(a => a.ChipCount).ThenBy(a => a.Name).ToList();
+                    return toReturn.OrderByDescending(a => a.ChipCount).ThenBy(a => a.Name).ToList();
                 case LibrarySortOptions.Element:
                     return toReturn.OrderBy(a => a.ChipElement).ThenBy(a => a.Name).ToList();
                 default:

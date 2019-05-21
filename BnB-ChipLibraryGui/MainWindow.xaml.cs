@@ -20,8 +20,10 @@ namespace BnB_ChipLibraryGui
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ChipLibrary.LibrarySortOptions sortOption;
         public MainWindow()
         {
+            this.sortOption = ChipLibrary.LibrarySortOptions.Name;
             InitializeComponent();
             if (System.IO.File.Exists("./userChips.dat"))
             {
@@ -39,27 +41,50 @@ namespace BnB_ChipLibraryGui
                         {
                             MessageBox.Show("The chip " + input[0] + " doesn't exist, ignoring", "ChipLibrary", MessageBoxButton.OK);
                         }
-                        toModify.ChipCount = count;
+                        toModify.UpdateChipCount(count);
                         toModify.UsedInBattle = used;
                     }
                 }
             }
+            LoadChips();
 
         }
 
         private void LoadChips()
         {
-            //UserChips.ItemsSource = ChipLibrary.instance.getList( );
+            ChipLibrary.ChipListOptions listAll = ChipLibrary.ChipListOptions.DisplayAll;
+            if (ShowNotOwned == null) return;
+            if(ShowNotOwned.IsChecked.HasValue && ShowNotOwned.IsChecked == true)
+            {
+                listAll = ChipLibrary.ChipListOptions.DisplayOwned;
+            }
+            UserChips.ItemsSource = ChipLibrary.instance.getList(listAll, this.sortOption);
         }
        private void ButtonClick(object sender, RoutedEventArgs e)
-        {
+       {
             FrameworkElement feSource = e.Source as FrameworkElement;
             switch (feSource.Name)
             {
-                case "Add Chip":
+                case "Add":
                     AddChip();
                     break;
+                case "Remove":
+                    RemoveChip();
+                    break;
+                case "SortByName":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.Name;
+                    break;
+                case "SortByDamage":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.Damage;
+                    break;
+                case "SortByOwned":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.Owned;
+                    break;
+                case "SortByElement":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.Element;
+                    break;
             }
+            LoadChips();
 
         }
 
@@ -72,9 +97,10 @@ namespace BnB_ChipLibraryGui
         {
             if(ChipNameEntered.Text != string.Empty)
             {
-                var chip = ChipLibrary.instance.GetChip(ChipNameEntered.Text);
+                var chip = ChipLibrary.instance.GetChip(ChipNameEntered.Text.ToLower());
                 if(chip != null)
                 {
+                    FoundChips.Text = string.Empty;
                     chip++;
 
                 }
@@ -94,10 +120,35 @@ namespace BnB_ChipLibraryGui
                     }
                     FoundChips.Text = possibleChips.ToString();
                 }
-
-
             }
         }
-
+        private void RemoveChip()
+        {
+            if (ChipNameEntered.Text != string.Empty)
+            {
+                var chip = ChipLibrary.instance.GetChip(ChipNameEntered.Text);
+                if (chip != null)
+                {
+                    FoundChips.Text = string.Empty;
+                    chip--;
+                }
+                else
+                {
+                    var chips = ChipLibrary.instance.Search(ChipNameEntered.Text);
+                    if (chips.Count == 0)
+                    {
+                        FoundChips.Text = "No chips were returned";
+                        return;
+                    }
+                    StringBuilder possibleChips = new StringBuilder();
+                    foreach (var possibleChip in chips)
+                    {
+                        possibleChips.Append(possibleChip);
+                        possibleChips.Append('\n');
+                    }
+                    FoundChips.Text = possibleChips.ToString();
+                }
+            }
+        }
     }
 }

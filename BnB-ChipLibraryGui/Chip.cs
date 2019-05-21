@@ -30,13 +30,17 @@ namespace BnB_ChipLibraryGui
             Sense, Info, Coding, Strength, Speed, Stamina, Charm, Bravery, Affinity, None
         }
 
+        [JsonProperty("Name")]
         public string Name { get; set; }
         public ChipRanges ChipRange { get; private set; }
         public ChipSkills ChipSkill { get; private set; }
 
+        private string _damage;
+
+        [JsonProperty("Damage")]
         public string Damage
         {
-            get => Damage;
+            get => _damage;
             set
             {
                 if (value == null || value == "N/A" || value == string.Empty)
@@ -50,25 +54,23 @@ namespace BnB_ChipLibraryGui
                     uint dieSize = uint.Parse(avg[1]);
                     this.AverageDamage = ((dieSize / 2m) + 0.5m) * numDice;
                 }
-                Damage = value;
+                this._damage = value;
             }
         }
 
         public ChipElements ChipElement { get; private set; }
         public ChipTypes ChipType { get; private set; }
         public decimal AverageDamage { get; private set; }
+
+        [JsonProperty("Description")]
         public string Description { get; set; }
+
+        [JsonProperty("All")]
         public string All { get; set; }
         public int ChipCount { get; private set; }
-        public int UsedInBattle {
-            get => UsedInBattle;
-            set
-            {
-                if (value > ChipCount) throw new ArgumentOutOfRangeException();
-                UsedInBattle = value;
-            }
-        }
+        public int UsedInBattle { get; set; }
 
+        [JsonProperty("Range")]
         public string Range {
             get => ChipRange.ToString();
             set
@@ -77,6 +79,7 @@ namespace BnB_ChipLibraryGui
             }
         }
 
+        [JsonProperty("Skill")]
         public string Skill {
             get => ChipSkill.ToString();
             set
@@ -92,6 +95,7 @@ namespace BnB_ChipLibraryGui
             }
         }
 
+        [JsonProperty("Element")]
         public string Element {
             get => ChipElement.ToString();
             set
@@ -100,6 +104,7 @@ namespace BnB_ChipLibraryGui
             }
         }
 
+        [JsonProperty("Type")]
         public string Type {
             get => ChipType.ToString();
             set
@@ -125,41 +130,20 @@ namespace BnB_ChipLibraryGui
         public Chip(string name, string range, string skill, string damage, string element, string type , string description, string All)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
-            this.ChipRange = (ChipRanges) Enum.Parse(typeof(ChipRanges), range);
-            if(skill == "N/A" || skill == null || skill == string.Empty)
-            {
-                this.ChipSkill = ChipSkills.None;
-            }
-            else
-            {
-                this.ChipSkill = (ChipSkills)Enum.Parse(typeof(ChipSkills), skill);
-            }
+            this.Range = range;
+            this.Skill = skill;
             this.Damage = damage ?? "N/A";
-            this.ChipElement = (ChipElements)Enum.Parse(typeof(ChipElements), element);
-            if (type == null || type == string.Empty)
-            {
-                this.ChipType = ChipTypes.Standard;
-            }
-            else
-            {
-                this.ChipType = (ChipTypes)Enum.Parse(typeof(ChipTypes), type);
-            }
+            this.Element = element;
+            this.Type = type;
             this.Description = description ?? throw new ArgumentNullException(nameof(description));
             this.All = All ?? throw new ArgumentNullException(nameof(All));
             this.ChipCount = 0;
             this.UsedInBattle = 0;
-            if (damage == null || damage == "N/A" || damage == string.Empty)
-            {
-                this.AverageDamage = 0;
-            }
-            else
-            {
-                var avg = damage.Split(damageDelims);
-                uint numDice = uint.Parse(avg[0]);
-                uint dieSize = uint.Parse(avg[1]);
-                this.AverageDamage = ((dieSize / 2m) + 0.5m) * numDice;
-            }
+        }
 
+        public void UpdateChipCount(int newCount)
+        {
+            this.ChipCount = newCount;
         }
 
         /// <summary>
