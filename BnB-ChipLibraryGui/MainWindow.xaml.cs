@@ -3,6 +3,8 @@ using System.Text;
 using System.Windows;
 using System.IO;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace BnB_ChipLibraryGui
 {
@@ -27,7 +29,7 @@ namespace BnB_ChipLibraryGui
                         line.Trim();
                         var input = line.Split(':');
                         int count = int.Parse(input[1]);
-                        int used = int.Parse(input[2]);
+                        uint used = uint.Parse(input[2]);
                         Chip toModify = ChipLibrary.Instance.GetChip(input[0]);
                         if (toModify == null)
                         {
@@ -91,6 +93,9 @@ namespace BnB_ChipLibraryGui
                 case "Remove":
                     RemoveChip();
                     break;
+                case "JackedOut":
+                    JackOut();
+                    break;
                 case "SortByName":
                     this.sortOption = ChipLibrary.LibrarySortOptions.Name;
                     break;
@@ -111,6 +116,21 @@ namespace BnB_ChipLibraryGui
 
         }
 
+        private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender != null)
+            {
+                if (sender is DataGrid grid && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
+                {
+                    DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
+                    if (!dgr.IsMouseOver)
+                    {
+                        (dgr as DataGridRow).IsSelected = false;
+                    }
+                }
+            }
+        }
+
         private void ShowOwned(object sender, RoutedEventArgs e)
         {
             LoadChips();
@@ -124,6 +144,7 @@ namespace BnB_ChipLibraryGui
 
         private void AddChip()
         {
+            FoundChips.Foreground = Brushes.Black;
             if (ChipNameEntered.Text != string.Empty)
             {
                 var chip = ChipLibrary.Instance.GetChip(ChipNameEntered.Text);
@@ -154,6 +175,7 @@ namespace BnB_ChipLibraryGui
         }
         private void RemoveChip()
         {
+            FoundChips.Foreground = Brushes.Black;
             if (ChipNameEntered.Text != string.Empty)
             {
                 var chip = ChipLibrary.Instance.GetChip(ChipNameEntered.Text);
@@ -180,6 +202,13 @@ namespace BnB_ChipLibraryGui
                     FoundChips.Text = possibleChips.ToString();
                 }
             }
+        }
+
+        private void JackOut()
+        {
+            FoundChips.Foreground = Brushes.Red;
+            uint count = ChipLibrary.Instance.jackOut();
+            FoundChips.Text = count + " chip(s) refreshed";
         }
     }
 }

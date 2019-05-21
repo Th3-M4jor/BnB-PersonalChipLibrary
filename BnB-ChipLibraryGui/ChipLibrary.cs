@@ -98,5 +98,16 @@ namespace BnB_ChipLibraryGui
             }
 
         }
+
+        public uint jackOut()
+        {
+            uint countRefreshed = 0;
+            foreach(var chip in this.Library)
+            {
+                countRefreshed += chip.Value.UsedInBattle;
+                chip.Value.UsedInBattle = 0;
+            }
+            return countRefreshed;
+        }
     }
 }

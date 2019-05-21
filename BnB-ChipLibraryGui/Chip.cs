@@ -69,7 +69,7 @@ namespace BnB_ChipLibraryGui
         [JsonProperty("All")]
         public string All { get; set; }
         public int ChipCount { get; private set; }
-        public int UsedInBattle { get; set; }
+        public uint UsedInBattle { get; set; }
 
         [JsonProperty("Range")]
         public string Range
