@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
@@ -19,7 +20,16 @@ namespace BnB_ChipLibraryGui
             Name, Element, AvgDamage, Owned, MaxDamage
         }
 
-        public static readonly ChipLibrary instance = new ChipLibrary();
+        private static readonly Lazy<ChipLibrary> lazy = new Lazy<ChipLibrary>(() => new ChipLibrary());
+
+        public static ChipLibrary Instance
+        {
+            get
+            {
+                return lazy.Value;
+            }
+        }
+
         private readonly Dictionary<string, Chip> Library;
         private ChipLibrary()
         {
@@ -71,19 +81,19 @@ namespace BnB_ChipLibraryGui
             switch (sortOptions)
             {
                 case LibrarySortOptions.AvgDamage:
-                    if(invert) return toReturn.OrderBy(a => a.AverageDamage).ThenBy(a => a.Name).ToList();
+                    if (invert) return toReturn.OrderBy(a => a.AverageDamage).ThenBy(a => a.Name).ToList();
                     return toReturn.OrderByDescending(a => a.AverageDamage).ThenBy(a => a.Name).ToList();
                 case LibrarySortOptions.Owned:
-                    if(invert) return toReturn.OrderBy(a => a.ChipType).ThenBy(a => a.ChipCount).ThenBy(a => a.Name).ToList();
+                    if (invert) return toReturn.OrderBy(a => a.ChipType).ThenBy(a => a.ChipCount).ThenBy(a => a.Name).ToList();
                     return toReturn.OrderBy(a => a.ChipType).ThenByDescending(a => a.ChipCount).ThenBy(a => a.Name).ToList();
                 case LibrarySortOptions.Element:
-                    if(invert) toReturn.OrderByDescending(a => a.ChipElement).ThenBy(a => a.ChipType).ThenBy(a => a.Name).ToList();
+                    if (invert) toReturn.OrderByDescending(a => a.ChipElement).ThenBy(a => a.ChipType).ThenBy(a => a.Name).ToList();
                     return toReturn.OrderBy(a => a.ChipElement).ThenBy(a => a.Name).ToList();
                 case LibrarySortOptions.MaxDamage:
                     if (invert) return toReturn.OrderBy(a => a.MaxDamage).ThenBy(a => a.Name).ToList();
                     return toReturn.OrderByDescending(a => a.MaxDamage).ThenBy(a => a.Name).ToList();
                 default:
-                    if(invert) return toReturn.OrderByDescending(a => a.ChipType).ThenByDescending(a => a.Name).ToList();
+                    if (invert) return toReturn.OrderByDescending(a => a.ChipType).ThenByDescending(a => a.Name).ToList();
                     return toReturn.OrderBy(a => a.ChipType).ThenBy(a => a.Name).ToList();
             }
 

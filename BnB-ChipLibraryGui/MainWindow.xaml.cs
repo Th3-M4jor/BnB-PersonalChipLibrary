@@ -28,7 +28,7 @@ namespace BnB_ChipLibraryGui
                         var input = line.Split(':');
                         int count = int.Parse(input[1]);
                         int used = int.Parse(input[2]);
-                        Chip toModify = ChipLibrary.instance.GetChip(input[0]);
+                        Chip toModify = ChipLibrary.Instance.GetChip(input[0]);
                         if (toModify == null)
                         {
                             MessageBox.Show("The chip " + input[0] + " doesn't exist, ignoring", "ChipLibrary", MessageBoxButton.OK);
@@ -44,12 +44,12 @@ namespace BnB_ChipLibraryGui
 
         private void ExitClicked(object sender, CancelEventArgs e)
         {
-            var toSave = ChipLibrary.instance.getList(ChipLibrary.ChipListOptions.DisplayOwned, ChipLibrary.LibrarySortOptions.Name, false);
+            var toSave = ChipLibrary.Instance.getList(ChipLibrary.ChipListOptions.DisplayOwned, ChipLibrary.LibrarySortOptions.Name, false);
             using (var chipFile = new StreamWriter(new FileStream("./userChips.dat", System.IO.FileMode.Create)))
             {
-               foreach(Chip chip in toSave)
+                foreach (Chip chip in toSave)
                 {
-                    chipFile.WriteLine("{0}:{1}:{2}",chip.Name,chip.ChipCount,chip.UsedInBattle);
+                    chipFile.WriteLine("{0}:{1}:{2}", chip.Name, chip.ChipCount, chip.UsedInBattle);
                 }
             }
         }
@@ -58,11 +58,11 @@ namespace BnB_ChipLibraryGui
         {
             ChipLibrary.ChipListOptions listAll = ChipLibrary.ChipListOptions.DisplayAll;
             if (ShowNotOwned == null) return;
-            if(ShowNotOwned.IsChecked.HasValue && ShowNotOwned.IsChecked == true)
+            if (ShowNotOwned.IsChecked.HasValue && ShowNotOwned.IsChecked == true)
             {
                 listAll = ChipLibrary.ChipListOptions.DisplayOwned;
             }
-            UserChips.ItemsSource = ChipLibrary.instance.getList(listAll, this.sortOption, this.invert);
+            UserChips.ItemsSource = ChipLibrary.Instance.getList(listAll, this.sortOption, this.invert);
         }
 
 
@@ -76,12 +76,12 @@ namespace BnB_ChipLibraryGui
             string numChipsUsed = ((TextBlock)chipUsed.Content).Text;
             string changedChipName = ((TextBlock)chipName.Content).Text;
 
-            Chip toUpdate = ChipLibrary.instance.GetChip(changedChipName);
+            Chip toUpdate = ChipLibrary.Instance.GetChip(changedChipName);
             //toUpdate.UsedInBattle = int.Parse(numChipsUsed);
 
         }
-       private void ButtonClick(object sender, RoutedEventArgs e)
-       {
+        private void ButtonClick(object sender, RoutedEventArgs e)
+        {
             FrameworkElement feSource = e.Source as FrameworkElement;
             switch (feSource.Name)
             {
@@ -124,10 +124,10 @@ namespace BnB_ChipLibraryGui
 
         private void AddChip()
         {
-            if(ChipNameEntered.Text != string.Empty)
+            if (ChipNameEntered.Text != string.Empty)
             {
-                var chip = ChipLibrary.instance.GetChip(ChipNameEntered.Text);
-                if(chip != null)
+                var chip = ChipLibrary.Instance.GetChip(ChipNameEntered.Text);
+                if (chip != null)
                 {
                     ChipNameEntered.Text = string.Empty;
                     FoundChips.Text = string.Empty;
@@ -136,14 +136,14 @@ namespace BnB_ChipLibraryGui
                 }
                 else
                 {
-                    var chips = ChipLibrary.instance.Search(ChipNameEntered.Text);
-                    if(chips.Count == 0)
+                    var chips = ChipLibrary.Instance.Search(ChipNameEntered.Text);
+                    if (chips.Count == 0)
                     {
                         FoundChips.Text = "No chips were returned";
                         return;
                     }
                     StringBuilder possibleChips = new StringBuilder();
-                    foreach(var possibleChip in chips)
+                    foreach (var possibleChip in chips)
                     {
                         possibleChips.Append(possibleChip);
                         possibleChips.Append('\n');
@@ -156,7 +156,7 @@ namespace BnB_ChipLibraryGui
         {
             if (ChipNameEntered.Text != string.Empty)
             {
-                var chip = ChipLibrary.instance.GetChip(ChipNameEntered.Text);
+                var chip = ChipLibrary.Instance.GetChip(ChipNameEntered.Text);
                 if (chip != null)
                 {
                     ChipNameEntered.Text = string.Empty;
@@ -165,7 +165,7 @@ namespace BnB_ChipLibraryGui
                 }
                 else
                 {
-                    var chips = ChipLibrary.instance.Search(ChipNameEntered.Text);
+                    var chips = ChipLibrary.Instance.Search(ChipNameEntered.Text);
                     if (chips.Count == 0)
                     {
                         FoundChips.Text = "No chips were returned";

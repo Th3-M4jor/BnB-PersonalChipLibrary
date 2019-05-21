@@ -25,7 +25,13 @@
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True" Width="80" HeaderStyle="{StaticResource CenterGridHeaderStyle}"/>
                 <DataGridTextColumn Header="Range" Binding="{Binding Range}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Damage" Binding="{Binding Damage}" IsReadOnly="True" Width="80" HeaderStyle="{StaticResource CenterGridHeaderStyle}"/>
-                <DataGridTextColumn Header="Element" Binding="{Binding Element}" IsReadOnly="True"/>
+                <DataGridTemplateColumn Header="Element" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding ElementImage}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Class" Binding="{Binding ChipClass}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Count" Binding="{Binding ChipCount}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Used" Binding="{Binding UsedInBattle, NotifyOnTargetUpdated=True}" IsReadOnly="False"/>

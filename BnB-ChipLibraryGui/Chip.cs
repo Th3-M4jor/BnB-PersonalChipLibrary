@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Windows.Media.Imaging;
 
 namespace BnB_ChipLibraryGui
 {
@@ -71,7 +72,8 @@ namespace BnB_ChipLibraryGui
         public int UsedInBattle { get; set; }
 
         [JsonProperty("Range")]
-        public string Range {
+        public string Range
+        {
             get => ChipRange.ToString();
             set
             {
@@ -80,7 +82,8 @@ namespace BnB_ChipLibraryGui
         }
 
         [JsonProperty("Skill")]
-        public string Skill {
+        public string Skill
+        {
             get => ChipSkill.ToString();
             set
             {
@@ -96,7 +99,8 @@ namespace BnB_ChipLibraryGui
         }
 
         [JsonProperty("Element")]
-        public string Element {
+        public string Element
+        {
             get => ChipElement.ToString();
             set
             {
@@ -105,7 +109,8 @@ namespace BnB_ChipLibraryGui
         }
 
         [JsonProperty("Type")]
-        public string Type {
+        public string Type
+        {
             get => ChipType.ToString();
             set
             {
@@ -120,8 +125,14 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        public char ChipClass {
+        public char ChipClass
+        {
             get => ChipType.ToString()[0];
+        }
+
+        public BitmapImage ElementImage
+        {
+            get => ChipImages.Instance[ChipElement];
         }
 
         public Chip()
@@ -131,7 +142,7 @@ namespace BnB_ChipLibraryGui
             UsedInBattle = 0;
         }
 
-        public Chip(string name, string range, string skill, string damage, string element, string type , string description, string All)
+        public Chip(string name, string range, string skill, string damage, string element, string type, string description, string All)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.Range = range;
@@ -155,7 +166,7 @@ namespace BnB_ChipLibraryGui
         /// </summary>
         /// <param name="chip">The chip to have it's count increased by 1</param>
         /// <returns></returns>
-        public static Chip operator++(Chip chip)
+        public static Chip operator ++(Chip chip)
         {
             chip.ChipCount++;
             return chip;
@@ -166,7 +177,7 @@ namespace BnB_ChipLibraryGui
         /// </summary>
         /// <param name="chip">The chip to have it's count reduced by 1</param>
         /// <returns>The chip</returns>
-        public static Chip operator--(Chip chip)
+        public static Chip operator --(Chip chip)
         {
             chip.ChipCount--;
             return chip;
