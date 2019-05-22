@@ -111,6 +111,9 @@ namespace BnB_ChipLibraryGui
                 case "SortByElement":
                     this.sortOption = ChipLibrary.LibrarySortOptions.Element;
                     break;
+                case "SortBySkill":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.Skill;
+                    break;
             }
             LoadChips();
 
@@ -207,7 +210,7 @@ namespace BnB_ChipLibraryGui
         private void JackOut()
         {
             FoundChips.Foreground = Brushes.Red;
-            uint count = ChipLibrary.Instance.jackOut();
+            uint count = ChipLibrary.Instance.JackOut();
             FoundChips.Text = count + " chip(s) refreshed";
         }
     }

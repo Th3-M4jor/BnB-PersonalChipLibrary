@@ -17,7 +17,7 @@ namespace BnB_ChipLibraryGui
 
         public enum LibrarySortOptions
         {
-            Name, Element, AvgDamage, Owned, MaxDamage
+            Name, Element, AvgDamage, Owned, MaxDamage, Skill
         }
 
         private static readonly Lazy<ChipLibrary> lazy = new Lazy<ChipLibrary>(() => new ChipLibrary());
@@ -92,6 +92,9 @@ namespace BnB_ChipLibraryGui
                 case LibrarySortOptions.MaxDamage:
                     if (invert) return toReturn.OrderBy(a => a.MaxDamage).ThenBy(a => a.Name).ToList();
                     return toReturn.OrderByDescending(a => a.MaxDamage).ThenBy(a => a.Name).ToList();
+                case LibrarySortOptions.Skill:
+                    if (invert) return toReturn.OrderByDescending(a => a.ChipSkill).ThenBy(a => a.Name).ToList();
+                    return toReturn.OrderBy(a => a.ChipSkill).ThenBy(a => a.Name).ToList();
                 default:
                     if (invert) return toReturn.OrderByDescending(a => a.ChipType).ThenByDescending(a => a.Name).ToList();
                     return toReturn.OrderBy(a => a.ChipType).ThenBy(a => a.Name).ToList();
@@ -99,7 +102,7 @@ namespace BnB_ChipLibraryGui
 
         }
 
-        public uint jackOut()
+        public uint JackOut()
         {
             uint countRefreshed = 0;
             foreach(var chip in this.Library)

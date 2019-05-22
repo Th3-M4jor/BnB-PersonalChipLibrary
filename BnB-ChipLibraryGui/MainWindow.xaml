@@ -64,7 +64,7 @@
                 </DataGrid.Columns>
                 <DataGrid.RowDetailsTemplate>
                     <DataTemplate>
-                        <TextBlock Background="Orange" Text="{Binding Description}" TextWrapping="Wrap"
+                        <TextBlock Background="GhostWhite" Text="{Binding Description}" TextWrapping="Wrap"
                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="300"/>
                     </DataTemplate>
                 </DataGrid.RowDetailsTemplate>
@@ -79,13 +79,14 @@
                 <RadioButton GroupName="SortOption" Name="SortByMaxDamage" Content="MaxDamage" Checked="ButtonClick"/>
                 <RadioButton GroupName="SortOption" Name="SortByOwned" Content="Owned" Checked="ButtonClick"/>
                 <RadioButton GroupName="SortOption" Name="SortByElement" Content="Element" Checked="ButtonClick"/>
+                <RadioButton GroupName="SortOption" Name="SortBySkill" Content="Skill" Checked="ButtonClick"/>
             </StackPanel>
             <Button Name="Add"  Content="Add Chip" HorizontalAlignment="Left" VerticalAlignment="Top" Width="60" Click="ButtonClick" Canvas.Left="30" Canvas.Top="25"/>
             <Button Name="JackedOut"  Content="Jack Out" HorizontalAlignment="Left" VerticalAlignment="Top" Width="60" Click="ButtonClick" Canvas.Left="57" Canvas.Top="45"/>
             <Button Name="Remove" Content="Remove" HorizontalAlignment="Left" VerticalAlignment="Top" Width="59" Click="ButtonClick" Canvas.Left="91" Canvas.Top="25"/>
             <TextBlock Name="FoundChips" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="117" Grid.RowSpan="2" Width="120" Canvas.Left="30" Canvas.Top="70"/>
             <CheckBox Name="ShowNotOwned" Content="Show Owned Chips Only" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="ShowOwned" Unchecked="ShowOwned" Grid.Row="1" IsChecked="True" Canvas.Top="426"/>
-            <CheckBox x:Name="Invert" Content="InvertSort" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="InvertSort" Unchecked="InvertSort" Grid.Row="1" Canvas.Top="371"/>
+            <CheckBox x:Name="Invert" Content="InvertSort" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="InvertSort" Unchecked="InvertSort" Grid.Row="1" Canvas.Top="406"/>
         </Canvas>
     </Grid>
 </Window>
