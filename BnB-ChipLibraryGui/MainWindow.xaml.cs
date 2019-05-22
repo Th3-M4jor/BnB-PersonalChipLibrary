@@ -152,6 +152,7 @@ namespace BnB_ChipLibraryGui
                     this.sortOption = ChipLibrary.LibrarySortOptions.Skill;
                     break;
             }
+            LoadChips();
         }
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

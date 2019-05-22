@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BnB_ChipLibraryGui"
         mc:Ignorable="d"
         Closing="ExitClicked"
-        Title="ChipLibrary" Height="500" Width="597.344">
+        Title="ChipLibrary" Height="500" Width="650.73">
     <Window.Resources>
         <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -21,7 +21,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto">
             <DataGrid Name="UserChips" AutoGenerateColumns="false" SelectionMode="Single" 
                   HorizontalAlignment="Left" Height="451" VerticalAlignment="Top" 
-                  Width="382" CanUserSortColumns="False" CanUserAddRows="False" 
+                  Width="431" CanUserSortColumns="False" CanUserAddRows="False" 
                   CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False"
                   MouseDown="Grid_MouseLeftButtonDown"
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
