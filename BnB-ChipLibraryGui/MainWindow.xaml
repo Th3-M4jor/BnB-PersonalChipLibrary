@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BnB_ChipLibraryGui"
         mc:Ignorable="d"
         Closing="ExitClicked"
-        Title="ChipLibrary" Height="500" Width="650.73">
+        Title="BnBChipManager" Height="500" Width="650.73">
     <Window.Resources>
         <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
