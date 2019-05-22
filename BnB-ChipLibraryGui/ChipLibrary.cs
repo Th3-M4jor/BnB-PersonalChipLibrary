@@ -17,7 +17,7 @@ namespace BnB_ChipLibraryGui
 
         public enum LibrarySortOptions
         {
-            Name, Element, AvgDamage, Owned, MaxDamage, Skill
+            Name, Element, AvgDamage, Owned, MaxDamage, Skill, Range
         }
 
         private static readonly Lazy<ChipLibrary> lazy = new Lazy<ChipLibrary>(() => new ChipLibrary());
@@ -67,14 +67,17 @@ namespace BnB_ChipLibraryGui
             return toReturn;
         }
 
-        public List<Chip> getList(ChipListOptions AllOrOwned, LibrarySortOptions sortOptions, bool invert)
+        public List<Chip> getList(ChipListOptions AllOrOwned, LibrarySortOptions sortOptions, Chip.ChipRanges rangeOption, bool invert)
         {
             List<Chip> toReturn = new List<Chip>();
             foreach (var item in this.Library)
             {
                 if (item.Value.ChipCount != 0 || AllOrOwned == ChipListOptions.DisplayAll)
                 {
-                    toReturn.Add(item.Value);
+                    if (rangeOption == Chip.ChipRanges.All || item.Value.ChipRange == rangeOption)
+                    {
+                        toReturn.Add(item.Value);
+                    }
                 }
             }
             //toReturn.OrderBy(a => a.Name).ThenBy(a => a.averageDamage);
@@ -95,6 +98,10 @@ namespace BnB_ChipLibraryGui
                 case LibrarySortOptions.Skill:
                     if (invert) return toReturn.OrderByDescending(a => a.ChipSkill).ThenBy(a => a.Name).ToList();
                     return toReturn.OrderBy(a => a.ChipSkill).ThenBy(a => a.Name).ToList();
+                case LibrarySortOptions.Range:
+                    if (invert) return toReturn.OrderByDescending(a => a.ChipRange).ThenBy(a => a.Name).ToList();
+                    return toReturn.OrderBy(a => a.ChipRange).ThenBy(a => a.Name).ToList();
+                case LibrarySortOptions.Name:
                 default:
                     if (invert) return toReturn.OrderByDescending(a => a.ChipType).ThenByDescending(a => a.Name).ToList();
                     return toReturn.OrderBy(a => a.ChipType).ThenBy(a => a.Name).ToList();

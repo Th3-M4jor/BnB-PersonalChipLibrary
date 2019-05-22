@@ -14,10 +14,12 @@ namespace BnB_ChipLibraryGui
     public partial class MainWindow : Window
     {
         private ChipLibrary.LibrarySortOptions sortOption;
+        private Chip.ChipRanges rangeOption;
         private bool invert = false;
         public MainWindow()
         {
             this.sortOption = ChipLibrary.LibrarySortOptions.Name;
+            this.rangeOption = Chip.ChipRanges.All;
             InitializeComponent();
             if (System.IO.File.Exists("./userChips.dat"))
             {
@@ -46,7 +48,8 @@ namespace BnB_ChipLibraryGui
 
         private void ExitClicked(object sender, CancelEventArgs e)
         {
-            var toSave = ChipLibrary.Instance.getList(ChipLibrary.ChipListOptions.DisplayOwned, ChipLibrary.LibrarySortOptions.Name, false);
+            var toSave = ChipLibrary.Instance.getList(ChipLibrary.ChipListOptions.DisplayOwned,
+                ChipLibrary.LibrarySortOptions.Name, Chip.ChipRanges.All, false);
             using (var chipFile = new StreamWriter(new FileStream("./userChips.dat", System.IO.FileMode.Create)))
             {
                 foreach (Chip chip in toSave)
@@ -64,7 +67,7 @@ namespace BnB_ChipLibraryGui
             {
                 listAll = ChipLibrary.ChipListOptions.DisplayOwned;
             }
-            UserChips.ItemsSource = ChipLibrary.Instance.getList(listAll, this.sortOption, this.invert);
+            UserChips.ItemsSource = ChipLibrary.Instance.getList(listAll, this.sortOption, this.rangeOption, this.invert);
         }
 
 
@@ -84,8 +87,7 @@ namespace BnB_ChipLibraryGui
         }
         private void ButtonClick(object sender, RoutedEventArgs e)
         {
-            FrameworkElement feSource = e.Source as FrameworkElement;
-            switch (feSource.Name)
+            switch ((e.Source as FrameworkElement).Name)
             {
                 case "Add":
                     AddChip();
@@ -96,6 +98,38 @@ namespace BnB_ChipLibraryGui
                 case "JackedOut":
                     JackOut();
                     break;
+            }
+            LoadChips();
+
+        }
+
+        private void RangeClick(object sender, RoutedEventArgs e)
+        {
+            switch ((e.Source as FrameworkElement).Name)
+            {
+                case "AllRanges":
+                    this.rangeOption = Chip.ChipRanges.All;
+                    break;
+                case "FarRange":
+                    this.rangeOption = Chip.ChipRanges.Far;
+                    break;
+                case "NearRange":
+                    this.rangeOption = Chip.ChipRanges.Near;
+                    break;
+                case "CloseRange":
+                    this.rangeOption = Chip.ChipRanges.Close;
+                    break;
+                case "SelfRange":
+                    this.rangeOption = Chip.ChipRanges.Self;
+                    break;
+            }
+            LoadChips();
+        }
+
+        private void SortClick(object sender, RoutedEventArgs e)
+        {
+            switch ((e.Source as FrameworkElement).Name)
+            {
                 case "SortByName":
                     this.sortOption = ChipLibrary.LibrarySortOptions.Name;
                     break;
@@ -111,12 +145,13 @@ namespace BnB_ChipLibraryGui
                 case "SortByElement":
                     this.sortOption = ChipLibrary.LibrarySortOptions.Element;
                     break;
+                case "SortByRange":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.Range;
+                    break;
                 case "SortBySkill":
                     this.sortOption = ChipLibrary.LibrarySortOptions.Skill;
                     break;
             }
-            LoadChips();
-
         }
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

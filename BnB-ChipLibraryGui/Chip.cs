@@ -15,7 +15,7 @@ namespace BnB_ChipLibraryGui
 
         public enum ChipRanges
         {
-            Far, Near, Close, Self
+            Far, Near, Close, Self, All
         }
 
         public enum ChipTypes
