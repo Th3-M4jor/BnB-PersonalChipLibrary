@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.Text;
 using System.Windows;
-using System.IO;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -13,14 +13,15 @@ namespace BnB_ChipLibraryGui
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ChipLibrary.LibrarySortOptions sortOption;
-        private Chip.ChipRanges rangeOption;
         private bool invert = false;
+        private Chip.ChipRanges rangeOption;
+        private ChipLibrary.LibrarySortOptions sortOption;
         public MainWindow()
         {
             this.sortOption = ChipLibrary.LibrarySortOptions.Name;
             this.rangeOption = Chip.ChipRanges.All;
             InitializeComponent();
+            bool chipsOwned = false;
             if (System.IO.File.Exists("./userChips.dat"))
             {
                 using (var chipFile = System.IO.File.OpenText("./userChips.dat"))
@@ -36,148 +37,18 @@ namespace BnB_ChipLibraryGui
                         if (toModify == null)
                         {
                             MessageBox.Show("The chip " + input[0] + " doesn't exist, ignoring", "ChipLibrary", MessageBoxButton.OK);
+                            continue;
                         }
                         toModify.UpdateChipCount(count);
                         toModify.UsedInBattle = used;
+                        chipsOwned = true;
                     }
                 }
             }
-            LoadChips();
-
-        }
-
-        private void ExitClicked(object sender, CancelEventArgs e)
-        {
-            var toSave = ChipLibrary.Instance.getList(ChipLibrary.ChipListOptions.DisplayOwned,
-                ChipLibrary.LibrarySortOptions.Name, Chip.ChipRanges.All, false);
-            using (var chipFile = new StreamWriter(new FileStream("./userChips.dat", System.IO.FileMode.Create)))
+            if(chipsOwned)
             {
-                foreach (Chip chip in toSave)
-                {
-                    chipFile.WriteLine("{0}:{1}:{2}", chip.Name, chip.ChipCount, chip.UsedInBattle);
-                }
+                ShowNotOwned.IsChecked = true;
             }
-        }
-
-        private void LoadChips()
-        {
-            ChipLibrary.ChipListOptions listAll = ChipLibrary.ChipListOptions.DisplayAll;
-            if (ShowNotOwned == null) return;
-            if (ShowNotOwned.IsChecked.HasValue && ShowNotOwned.IsChecked == true)
-            {
-                listAll = ChipLibrary.ChipListOptions.DisplayOwned;
-            }
-            UserChips.ItemsSource = ChipLibrary.Instance.getList(listAll, this.sortOption, this.rangeOption, this.invert);
-        }
-
-
-        //SelectionChanged="TextBox_TextChanged"
-        private void TextBox_TextChanged(object sender, SelectionChangedEventArgs e)
-        {
-            DataGrid dataGrid = sender as DataGrid;
-            DataGridRow row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(dataGrid.SelectedIndex);
-            DataGridCell chipUsed = dataGrid.Columns[dataGrid.Columns.Count - 1].GetCellContent(row).Parent as DataGridCell;
-            DataGridCell chipName = dataGrid.Columns[0].GetCellContent(row).Parent as DataGridCell;
-            string numChipsUsed = ((TextBlock)chipUsed.Content).Text;
-            string changedChipName = ((TextBlock)chipName.Content).Text;
-
-            Chip toUpdate = ChipLibrary.Instance.GetChip(changedChipName);
-            //toUpdate.UsedInBattle = int.Parse(numChipsUsed);
-
-        }
-        private void ButtonClick(object sender, RoutedEventArgs e)
-        {
-            switch ((e.Source as FrameworkElement).Name)
-            {
-                case "Add":
-                    AddChip();
-                    break;
-                case "Remove":
-                    RemoveChip();
-                    break;
-                case "JackedOut":
-                    JackOut();
-                    break;
-            }
-            LoadChips();
-
-        }
-
-        private void RangeClick(object sender, RoutedEventArgs e)
-        {
-            switch ((e.Source as FrameworkElement).Name)
-            {
-                case "AllRanges":
-                    this.rangeOption = Chip.ChipRanges.All;
-                    break;
-                case "FarRange":
-                    this.rangeOption = Chip.ChipRanges.Far;
-                    break;
-                case "NearRange":
-                    this.rangeOption = Chip.ChipRanges.Near;
-                    break;
-                case "CloseRange":
-                    this.rangeOption = Chip.ChipRanges.Close;
-                    break;
-                case "SelfRange":
-                    this.rangeOption = Chip.ChipRanges.Self;
-                    break;
-            }
-            LoadChips();
-        }
-
-        private void SortClick(object sender, RoutedEventArgs e)
-        {
-            switch ((e.Source as FrameworkElement).Name)
-            {
-                case "SortByName":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.Name;
-                    break;
-                case "SortByAvgDamage":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.AvgDamage;
-                    break;
-                case "SortByMaxDamage":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.MaxDamage;
-                    break;
-                case "SortByOwned":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.Owned;
-                    break;
-                case "SortByElement":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.Element;
-                    break;
-                case "SortByRange":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.Range;
-                    break;
-                case "SortBySkill":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.Skill;
-                    break;
-            }
-            LoadChips();
-        }
-
-        private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (sender != null)
-            {
-                if (sender is DataGrid grid && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
-                {
-                    DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
-                    if (!dgr.IsMouseOver)
-                    {
-                        (dgr as DataGridRow).IsSelected = false;
-                    }
-                }
-            }
-        }
-
-        private void ShowOwned(object sender, RoutedEventArgs e)
-        {
-            LoadChips();
-        }
-
-        private void InvertSort(object sender, RoutedEventArgs e)
-        {
-            invert = !invert;
             LoadChips();
         }
 
@@ -192,7 +63,6 @@ namespace BnB_ChipLibraryGui
                     ChipNameEntered.Text = string.Empty;
                     FoundChips.Text = string.Empty;
                     chip++;
-
                 }
                 else
                 {
@@ -212,6 +82,114 @@ namespace BnB_ChipLibraryGui
                 }
             }
         }
+
+        private void ButtonClick(object sender, RoutedEventArgs e)
+        {
+            switch ((e.Source as FrameworkElement).Name)
+            {
+                case "Add":
+                    AddChip();
+                    break;
+
+                case "Remove":
+                    RemoveChip();
+                    break;
+
+                case "JackedOut":
+                    JackOut();
+                    break;
+            }
+            LoadChips();
+        }
+
+        private void ChipNameEntered_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return && ChipNameEntered.Text != string.Empty)
+            {
+                AddChip();
+            }
+            LoadChips();
+        }
+
+        private void ExitClicked(object sender, CancelEventArgs e)
+        {
+            var toSave = ChipLibrary.Instance.getList(ChipLibrary.ChipListOptions.DisplayOwned,
+                ChipLibrary.LibrarySortOptions.Name, Chip.ChipRanges.All, false);
+            using (var chipFile = new StreamWriter(new FileStream("./userChips.dat", System.IO.FileMode.Create)))
+            {
+                foreach (Chip chip in toSave)
+                {
+                    chipFile.WriteLine("{0}:{1}:{2}", chip.Name, chip.ChipCount, chip.UsedInBattle);
+                }
+            }
+        }
+
+        private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender != null)
+            {
+                if (sender is DataGrid grid && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
+                {
+                    DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
+                    if (!dgr.IsMouseOver)
+                    {
+                        (dgr as DataGridRow).IsSelected = false;
+                    }
+                }
+            }
+        }
+
+        private void InvertSort(object sender, RoutedEventArgs e)
+        {
+            invert = !invert;
+            LoadChips();
+        }
+
+        private void JackOut()
+        {
+            FoundChips.Foreground = Brushes.Red;
+            uint count = ChipLibrary.Instance.JackOut();
+            FoundChips.Text = count + " chip(s) refreshed";
+        }
+
+        private void LoadChips()
+        {
+            ChipLibrary.ChipListOptions listAll = ChipLibrary.ChipListOptions.DisplayAll;
+            if (ShowNotOwned == null) return;
+            if (ShowNotOwned.IsChecked.HasValue && ShowNotOwned.IsChecked == true)
+            {
+                listAll = ChipLibrary.ChipListOptions.DisplayOwned;
+            }
+            UserChips.ItemsSource = ChipLibrary.Instance.getList(listAll, this.sortOption, this.rangeOption, this.invert);
+        }
+
+        private void RangeClick(object sender, RoutedEventArgs e)
+        {
+            switch ((e.Source as FrameworkElement).Name)
+            {
+                case "AllRanges":
+                    this.rangeOption = Chip.ChipRanges.All;
+                    break;
+
+                case "FarRange":
+                    this.rangeOption = Chip.ChipRanges.Far;
+                    break;
+
+                case "NearRange":
+                    this.rangeOption = Chip.ChipRanges.Near;
+                    break;
+
+                case "CloseRange":
+                    this.rangeOption = Chip.ChipRanges.Close;
+                    break;
+
+                case "SelfRange":
+                    this.rangeOption = Chip.ChipRanges.Self;
+                    break;
+            }
+            LoadChips();
+        }
+
         private void RemoveChip()
         {
             FoundChips.Foreground = Brushes.Black;
@@ -243,11 +221,58 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        private void JackOut()
+        private void ShowOwned(object sender, RoutedEventArgs e)
         {
-            FoundChips.Foreground = Brushes.Red;
-            uint count = ChipLibrary.Instance.JackOut();
-            FoundChips.Text = count + " chip(s) refreshed";
+            LoadChips();
+        }
+
+        private void SortClick(object sender, RoutedEventArgs e)
+        {
+            switch ((e.Source as FrameworkElement).Name)
+            {
+                case "SortByName":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.Name;
+                    break;
+
+                case "SortByAvgDamage":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.AvgDamage;
+                    break;
+
+                case "SortByMaxDamage":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.MaxDamage;
+                    break;
+
+                case "SortByOwned":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.Owned;
+                    break;
+
+                case "SortByElement":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.Element;
+                    break;
+
+                case "SortByRange":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.Range;
+                    break;
+
+                case "SortBySkill":
+                    this.sortOption = ChipLibrary.LibrarySortOptions.Skill;
+                    break;
+            }
+            LoadChips();
+        }
+
+        //SelectionChanged="TextBox_TextChanged"
+        private void TextBox_TextChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DataGrid dataGrid = sender as DataGrid;
+            DataGridRow row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(dataGrid.SelectedIndex);
+            DataGridCell chipUsed = dataGrid.Columns[dataGrid.Columns.Count - 1].GetCellContent(row).Parent as DataGridCell;
+            DataGridCell chipName = dataGrid.Columns[0].GetCellContent(row).Parent as DataGridCell;
+            string numChipsUsed = ((TextBlock)chipUsed.Content).Text;
+            string changedChipName = ((TextBlock)chipName.Content).Text;
+
+            Chip toUpdate = ChipLibrary.Instance.GetChip(changedChipName);
+            //toUpdate.UsedInBattle = int.Parse(numChipsUsed);
         }
     }
 }

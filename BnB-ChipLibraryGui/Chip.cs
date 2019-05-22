@@ -4,10 +4,8 @@ using System.Windows.Media.Imaging;
 
 namespace BnB_ChipLibraryGui
 {
-
     public class Chip
     {
-        private static readonly char[] damageDelims = { 'd', ' ' };
         public enum ChipElements
         {
             Fire, Aqua, Elec, Wood, Wind, Sword, Break, Cursor, Recovery, Invis, Object, Null
@@ -18,23 +16,30 @@ namespace BnB_ChipLibraryGui
             Far, Near, Close, Self, All
         }
 
-        public enum ChipTypes
-        {
-            Standard, Mega, Giga
-        }
-
         public enum ChipSkills
         {
             Sense, Info, Coding, Strength, Speed, Stamina, Charm, Bravery, Affinity, None
         }
 
-        [JsonProperty("Name")]
-        public string Name { get; set; }
+        public enum ChipTypes
+        {
+            Standard, Mega, Giga
+        }
+
+        [JsonProperty("All")]
+        public string All { get; set; }
+
+        public decimal AverageDamage { get; private set; }
+        public char ChipClass
+        {
+            get => ChipType.ToString()[0];
+        }
+
+        public int ChipCount { get; set; }
+        public ChipElements ChipElement { get; private set; }
         public ChipRanges ChipRange { get; private set; }
         public ChipSkills ChipSkill { get; private set; }
-
-        private string _damage;
-
+        public ChipTypes ChipType { get; private set; }
         [JsonProperty("Damage")]
         public string Damage
         {
@@ -58,18 +63,27 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        public ChipElements ChipElement { get; private set; }
-        public ChipTypes ChipType { get; private set; }
-        public decimal AverageDamage { get; private set; }
-        public uint MaxDamage { get; private set; }
-
         [JsonProperty("Description")]
         public string Description { get; set; }
 
-        [JsonProperty("All")]
-        public string All { get; set; }
-        public int ChipCount { get; private set; }
-        public uint UsedInBattle { get; set; }
+        [JsonProperty("Element")]
+        public string Element
+        {
+            get => ChipElement.ToString();
+            set
+            {
+                this.ChipElement = (ChipElements)Enum.Parse(typeof(ChipElements), value);
+            }
+        }
+
+        public BitmapImage ElementImage
+        {
+            get => ChipImages.Instance[ChipElement];
+        }
+
+        public uint MaxDamage { get; private set; }
+        [JsonProperty("Name")]
+        public string Name { get; set; }
 
         [JsonProperty("Range")]
         public string Range
@@ -98,16 +112,6 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        [JsonProperty("Element")]
-        public string Element
-        {
-            get => ChipElement.ToString();
-            set
-            {
-                this.ChipElement = (ChipElements)Enum.Parse(typeof(ChipElements), value);
-            }
-        }
-
         [JsonProperty("Type")]
         public string Type
         {
@@ -125,16 +129,7 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        public char ChipClass
-        {
-            get => ChipType.ToString()[0];
-        }
-
-        public BitmapImage ElementImage
-        {
-            get => ChipImages.Instance[ChipElement];
-        }
-
+        public uint UsedInBattle { get; set; }
         public Chip()
         {
             AverageDamage = 0;
@@ -156,9 +151,15 @@ namespace BnB_ChipLibraryGui
             this.UsedInBattle = 0;
         }
 
-        public void UpdateChipCount(int newCount)
+        /// <summary>
+        /// Reduces the number of held copies of the said chip by 1, cannot go below zero
+        /// </summary>
+        /// <param name="chip">The chip to have it's count reduced by 1</param>
+        /// <returns>The chip</returns>
+        public static Chip operator --(Chip chip)
         {
-            this.ChipCount = newCount;
+            chip.ChipCount--;
+            return chip;
         }
 
         /// <summary>
@@ -173,18 +174,6 @@ namespace BnB_ChipLibraryGui
         }
 
         /// <summary>
-        /// Reduces the number of held copies of the said chip by 1, cannot go below zero
-        /// </summary>
-        /// <param name="chip">The chip to have it's count reduced by 1</param>
-        /// <returns>The chip</returns>
-        public static Chip operator --(Chip chip)
-        {
-            chip.ChipCount--;
-            return chip;
-        }
-
-
-        /// <summary>
         /// Converts it to a string that should look exactly like the documentation
         /// </summary>
         /// <returns>The chip as a string like the documentation has it</returns>
@@ -193,6 +182,13 @@ namespace BnB_ChipLibraryGui
             return this.All;
         }
 
+        public void UpdateChipCount(int newCount)
+        {
+            this.ChipCount = newCount;
+        }
 
+        private static readonly char[] damageDelims = { 'd', ' ' };
+
+        private string _damage;
     }
 }
