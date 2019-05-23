@@ -35,6 +35,8 @@ namespace BnB_ChipLibraryGui
             get => ChipType.ToString()[0];
         }
 
+        public int NumInHand { get; set; }
+
         public int ChipCount { get; set; }
         public ChipElements ChipElement { get; private set; }
         public ChipRanges ChipRange { get; private set; }
@@ -135,6 +137,7 @@ namespace BnB_ChipLibraryGui
             AverageDamage = 0;
             ChipCount = 0;
             UsedInBattle = 0;
+            this.NumInHand = 0;
         }
 
         public Chip(string name, string range, string skill, string damage, string element, string type, string description, string All)
@@ -149,6 +152,7 @@ namespace BnB_ChipLibraryGui
             this.All = All ?? throw new ArgumentNullException(nameof(All));
             this.ChipCount = 0;
             this.UsedInBattle = 0;
+            this.NumInHand = 0;
         }
 
         /// <summary>

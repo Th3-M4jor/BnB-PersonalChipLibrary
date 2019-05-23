@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Collections.Generic;
 
 namespace BnB_ChipLibraryGui
 {
@@ -14,14 +15,15 @@ namespace BnB_ChipLibraryGui
     public partial class MainWindow : Window
     {
         private bool invert = false;
-        private Chip.ChipRanges rangeOption;
-        private ChipLibrary.LibrarySortOptions sortOption;
+        public Chip.ChipRanges RangeOption { get; private set; }
+        public ChipLibrary.LibrarySortOptions SortOption { get; private set; }
         public MainWindow()
         {
-            this.sortOption = ChipLibrary.LibrarySortOptions.Name;
-            this.rangeOption = Chip.ChipRanges.All;
+            this.SortOption = ChipLibrary.LibrarySortOptions.Name;
+            this.RangeOption = Chip.ChipRanges.All;
             InitializeComponent();
             bool chipsOwned = false;
+            List<Chip> playerHand = new List<Chip>();
             if (System.IO.File.Exists("./userChips.dat"))
             {
                 using (var chipFile = System.IO.File.OpenText("./userChips.dat"))
@@ -39,6 +41,14 @@ namespace BnB_ChipLibraryGui
                             MessageBox.Show("The chip " + input[0] + " doesn't exist, ignoring", "ChipLibrary", MessageBoxButton.OK);
                             continue;
                         }
+                        if (input.Length == 4)
+                        {
+                            int numInHand = int.Parse(input[3]);
+                            for (int i = 0; i < numInHand; i++)
+                            {
+                                playerHand.Add(toModify);
+                            }
+                        }
                         toModify.UpdateChipCount(count);
                         toModify.UsedInBattle = used;
                         chipsOwned = true;
@@ -50,6 +60,11 @@ namespace BnB_ChipLibraryGui
                 ShowNotOwned.IsChecked = true;
             }
             LoadChips();
+            Hand handWindow = new Hand
+            {
+                Owner = this
+            };
+            handWindow.Show();
         }
 
         private void AddChip()
@@ -113,7 +128,7 @@ namespace BnB_ChipLibraryGui
 
         private void ExitClicked(object sender, CancelEventArgs e)
         {
-            var toSave = ChipLibrary.Instance.getList(ChipLibrary.ChipListOptions.DisplayOwned,
+            var toSave = ChipLibrary.Instance.GetList(ChipLibrary.ChipListOptions.DisplayOwned,
                 ChipLibrary.LibrarySortOptions.Name, Chip.ChipRanges.All, false);
             using (var chipFile = new StreamWriter(new FileStream("./userChips.dat", System.IO.FileMode.Create)))
             {
@@ -160,7 +175,7 @@ namespace BnB_ChipLibraryGui
             {
                 listAll = ChipLibrary.ChipListOptions.DisplayOwned;
             }
-            UserChips.ItemsSource = ChipLibrary.Instance.getList(listAll, this.sortOption, this.rangeOption, this.invert);
+            UserChips.ItemsSource = ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.invert);
         }
 
         private void RangeClick(object sender, RoutedEventArgs e)
@@ -168,23 +183,23 @@ namespace BnB_ChipLibraryGui
             switch ((e.Source as FrameworkElement).Name)
             {
                 case "AllRanges":
-                    this.rangeOption = Chip.ChipRanges.All;
+                    this.RangeOption = Chip.ChipRanges.All;
                     break;
 
                 case "FarRange":
-                    this.rangeOption = Chip.ChipRanges.Far;
+                    this.RangeOption = Chip.ChipRanges.Far;
                     break;
 
                 case "NearRange":
-                    this.rangeOption = Chip.ChipRanges.Near;
+                    this.RangeOption = Chip.ChipRanges.Near;
                     break;
 
                 case "CloseRange":
-                    this.rangeOption = Chip.ChipRanges.Close;
+                    this.RangeOption = Chip.ChipRanges.Close;
                     break;
 
                 case "SelfRange":
-                    this.rangeOption = Chip.ChipRanges.Self;
+                    this.RangeOption = Chip.ChipRanges.Self;
                     break;
             }
             LoadChips();
@@ -231,31 +246,31 @@ namespace BnB_ChipLibraryGui
             switch ((e.Source as FrameworkElement).Name)
             {
                 case "SortByName":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.Name;
+                    this.SortOption = ChipLibrary.LibrarySortOptions.Name;
                     break;
 
                 case "SortByAvgDamage":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.AvgDamage;
+                    this.SortOption = ChipLibrary.LibrarySortOptions.AvgDamage;
                     break;
 
                 case "SortByMaxDamage":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.MaxDamage;
+                    this.SortOption = ChipLibrary.LibrarySortOptions.MaxDamage;
                     break;
 
                 case "SortByOwned":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.Owned;
+                    this.SortOption = ChipLibrary.LibrarySortOptions.Owned;
                     break;
 
                 case "SortByElement":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.Element;
+                    this.SortOption = ChipLibrary.LibrarySortOptions.Element;
                     break;
 
                 case "SortByRange":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.Range;
+                    this.SortOption = ChipLibrary.LibrarySortOptions.Range;
                     break;
 
                 case "SortBySkill":
-                    this.sortOption = ChipLibrary.LibrarySortOptions.Skill;
+                    this.SortOption = ChipLibrary.LibrarySortOptions.Skill;
                     break;
             }
             LoadChips();

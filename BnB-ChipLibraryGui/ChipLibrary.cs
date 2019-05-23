@@ -32,7 +32,7 @@ namespace BnB_ChipLibraryGui
             else return null;
         }
 
-        public List<Chip> getList(ChipListOptions AllOrOwned, LibrarySortOptions sortOptions, Chip.ChipRanges rangeOption, bool invert)
+        public List<Chip> GetList(ChipListOptions AllOrOwned, LibrarySortOptions sortOptions, Chip.ChipRanges rangeOption, bool invert)
         {
             List<Chip> toReturn = new List<Chip>();
             foreach (var item in this.Library)
