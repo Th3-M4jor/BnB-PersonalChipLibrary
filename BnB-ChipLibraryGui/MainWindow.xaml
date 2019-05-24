@@ -70,6 +70,11 @@
                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="300" />
                     </DataTemplate>
                 </DataGrid.RowDetailsTemplate>
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridRow">
+                        <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
+                    </Style>
+                </DataGrid.Resources>
             </DataGrid>
         </ScrollViewer>
         <Canvas HorizontalAlignment="Left" Height="451" VerticalAlignment="Top" Width="192" Grid.Column="1">
@@ -98,7 +103,7 @@
             <Button Name="Remove" Content="Remove" HorizontalAlignment="Left" VerticalAlignment="Top" Width="59" Click="ButtonClick" Canvas.Left="91" Canvas.Top="25" />
             <TextBlock Name="FoundChips" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="117" Grid.RowSpan="2" Width="120" Canvas.Left="57" Canvas.Top="70" />
             <CheckBox Name="ShowNotOwned" Content="Show Owned Chips Only" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="ShowOwned" Unchecked="ShowOwned" Grid.Row="1" IsChecked="False" Canvas.Top="426" />
-            <CheckBox x:Name="Invert" Content="InvertSort" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="InvertSort" Unchecked="InvertSort" Grid.Row="1" Canvas.Top="406" />
+            <CheckBox x:Name="ReverseSort" Content="InvertSort" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SortReverse" Unchecked="SortReverse" Grid.Row="1" Canvas.Top="406" />
         </Canvas>
     </Grid>
 </Window>

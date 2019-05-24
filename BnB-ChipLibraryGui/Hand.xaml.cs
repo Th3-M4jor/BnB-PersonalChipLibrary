@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -18,19 +19,39 @@ namespace BnB_ChipLibraryGui
     /// </summary>
     public partial class Hand : Window
     {
-        private List<Chip> ChipsInHand;
+        //private List<HandChip> ChipsInHand;
+        private ObservableCollection<HandChip> ChipsInHand;
 
-        public Hand(List<Chip> hand)
+        public Hand(IEnumerable<HandChip> hand)
         {
             InitializeComponent();
-            this.ChipsInHand = hand;
+            this.ChipsInHand = new ObservableCollection<HandChip>(hand);
             this.PlayerHand.ItemsSource = this.ChipsInHand;
         }
 
         public void AddChip(Chip newChip)
         {
-            ChipsInHand.Add(newChip);
-            this.PlayerHand.ItemsSource = ChipsInHand;
+            ChipsInHand.Add(newChip.MakeHandChip());
+        }
+
+        private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender != null)
+            {
+                if (sender is DataGrid grid && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
+                {
+                    DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
+                    if (!dgr.IsMouseOver)
+                    {
+                        (dgr as DataGridRow).IsSelected = false;
+                    }
+                }
+            }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
         }
     }
 }

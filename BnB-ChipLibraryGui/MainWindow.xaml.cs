@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Collections.Generic;
+using System;
 
 namespace BnB_ChipLibraryGui
 {
@@ -14,16 +15,20 @@ namespace BnB_ChipLibraryGui
     /// </summary>
     public partial class MainWindow : Window
     {
-        private bool invert = false;
+        public bool SortDesc { get; private set; }
         public Chip.ChipRanges RangeOption { get; private set; }
         public ChipLibrary.LibrarySortOptions SortOption { get; private set; }
+
+        private Hand handWindow;
+
         public MainWindow()
         {
+            this.SortDesc = false;
             this.SortOption = ChipLibrary.LibrarySortOptions.Name;
             this.RangeOption = Chip.ChipRanges.All;
             InitializeComponent();
             bool chipsOwned = false;
-            List<Chip> playerHand = new List<Chip>();
+            List<HandChip> playerHand = new List<HandChip>();
             if (System.IO.File.Exists("./userChips.dat"))
             {
                 using (var chipFile = System.IO.File.OpenText("./userChips.dat"))
@@ -41,30 +46,36 @@ namespace BnB_ChipLibraryGui
                             MessageBox.Show("The chip " + input[0] + " doesn't exist, ignoring", "ChipLibrary", MessageBoxButton.OK);
                             continue;
                         }
-                        if (input.Length == 4)
-                        {
-                            int numInHand = int.Parse(input[3]);
-                            for (int i = 0; i < numInHand; i++)
-                            {
-                                playerHand.Add(toModify);
-                            }
-                        }
                         toModify.UpdateChipCount(count);
                         toModify.UsedInBattle = used;
+                        if (input.Length == 4)
+                        {
+                            uint numInHand = uint.Parse(input[3]);
+                            toModify.NumInHand = numInHand;
+                            for (int i = 0; i < numInHand; i++)
+                            {
+                                playerHand.Add(toModify.MakeHandChip());
+                            }
+                        }
                         chipsOwned = true;
                     }
                 }
             }
+
             if(chipsOwned)
             {
                 ShowNotOwned.IsChecked = true;
             }
             LoadChips();
-            Hand handWindow = new Hand
+            this.SourceInitialized += (s, a) =>
             {
-                Owner = this
+                this.handWindow = new Hand(playerHand)
+                {
+                    Owner = this
+                };
+                
+                handWindow.Show();
             };
-            handWindow.Show();
         }
 
         private void AddChip()
@@ -134,9 +145,10 @@ namespace BnB_ChipLibraryGui
             {
                 foreach (Chip chip in toSave)
                 {
-                    chipFile.WriteLine("{0}:{1}:{2}", chip.Name, chip.ChipCount, chip.UsedInBattle);
+                    chipFile.WriteLine("{0}:{1}:{2}:{3}", chip.Name, chip.ChipCount, chip.UsedInBattle, chip.NumInHand);
                 }
             }
+            handWindow.Close();
         }
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -154,9 +166,9 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        private void InvertSort(object sender, RoutedEventArgs e)
+        private void SortReverse(object sender, RoutedEventArgs e)
         {
-            invert = !invert;
+            this.SortDesc = !this.SortDesc;
             LoadChips();
         }
 
@@ -175,7 +187,7 @@ namespace BnB_ChipLibraryGui
             {
                 listAll = ChipLibrary.ChipListOptions.DisplayOwned;
             }
-            UserChips.ItemsSource = ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.invert);
+            UserChips.ItemsSource = ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc);
         }
 
         private void RangeClick(object sender, RoutedEventArgs e)
@@ -288,6 +300,20 @@ namespace BnB_ChipLibraryGui
 
             Chip toUpdate = ChipLibrary.Instance.GetChip(changedChipName);
             //toUpdate.UsedInBattle = int.Parse(numChipsUsed);
+        }
+
+        private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender == null) return;
+            if (!(UserChips.SelectedItem is Chip selected)) return;
+            try
+            {
+                selected.NumInHand++;
+                handWindow.AddChip(selected);
+            } catch(ArgumentOutOfRangeException)
+            {
+                MessageBox.Show("Cannot add another copy of " + selected.Name + " to your hand", "AddToHand", MessageBoxButton.OK);
+            }
         }
     }
 }

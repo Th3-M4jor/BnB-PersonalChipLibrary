@@ -35,7 +35,22 @@ namespace BnB_ChipLibraryGui
             get => ChipType.ToString()[0];
         }
 
-        public int NumInHand { get; set; }
+        public uint NumInHand {
+            get => _numInHand;
+            set
+            {
+                if (this.ChipCount < 0) return;
+
+                if(value <= this.ChipCount)
+                {
+                    _numInHand = value;
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException("Can't add chips you don't have");
+                }
+            }
+        }
 
         public int ChipCount { get; set; }
         public ChipElements ChipElement { get; private set; }
@@ -137,7 +152,7 @@ namespace BnB_ChipLibraryGui
             AverageDamage = 0;
             ChipCount = 0;
             UsedInBattle = 0;
-            this.NumInHand = 0;
+            NumInHand = 0;
         }
 
         public Chip(string name, string range, string skill, string damage, string element, string type, string description, string All)
@@ -153,6 +168,11 @@ namespace BnB_ChipLibraryGui
             this.ChipCount = 0;
             this.UsedInBattle = 0;
             this.NumInHand = 0;
+        }
+
+        public HandChip MakeHandChip()
+        {
+            return new HandChip(this.Name);
         }
 
         /// <summary>
@@ -191,8 +211,27 @@ namespace BnB_ChipLibraryGui
             this.ChipCount = newCount;
         }
 
+        public override bool Equals(object obj)
+        {
+            if(obj is Chip)
+            {
+                return this.Name == ((Chip)obj).Name;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
+
         private static readonly char[] damageDelims = { 'd', ' ' };
 
         private string _damage;
+
+        private uint _numInHand;
     }
 }

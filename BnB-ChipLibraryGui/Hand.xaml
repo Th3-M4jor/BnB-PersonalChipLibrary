@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BnB_ChipLibraryGui"
-        mc:Ignorable="d"
-        Title="Hand" Height="450" Width="462.5">
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d" Closing="Window_Closing"
+        Title="Hand" Height="450" Width="346.484">
     <Window.Resources>
         <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -14,9 +15,9 @@
     <Grid Margin="0,0,2,0">
         <DataGrid Name="PlayerHand" AutoGenerateColumns="false" SelectionMode="Single"
                   HorizontalAlignment="Left" Height="409" VerticalAlignment="Top"
-                  Width="285" CanUserSortColumns="False" CanUserAddRows="False"
+                  Width="281" CanUserSortColumns="False" CanUserAddRows="False"
                   CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False"
-                  MouseDown="Grid_MouseLeftButtonDown"
+                  MouseDown="Grid_MouseLeftButtonDown" 
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True"
@@ -56,9 +57,12 @@
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
                     <TextBlock Background="GhostWhite" Text="{Binding Description}" TextWrapping="Wrap"
-                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="300" />
+                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="250" />
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
         </DataGrid>
+
+        <xctk:ByteUpDown Margin="286,35,10,354" Name="MaxHandSize" Value="3"/>
+        <Label Content="Size" HorizontalAlignment="Center" Margin="286,10,-1,0" VerticalAlignment="Top" Width="51" Height="25"/>
     </Grid>
 </Window>
