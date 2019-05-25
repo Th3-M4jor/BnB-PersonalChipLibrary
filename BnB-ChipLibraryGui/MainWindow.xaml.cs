@@ -50,7 +50,7 @@ namespace BnB_ChipLibraryGui
                         toModify.UsedInBattle = used;
                         if (input.Length == 4)
                         {
-                            uint numInHand = uint.Parse(input[3]);
+                            byte numInHand = byte.Parse(input[3]);
                             toModify.NumInHand = numInHand;
                             for (int i = 0; i < numInHand; i++)
                             {
@@ -176,10 +176,11 @@ namespace BnB_ChipLibraryGui
         {
             FoundChips.Foreground = Brushes.Red;
             uint count = ChipLibrary.Instance.JackOut();
-            FoundChips.Text = count + " chip(s) refreshed";
+            int handSize = this.handWindow.ClearHand();
+            FoundChips.Text = count + " chip(s) refreshed\n" + handSize + " chip(s) cleared from hand";
         }
 
-        private void LoadChips()
+        public void LoadChips()
         {
             ChipLibrary.ChipListOptions listAll = ChipLibrary.ChipListOptions.DisplayAll;
             if (ShowNotOwned == null) return;
@@ -308,7 +309,13 @@ namespace BnB_ChipLibraryGui
             if (!(UserChips.SelectedItem is Chip selected)) return;
             try
             {
-                selected.NumInHand++;
+
+                if(selected.ChipCount <= 0 || selected.NumInHand >= selected.ChipCount || selected.UsedInBattle >= selected.ChipCount)
+                {
+                    MessageBox.Show("Cannot add another copy of " + selected.Name + " to your hand", "AddToHand", MessageBoxButton.OK);
+                    return;
+                }
+
                 handWindow.AddChip(selected);
             } catch(ArgumentOutOfRangeException)
             {

@@ -35,11 +35,10 @@ namespace BnB_ChipLibraryGui
             get => ChipType.ToString()[0];
         }
 
-        public uint NumInHand {
+        public byte NumInHand {
             get => _numInHand;
             set
             {
-                if (this.ChipCount < 0) return;
 
                 if(value <= this.ChipCount)
                 {
@@ -232,6 +231,6 @@ namespace BnB_ChipLibraryGui
 
         private string _damage;
 
-        private uint _numInHand;
+        private byte _numInHand;
     }
 }

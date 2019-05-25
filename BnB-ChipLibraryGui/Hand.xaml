@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BnB_ChipLibraryGui"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d" Closing="Window_Closing"
-        Title="Hand" Height="450" Width="346.484">
+        Title="Hand" Height="450" Width="423.828">
     <Window.Resources>
         <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -15,7 +15,7 @@
     <Grid Margin="0,0,2,0">
         <DataGrid Name="PlayerHand" AutoGenerateColumns="false" SelectionMode="Single"
                   HorizontalAlignment="Left" Height="409" VerticalAlignment="Top"
-                  Width="281" CanUserSortColumns="False" CanUserAddRows="False"
+                  Width="320" CanUserSortColumns="False" CanUserAddRows="False"
                   CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False"
                   MouseDown="Grid_MouseLeftButtonDown" 
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
@@ -60,9 +60,18 @@
                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="250" />
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
+            <DataGrid.Resources>
+                <Style TargetType="DataGridRow">
+                    <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
+                </Style>
+            </DataGrid.Resources>
         </DataGrid>
 
-        <xctk:ByteUpDown Margin="286,35,10,354" Name="MaxHandSize" Value="3"/>
-        <Label Content="Size" HorizontalAlignment="Center" Margin="286,10,-1,0" VerticalAlignment="Top" Width="51" Height="25"/>
+        <StackPanel Orientation="Horizontal" Margin="340,35,0,343" Name="MaxHandSize">
+            <TextBox x:Name="txtNum" x:FieldModifier="private" Margin="5,5,0,5" Width="22" Text="0" TextChanged="TxtNum_TextChanged" RenderTransformOrigin="-0.373,0.914" />
+            <Button x:Name="cmdUp" x:FieldModifier="private" Margin="5,5,0,5" Content="˄" Width="15" Click="CmdUp_Click" />
+            <Button x:Name="cmdDown" x:FieldModifier="private" Margin="0,5,0,5"  Content="˅" Width="15" Click="CmdDown_Click" />
+        </StackPanel>
+        <Label Content="Size" HorizontalAlignment="Center" Margin="353,10,10,0" VerticalAlignment="Top" Width="51" Height="25"/>
     </Grid>
 </Window>
