@@ -39,6 +39,11 @@ namespace BnB_ChipLibraryGui
             get => _numInHand;
             set
             {
+                if(this.ChipCount < 0)
+                {
+                    _numInHand = 0;
+                    return;
+                }
 
                 if(value <= this.ChipCount)
                 {
