@@ -56,7 +56,8 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        public int ChipCount { get; set; }
+
+        public sbyte ChipCount { get; set; }
         public ChipElements ChipElement { get; private set; }
         public ChipRanges ChipRange { get; private set; }
         public ChipSkills ChipSkill { get; private set; }
@@ -150,7 +151,7 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        public uint UsedInBattle { get; set; }
+        public byte UsedInBattle { get; set; }
         public Chip()
         {
             AverageDamage = 0;
@@ -210,10 +211,6 @@ namespace BnB_ChipLibraryGui
             return this.All;
         }
 
-        public void UpdateChipCount(int newCount)
-        {
-            this.ChipCount = newCount;
-        }
 
         public override bool Equals(object obj)
         {

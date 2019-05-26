@@ -33,20 +33,21 @@ namespace BnB_ChipLibraryGui
             {
                 using (var chipFile = System.IO.File.OpenText("./userChips.dat"))
                 {
+                    
                     while (!chipFile.EndOfStream)
                     {
                         var line = chipFile.ReadLine();
                         line.Trim();
                         var input = line.Split(':');
-                        int count = int.Parse(input[1]);
-                        uint used = uint.Parse(input[2]);
+                        sbyte count = sbyte.Parse(input[1]);
+                        byte used = byte.Parse(input[2]);
                         Chip toModify = ChipLibrary.Instance.GetChip(input[0]);
                         if (toModify == null)
                         {
                             MessageBox.Show("The chip " + input[0] + " doesn't exist, ignoring", "ChipLibrary", MessageBoxButton.OK);
                             continue;
                         }
-                        toModify.UpdateChipCount(count);
+                        toModify.ChipCount = count;
                         toModify.UsedInBattle = used;
                         if (input.Length == 4)
                         {
