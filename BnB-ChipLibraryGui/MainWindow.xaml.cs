@@ -33,7 +33,7 @@ namespace BnB_ChipLibraryGui
             {
                 using (var chipFile = System.IO.File.OpenText("./userChips.dat"))
                 {
-                    
+
                     while (!chipFile.EndOfStream)
                     {
                         var line = chipFile.ReadLine();
@@ -63,7 +63,7 @@ namespace BnB_ChipLibraryGui
                 }
             }
 
-            if(chipsOwned)
+            if (chipsOwned)
             {
                 ShowNotOwned.IsChecked = true;
             }
@@ -74,7 +74,7 @@ namespace BnB_ChipLibraryGui
                 {
                     Owner = this
                 };
-                
+
                 handWindow.Show();
             };
         }
@@ -154,15 +154,13 @@ namespace BnB_ChipLibraryGui
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender != null)
+
+            if (sender != null && UserChips.SelectedItems != null && UserChips.SelectedItems.Count == 1)
             {
-                if (sender is DataGrid grid && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
+                DataGridRow dgr = UserChips.ItemContainerGenerator.ContainerFromItem(UserChips.SelectedItem) as DataGridRow;
+                if (!dgr.IsMouseOver)
                 {
-                    DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
-                    if (!dgr.IsMouseOver)
-                    {
-                        (dgr as DataGridRow).IsSelected = false;
-                    }
+                    (dgr as DataGridRow).IsSelected = false;
                 }
             }
         }
@@ -311,14 +309,15 @@ namespace BnB_ChipLibraryGui
             try
             {
 
-                if(selected.ChipCount <= 0 || selected.NumInHand >= selected.ChipCount || selected.UsedInBattle >= selected.ChipCount)
+                if (selected.ChipCount <= 0 || selected.NumInHand >= selected.ChipCount || selected.UsedInBattle >= selected.ChipCount)
                 {
                     MessageBox.Show("Cannot add another copy of " + selected.Name + " to your hand", "AddToHand", MessageBoxButton.OK);
                     return;
                 }
 
                 handWindow.AddChip(selected);
-            } catch(ArgumentOutOfRangeException)
+            }
+            catch (ArgumentOutOfRangeException)
             {
                 MessageBox.Show("Cannot add another copy of " + selected.Name + " to your hand", "AddToHand", MessageBoxButton.OK);
             }

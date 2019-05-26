@@ -87,15 +87,12 @@ namespace BnB_ChipLibraryGui
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender != null)
+            if (sender != null && PlayerHand.SelectedItems != null && PlayerHand.SelectedItems.Count == 1)
             {
-                if (sender is DataGrid grid && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
+                DataGridRow dgr = PlayerHand.ItemContainerGenerator.ContainerFromItem(PlayerHand.SelectedItem) as DataGridRow;
+                if (!dgr.IsMouseOver)
                 {
-                    DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
-                    if (!dgr.IsMouseOver)
-                    {
-                        (dgr as DataGridRow).IsSelected = false;
-                    }
+                    (dgr as DataGridRow).IsSelected = false;
                 }
             }
         }
