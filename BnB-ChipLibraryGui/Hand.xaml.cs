@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -53,7 +54,7 @@ namespace BnB_ChipLibraryGui
         }
 
         //private List<HandChip> ChipsInHand;
-        private ObservableCollection<HandChip> ChipsInHand;
+        private readonly ObservableCollection<HandChip> ChipsInHand;
 
         public Hand(IEnumerable<HandChip> hand)
         {
@@ -61,6 +62,7 @@ namespace BnB_ChipLibraryGui
             txtNum.Text = 10 + "";
             this.ChipsInHand = new ObservableCollection<HandChip>(hand);
             this.PlayerHand.ItemsSource = this.ChipsInHand;
+            this.ChipsInHand.CollectionChanged += HandCollectionChanged;
         }
 
         public void AddChip(Chip newChip)
@@ -116,6 +118,18 @@ namespace BnB_ChipLibraryGui
                 }
             }
 
+        }
+
+        private void HandCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if(ChipsInHand.Count > 0 && this.Visibility == Visibility.Hidden)
+            {
+                this.Show();
+            }
+            else if(ChipsInHand.Count == 0 && this.Visibility != Visibility.Hidden)
+            {
+                this.Hide();
+            }
         }
     }
 }

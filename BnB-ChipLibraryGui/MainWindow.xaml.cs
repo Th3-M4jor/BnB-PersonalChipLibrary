@@ -75,7 +75,10 @@ namespace BnB_ChipLibraryGui
                     Owner = this
                 };
 
-                handWindow.Show();
+                if(playerHand.Count > 0)
+                {
+                    handWindow.Show();
+                } 
             };
         }
 
@@ -106,6 +109,16 @@ namespace BnB_ChipLibraryGui
                         possibleChips.Append('\n');
                     }
                     FoundChips.Text = possibleChips.ToString();
+                }
+            }
+            else
+            {
+                if(UserChips.SelectedItem != null )
+                {
+                    Chip selected = UserChips.SelectedItem as Chip;
+                    Chip toModify = ChipLibrary.Instance.GetChip(selected.Name);
+                    toModify.ChipCount += 1;
+                    LoadChips();
                 }
             }
         }
@@ -244,6 +257,23 @@ namespace BnB_ChipLibraryGui
                         possibleChips.Append('\n');
                     }
                     FoundChips.Text = possibleChips.ToString();
+                }
+            }
+            else
+            {
+                if (UserChips.SelectedItem != null)
+                {
+                    Chip selected = UserChips.SelectedItem as Chip;
+                    Chip toModify = ChipLibrary.Instance.GetChip(selected.Name);
+                    if (toModify.ChipCount > 0)
+                    {
+                        toModify.ChipCount -= 1;
+                        LoadChips();
+                    }
+                    else
+                    {
+                        FoundChips.Text = "Cannot remove a chip you don't have";
+                    }
                 }
             }
         }
