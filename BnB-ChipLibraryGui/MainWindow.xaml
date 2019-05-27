@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BnB_ChipLibraryGui"
         mc:Ignorable="d"
-        Closing="ExitClicked"
+        Closing="ExitClicked" MinHeight="490"
         Title="BnBChipManager" Height="500" Width="650.73" MouseDown="Grid_MouseLeftButtonDown">
     <Window.Resources>
         <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
@@ -15,67 +15,68 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="202" />
         </Grid.ColumnDefinitions>
-        <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto">
-            <DataGrid Name="UserChips" AutoGenerateColumns="false" SelectionMode="Single"
-                  HorizontalAlignment="Left" Height="469" VerticalAlignment="Top"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DataGrid Name="UserChips" AutoGenerateColumns="false" SelectionMode="Single"
+                  HorizontalAlignment="Left" Margin="0,0,0,5" Grid.Column="0" Grid.Row="0"
                   Width="431" CanUserSortColumns="False" CanUserAddRows="False"
                   CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False"
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True"
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True"
                                     HeaderStyle="{StaticResource CenterGridHeaderStyle}" Width="Auto">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment" Value="Center" />
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Skill" Binding="{Binding Skill}" IsReadOnly="True"
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Skill" Binding="{Binding Skill}" IsReadOnly="True"
                                     HeaderStyle="{StaticResource CenterGridHeaderStyle}">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment" Value="Center" />
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Range" Binding="{Binding Range}" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Damage" Binding="{Binding Damage}" IsReadOnly="True"
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Range" Binding="{Binding Range}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Damage" Binding="{Binding Damage}" IsReadOnly="True"
                                     HeaderStyle="{StaticResource CenterGridHeaderStyle}">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment" Value="Center" />
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTemplateColumn Header="Element" IsReadOnly="True">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Image Source="{Binding ElementImage}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Class" Binding="{Binding ChipClass}" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Count" Binding="{Binding ChipCount}" IsReadOnly="False" />
-                    <DataGridTextColumn Header="Used" Binding="{Binding UsedInBattle, NotifyOnTargetUpdated=True}" IsReadOnly="False">
-                        
-                    </DataGridTextColumn>
-                </DataGrid.Columns>
-                <DataGrid.RowDetailsTemplate>
-                    <DataTemplate>
-                        <TextBlock Background="GhostWhite" Text="{Binding Description}" TextWrapping="Wrap"
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn Header="Element" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding ElementImage}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Class" Binding="{Binding ChipClass}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Count" Binding="{Binding ChipCount}" IsReadOnly="False" />
+                <DataGridTextColumn Header="Used" Binding="{Binding UsedInBattle, NotifyOnTargetUpdated=True}" IsReadOnly="False">
+
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <TextBlock Background="GhostWhite" Text="{Binding Description}" TextWrapping="Wrap"
                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="300" />
-                    </DataTemplate>
-                </DataGrid.RowDetailsTemplate>
-                <DataGrid.Resources>
-                    <Style TargetType="DataGridRow">
-                        <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
-                    </Style>
-                </DataGrid.Resources>
-            </DataGrid>
-        </ScrollViewer>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+            <DataGrid.Resources>
+                <Style TargetType="DataGridRow">
+                    <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
+                </Style>
+            </DataGrid.Resources>
+        </DataGrid>
         <Canvas HorizontalAlignment="Left" Height="451" VerticalAlignment="Top" Width="192" Grid.Column="1">
             <TextBox Name="ChipNameEntered" HorizontalAlignment="Left" Height="22" TextWrapping="Wrap" Text=""
                      VerticalAlignment="Top" Width="120" Canvas.Left="30" Canvas.Top="3" KeyDown="ChipNameEntered_KeyDown" />

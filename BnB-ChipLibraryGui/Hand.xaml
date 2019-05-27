@@ -5,19 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BnB_ChipLibraryGui"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        mc:Ignorable="d" Closing="Window_Closing"
+        mc:Ignorable="d" Closing="Window_Closing" MinHeight="130"
         Title="Hand" Height="355" Width="423.828" MouseDown="Grid_MouseLeftButtonDown">
     <Window.Resources>
         <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
     </Window.Resources>
-    <Grid Margin="0,0,2,0">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="97" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="82"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <DataGrid Name="PlayerHand" AutoGenerateColumns="false" SelectionMode="Single"
-                  HorizontalAlignment="Left" Height="324" VerticalAlignment="Top"
+                  HorizontalAlignment="Left" Height="auto" VerticalAlignment="Stretch" Margin="0,0,0,5"
                   Width="320" CanUserSortColumns="False" CanUserAddRows="False"
-                  CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False" 
-                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                  CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False"
+                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2" Grid.RowSpan="2">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True"
                                     HeaderStyle="{StaticResource CenterGridHeaderStyle}" Width="Auto">
@@ -66,11 +74,11 @@
             </DataGrid.Resources>
         </DataGrid>
 
-        <StackPanel Orientation="Horizontal" Margin="340,35,0,261" Name="MaxHandSize">
-            <TextBox x:Name="txtNum" x:FieldModifier="private" Margin="5,0,0,0" Width="22" Text="0" TextChanged="TxtNum_TextChanged" IsReadOnly="True"/>
-            <Button x:Name="cmdUp" x:FieldModifier="private" Margin="5,0,0,0" Content="˄" Width="15" Click="CmdUp_Click" />
+        <StackPanel Orientation="Horizontal" Name="MaxHandSize" Grid.Column="1" Margin="19,40,13,19" Grid.Row="0">
+            <TextBox x:Name="txtNum" x:FieldModifier="private" Width="32" Text="0" TextChanged="TxtNum_TextChanged" IsReadOnly="True"/>
+            <Button x:Name="cmdUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
             <Button x:Name="cmdDown" x:FieldModifier="private"  Content="˅" Width="15" Click="CmdDown_Click" />
         </StackPanel>
-        <Label Content="Size" HorizontalAlignment="Center" Margin="353,10,10,0" VerticalAlignment="Top" Width="51" Height="25"/>
+        <Label Content="Size" HorizontalAlignment="Center" Margin="37,10,10,0" VerticalAlignment="Top" Width="50" Height="25" Grid.Column="1"/>
     </Grid>
 </Window>
