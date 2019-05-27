@@ -76,15 +76,22 @@ namespace BnB_ChipLibraryGui
             ChipsInHand.Add(newChip.MakeHandChip());
         }
 
-        public int ClearHand()
+        public (int numRemoved, int numUsed) ClearHand()
         {
-            int toReturn = this.ChipsInHand.Count;
+            int numRemoved = this.ChipsInHand.Count;
+            int numUsed = 0;
             foreach(HandChip chip in ChipsInHand)
             {
-                ChipLibrary.Instance.GetChip(chip.Name).NumInHand--;
+                var handchip = ChipLibrary.Instance.GetChip(chip.Name);
+                handchip.NumInHand--;
+                if(chip.Used == true)
+                {
+                    handchip.UsedInBattle++;
+                    numUsed++;
+                }
             }
             this.ChipsInHand.Clear();
-            return toReturn;
+            return (numRemoved,numUsed);
         }
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -101,7 +108,13 @@ namespace BnB_ChipLibraryGui
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            var (numRemoved, numUsed) = this.ClearHand();
+            string message = "Hand cleared, " + numRemoved + " chips removed\nof which "
+                + numUsed + " were used.";
+            (this.Owner as MainWindow).SetMessage(message, Brushes.Red);
+            (this.Owner as MainWindow).LoadChips();
             e.Cancel = true;
+            this.Hide();
         }
 
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -114,19 +127,32 @@ namespace BnB_ChipLibraryGui
                 {
                     ChipsInHand.Remove(chip);
                     ChipLibrary.Instance.GetChip(selected.Name).NumInHand--;
+                    if(selected.Used == true)
+                    {
+                        ChipLibrary.Instance.GetChip(selected.Name).UsedInBattle++;
+                        (this.Owner as MainWindow).LoadChips();
+                    }
                     break;
                 }
             }
 
         }
 
+        private void UsedClick(object sender, RoutedEventArgs e)
+        {
+            if (sender == null) return;
+            if (!(PlayerHand.SelectedItem is HandChip selected)) return;
+            selected.Used = !selected.Used;
+        }
+
         private void HandCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if(ChipsInHand.Count > 0 && this.Visibility == Visibility.Hidden)
+            if (sender == null) return;
+            if(ChipsInHand.Count > 0)
             {
                 this.Show();
             }
-            else if(ChipsInHand.Count == 0 && this.Visibility != Visibility.Hidden)
+            else if(ChipsInHand.Count == 0)
             {
                 this.Hide();
             }

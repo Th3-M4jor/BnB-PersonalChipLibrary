@@ -32,7 +32,7 @@ namespace BnB_ChipLibraryGui
         {
             get
             {
-                return this.self.Skill;
+                return this.self.Range;
             }
         }
 
@@ -60,7 +60,10 @@ namespace BnB_ChipLibraryGui
         {
             self = ChipLibrary.Instance.GetChip(chipName) ?? throw new ArgumentException("NonExistentChip");
             _name = chipName;
+            Used = false;
         }
+
+        public bool Used { get; set; }
 
         private string _name;
         private Chip self;

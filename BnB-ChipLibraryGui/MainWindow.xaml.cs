@@ -187,9 +187,19 @@ namespace BnB_ChipLibraryGui
         private void JackOut()
         {
             FoundChips.Foreground = Brushes.Red;
+            int handSize = this.handWindow.ClearHand().numRemoved;
             uint count = ChipLibrary.Instance.JackOut();
-            int handSize = this.handWindow.ClearHand();
             FoundChips.Text = count + " chip(s) refreshed\n" + handSize + " chip(s) cleared from hand";
+        }
+
+        public void SetMessage(string message, SolidColorBrush colorBrush)
+        {
+            if(colorBrush == null)
+            {
+                colorBrush = Brushes.Black;
+            }
+            FoundChips.Foreground = colorBrush;
+            FoundChips.Text = message;
         }
 
         public void LoadChips()

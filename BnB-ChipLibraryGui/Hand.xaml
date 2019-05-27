@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BnB_ChipLibraryGui"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d" Closing="Window_Closing" MinHeight="130"
-        Title="Hand" Height="355" Width="423.828" MouseDown="Grid_MouseLeftButtonDown"
+        Title="Hand" Height="355" Width="469.746" MouseDown="Grid_MouseLeftButtonDown"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
@@ -24,9 +24,9 @@
         </Grid.RowDefinitions>
         <DataGrid Name="PlayerHand" AutoGenerateColumns="false" SelectionMode="Single"
                   HorizontalAlignment="Left" Height="auto" VerticalAlignment="Stretch" Margin="0,0,0,5"
-                  Width="320" CanUserSortColumns="False" CanUserAddRows="False"
+                  Width="355" CanUserSortColumns="False" CanUserAddRows="False"
                   CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False"
-                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2" Grid.RowSpan="2">
+                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.RowSpan="2">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True"
                                     HeaderStyle="{StaticResource CenterGridHeaderStyle}" Width="Auto">
@@ -61,6 +61,13 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Class" Binding="{Binding ChipClass}" IsReadOnly="True" />
+                <DataGridTemplateColumn Header="Used">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Path=Used}" Unchecked="UsedClick" Checked="UsedClick"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
