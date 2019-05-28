@@ -138,6 +138,10 @@ namespace BnB_ChipLibraryGui
                 case "JackedOut":
                     JackOut();
                     break;
+
+                case "Search":
+                    SearchChip();
+                    break;
             }
             LoadChips();
         }
@@ -190,6 +194,11 @@ namespace BnB_ChipLibraryGui
             int handSize = this.handWindow.ClearHand().numRemoved;
             uint count = ChipLibrary.Instance.JackOut();
             FoundChips.Text = count + " chip(s) refreshed\n" + handSize + " chip(s) cleared from hand";
+        }
+
+        private void SearchChip()
+        {
+
         }
 
         public void SetMessage(string message, SolidColorBrush colorBrush)
