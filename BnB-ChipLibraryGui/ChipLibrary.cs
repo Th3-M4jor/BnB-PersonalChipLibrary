@@ -90,15 +90,15 @@ namespace BnB_ChipLibraryGui
             return countRefreshed;
         }
 
-        public List<string> Search(string name)
+        public List<Chip> Search(string name)
         {
             name = name.ToLower();
-            List<string> toReturn = new List<string>();
+            List<Chip> toReturn = new List<Chip>();
             foreach (var item in this.Library)
             {
                 if (item.Key.Contains(name))
                 {
-                    toReturn.Add(item.Value.Name);
+                    toReturn.Add(item.Value);
                 }
             }
             return toReturn;

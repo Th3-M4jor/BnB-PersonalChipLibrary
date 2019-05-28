@@ -20,6 +20,7 @@ namespace BnB_ChipLibraryGui
         public ChipLibrary.LibrarySortOptions SortOption { get; private set; }
 
         private Hand handWindow;
+        private SearchWindow searchWindow;
 
         public MainWindow()
         {
@@ -75,51 +76,28 @@ namespace BnB_ChipLibraryGui
                     Owner = this
                 };
 
-                if(playerHand.Count > 0)
+                if (playerHand.Count > 0)
                 {
                     handWindow.Show();
-                } 
+                }
+
+                searchWindow = new SearchWindow
+                {
+                    Owner = this
+                };
+                searchWindow.Hide();
             };
+
         }
 
         private void AddChip()
         {
-            FoundChips.Foreground = Brushes.Black;
-            if (ChipNameEntered.Text != string.Empty)
+            if (UserChips.SelectedItem != null)
             {
-                var chip = ChipLibrary.Instance.GetChip(ChipNameEntered.Text);
-                if (chip != null)
-                {
-                    ChipNameEntered.Text = string.Empty;
-                    FoundChips.Text = string.Empty;
-                    chip++;
-                }
-                else
-                {
-                    var chips = ChipLibrary.Instance.Search(ChipNameEntered.Text);
-                    if (chips.Count == 0)
-                    {
-                        FoundChips.Text = "No chips were returned";
-                        return;
-                    }
-                    StringBuilder possibleChips = new StringBuilder();
-                    foreach (var possibleChip in chips)
-                    {
-                        possibleChips.Append(possibleChip);
-                        possibleChips.Append('\n');
-                    }
-                    FoundChips.Text = possibleChips.ToString();
-                }
-            }
-            else
-            {
-                if(UserChips.SelectedItem != null )
-                {
-                    Chip selected = UserChips.SelectedItem as Chip;
-                    Chip toModify = ChipLibrary.Instance.GetChip(selected.Name);
-                    toModify.ChipCount += 1;
-                    LoadChips();
-                }
+                Chip selected = UserChips.SelectedItem as Chip;
+                Chip toModify = ChipLibrary.Instance.GetChip(selected.Name);
+                toModify.ChipCount += 1;
+                LoadChips();
             }
         }
 
@@ -142,15 +120,6 @@ namespace BnB_ChipLibraryGui
                 case "Search":
                     SearchChip();
                     break;
-            }
-            LoadChips();
-        }
-
-        private void ChipNameEntered_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Return && ChipNameEntered.Text != string.Empty)
-            {
-                AddChip();
             }
             LoadChips();
         }
@@ -198,12 +167,12 @@ namespace BnB_ChipLibraryGui
 
         private void SearchChip()
         {
-
+            searchWindow.Show();
         }
 
         public void SetMessage(string message, SolidColorBrush colorBrush)
         {
-            if(colorBrush == null)
+            if (colorBrush == null)
             {
                 colorBrush = Brushes.Black;
             }
@@ -251,48 +220,19 @@ namespace BnB_ChipLibraryGui
 
         private void RemoveChip()
         {
-            FoundChips.Foreground = Brushes.Black;
-            if (ChipNameEntered.Text != string.Empty)
+
+            if (UserChips.SelectedItem != null)
             {
-                var chip = ChipLibrary.Instance.GetChip(ChipNameEntered.Text);
-                if (chip != null)
+                Chip selected = UserChips.SelectedItem as Chip;
+                Chip toModify = ChipLibrary.Instance.GetChip(selected.Name);
+                if (toModify.ChipCount > 0)
                 {
-                    ChipNameEntered.Text = string.Empty;
-                    FoundChips.Text = string.Empty;
-                    chip--;
+                    toModify.ChipCount -= 1;
+                    LoadChips();
                 }
                 else
                 {
-                    var chips = ChipLibrary.Instance.Search(ChipNameEntered.Text);
-                    if (chips.Count == 0)
-                    {
-                        FoundChips.Text = "No chips were returned";
-                        return;
-                    }
-                    StringBuilder possibleChips = new StringBuilder();
-                    foreach (var possibleChip in chips)
-                    {
-                        possibleChips.Append(possibleChip);
-                        possibleChips.Append('\n');
-                    }
-                    FoundChips.Text = possibleChips.ToString();
-                }
-            }
-            else
-            {
-                if (UserChips.SelectedItem != null)
-                {
-                    Chip selected = UserChips.SelectedItem as Chip;
-                    Chip toModify = ChipLibrary.Instance.GetChip(selected.Name);
-                    if (toModify.ChipCount > 0)
-                    {
-                        toModify.ChipCount -= 1;
-                        LoadChips();
-                    }
-                    else
-                    {
-                        FoundChips.Text = "Cannot remove a chip you don't have";
-                    }
+                    MessageBox.Show("Cannot remove a chip you don't have");
                 }
             }
         }

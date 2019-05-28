@@ -1,0 +1,74 @@
+﻿<Window x:Class="BnB_ChipLibraryGui.SearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BnB_ChipLibraryGui"
+        mc:Ignorable="d" MouseDown="Grid_MouseLeftButtonDown"
+        Title="Search" Height="450" Width="508.015" Closing="Window_Closing">
+    <Window.Resources>
+        <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="140" />
+        </Grid.ColumnDefinitions>
+        <DataGrid Name="SearchResultGrid" AutoGenerateColumns="false" SelectionMode="Single"
+                  HorizontalAlignment="Left" Margin="0,0,0,5" Grid.Column="0" Grid.Row="0"
+                  Width="350" CanUserSortColumns="False" CanUserAddRows="False"
+                  CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False"
+                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True"
+                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}" Width="Auto">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Skill" Binding="{Binding Skill}" IsReadOnly="True"
+                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Range" Binding="{Binding Range}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Damage" Binding="{Binding Damage}" IsReadOnly="True"
+                                    HeaderStyle="{StaticResource CenterGridHeaderStyle}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn Header="Element" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding ElementImage}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Class" Binding="{Binding ChipClass}" IsReadOnly="True" />
+            </DataGrid.Columns>
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <TextBlock Background="GhostWhite" Text="{Binding Description}" TextWrapping="Wrap"
+                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="300" />
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+            <DataGrid.Resources>
+                <Style TargetType="DataGridRow">
+                    <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
+                </Style>
+            </DataGrid.Resources>
+        </DataGrid>
+        <TextBox Name="SearchText" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Button Name="Search" Content="Search" Width="60" Click="Search_Click" Canvas.Left="86" Canvas.Top="37" Grid.Column="1" Margin="40,38,40,350"/>
+    </Grid>
+</Window>
