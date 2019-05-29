@@ -67,7 +67,7 @@ namespace BnB_ChipLibraryGui
 
         public void AddChip(Chip newChip)
         {
-            if(NumValue == ChipsInHand.Count)
+            if (NumValue == ChipsInHand.Count)
             {
                 MessageBox.Show("Cannot add another copy of " + newChip.Name + " to your hand\nYour hand is full", "AddToHand", MessageBoxButton.OK);
                 return;
@@ -80,18 +80,18 @@ namespace BnB_ChipLibraryGui
         {
             int numRemoved = this.ChipsInHand.Count;
             int numUsed = 0;
-            foreach(HandChip chip in ChipsInHand)
+            foreach (HandChip chip in ChipsInHand)
             {
                 var handchip = ChipLibrary.Instance.GetChip(chip.Name);
                 handchip.NumInHand--;
-                if(chip.Used == true)
+                if (chip.Used == true)
                 {
                     handchip.UsedInBattle++;
                     numUsed++;
                 }
             }
             this.ChipsInHand.Clear();
-            return (numRemoved,numUsed);
+            return (numRemoved, numUsed);
         }
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -120,21 +120,7 @@ namespace BnB_ChipLibraryGui
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (sender == null) return;
-            if (!(PlayerHand.SelectedItem is HandChip selected)) return;
-            foreach(HandChip chip in ChipsInHand)
-            {
-                if(chip.Name == selected.Name)
-                {
-                    ChipsInHand.Remove(chip);
-                    ChipLibrary.Instance.GetChip(selected.Name).NumInHand--;
-                    if(selected.Used == true)
-                    {
-                        ChipLibrary.Instance.GetChip(selected.Name).UsedInBattle++;
-                        (this.Owner as MainWindow).LoadChips();
-                    }
-                    break;
-                }
-            }
+            RemoveChipFromHand();
 
         }
 
@@ -148,13 +134,44 @@ namespace BnB_ChipLibraryGui
         private void HandCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (sender == null) return;
-            if(ChipsInHand.Count > 0)
+            if (ChipsInHand.Count > 0)
             {
                 this.Show();
             }
-            else if(ChipsInHand.Count == 0)
+            else if (ChipsInHand.Count == 0)
             {
                 this.Hide();
+            }
+        }
+
+        private void RemoveFromHand_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender == null) return;
+            RemoveChipFromHand();
+        }
+
+        private void RemoveChipFromHand()
+        {
+            if (PlayerHand.SelectedItem is HandChip selected)
+            {
+                foreach (HandChip chip in ChipsInHand)
+                {
+                    if (chip.GetHashCode() == selected.GetHashCode())
+                    {
+                        ChipsInHand.Remove(chip);
+                        ChipLibrary.Instance.GetChip(selected.Name).NumInHand--;
+                        if (selected.Used == true)
+                        {
+                            ChipLibrary.Instance.GetChip(selected.Name).UsedInBattle++;
+                            (this.Owner as MainWindow).LoadChips();
+                        }
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("No chip is currently selected!");
             }
         }
     }

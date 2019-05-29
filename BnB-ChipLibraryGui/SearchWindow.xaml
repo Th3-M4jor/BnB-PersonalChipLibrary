@@ -68,7 +68,8 @@
                 </Style>
             </DataGrid.Resources>
         </DataGrid>
-        <TextBox Name="SearchText" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <TextBox Name="SearchText" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" KeyDown="SearchText_KeyDown"/>
         <Button Name="Search" Content="Search" Width="60" Click="Search_Click" Canvas.Left="86" Canvas.Top="37" Grid.Column="1" Margin="40,38,40,350"/>
+        <Button Name="AddToPack" Content="Add to Pack" Grid.Column="1" HorizontalAlignment="Left" Margin="26,95,0,0" VerticalAlignment="Top" Width="90" Click="AddToPack_Click"/>
     </Grid>
 </Window>

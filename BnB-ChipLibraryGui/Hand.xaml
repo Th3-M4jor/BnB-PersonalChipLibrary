@@ -88,5 +88,6 @@
             <Button x:Name="cmdDown" x:FieldModifier="private"  Content="˅" Width="15" Click="CmdDown_Click" />
         </StackPanel>
         <Label Content="Size" HorizontalAlignment="Center" Margin="37,10,10,0" VerticalAlignment="Top" Width="50" Height="25" Grid.Column="1"/>
+        <Button Name="RemoveFromHand" Content="Remove" Grid.Column="1" HorizontalAlignment="Left" Margin="12,10,0,0" VerticalAlignment="Top" Width="75" Grid.Row="1" Click="RemoveFromHand_Click"/>
     </Grid>
 </Window>

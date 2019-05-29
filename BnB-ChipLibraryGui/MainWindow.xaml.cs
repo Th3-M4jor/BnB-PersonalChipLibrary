@@ -92,12 +92,21 @@ namespace BnB_ChipLibraryGui
 
         private void AddChip()
         {
-            if (UserChips.SelectedItem != null)
+            if (!(UserChips.SelectedItem is Chip selected)) return;
+            try
             {
-                Chip selected = UserChips.SelectedItem as Chip;
-                Chip toModify = ChipLibrary.Instance.GetChip(selected.Name);
-                toModify.ChipCount += 1;
-                LoadChips();
+
+                if (selected.ChipCount <= 0 || selected.NumInHand >= selected.ChipCount || selected.UsedInBattle >= selected.ChipCount)
+                {
+                    MessageBox.Show("Cannot add another copy of " + selected.Name + " to your hand", "AddToHand", MessageBoxButton.OK);
+                    return;
+                }
+
+                handWindow.AddChip(selected);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                MessageBox.Show("Cannot add another copy of " + selected.Name + " to your hand", "AddToHand", MessageBoxButton.OK);
             }
         }
 
@@ -277,39 +286,9 @@ namespace BnB_ChipLibraryGui
             LoadChips();
         }
 
-        //SelectionChanged="TextBox_TextChanged"
-        private void TextBox_TextChanged(object sender, SelectionChangedEventArgs e)
-        {
-            DataGrid dataGrid = sender as DataGrid;
-            DataGridRow row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(dataGrid.SelectedIndex);
-            DataGridCell chipUsed = dataGrid.Columns[dataGrid.Columns.Count - 1].GetCellContent(row).Parent as DataGridCell;
-            DataGridCell chipName = dataGrid.Columns[0].GetCellContent(row).Parent as DataGridCell;
-            string numChipsUsed = ((TextBlock)chipUsed.Content).Text;
-            string changedChipName = ((TextBlock)chipName.Content).Text;
-
-            Chip toUpdate = ChipLibrary.Instance.GetChip(changedChipName);
-            //toUpdate.UsedInBattle = int.Parse(numChipsUsed);
-        }
-
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender == null) return;
-            if (!(UserChips.SelectedItem is Chip selected)) return;
-            try
-            {
-
-                if (selected.ChipCount <= 0 || selected.NumInHand >= selected.ChipCount || selected.UsedInBattle >= selected.ChipCount)
-                {
-                    MessageBox.Show("Cannot add another copy of " + selected.Name + " to your hand", "AddToHand", MessageBoxButton.OK);
-                    return;
-                }
-
-                handWindow.AddChip(selected);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                MessageBox.Show("Cannot add another copy of " + selected.Name + " to your hand", "AddToHand", MessageBoxButton.OK);
-            }
+            AddChip();
         }
     }
 }
