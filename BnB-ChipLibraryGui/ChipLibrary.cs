@@ -17,11 +17,30 @@ namespace BnB_ChipLibraryGui
             Name, Element, AvgDamage, Owned, MaxDamage, Skill, Range
         }
 
+        private static readonly Lazy<ChipLibrary> lazy = new Lazy<ChipLibrary>(() => new ChipLibrary());
+
+        private readonly Dictionary<string, Chip> Library;
+
         public static ChipLibrary Instance
         {
             get
             {
                 return lazy.Value;
+            }
+        }
+
+        private ChipLibrary()
+        {
+            using (System.Net.WebClient wc = new System.Net.WebClient())
+            {
+                var json = wc.DownloadString("http://spartan364.hopto.org/chips.json");
+                json = json.Replace("â€™", "'");
+                var result = JsonConvert.DeserializeObject<List<Chip>>(json);
+                this.Library = new Dictionary<string, Chip>(result.Count);
+                result.ForEach(delegate (Chip aChip)
+                {
+                    this.Library.Add(aChip.Name.ToLower(), aChip);
+                });
             }
         }
 
@@ -102,25 +121,6 @@ namespace BnB_ChipLibraryGui
                 }
             }
             return toReturn;
-        }
-
-        private static readonly Lazy<ChipLibrary> lazy = new Lazy<ChipLibrary>(() => new ChipLibrary());
-
-        private readonly Dictionary<string, Chip> Library;
-
-        private ChipLibrary()
-        {
-            using (System.Net.WebClient wc = new System.Net.WebClient())
-            {
-                var json = wc.DownloadString("http://spartan364.hopto.org/chips.json");
-                json = json.Replace("â€™", "'");
-                var result = JsonConvert.DeserializeObject<List<Chip>>(json);
-                this.Library = new Dictionary<string, Chip>(result.Count);
-                result.ForEach(delegate (Chip aChip)
-                {
-                    this.Library.Add(aChip.Name.ToLower(), aChip);
-                });
-            }
         }
     }
 }

@@ -38,7 +38,13 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Range" Binding="{Binding Range}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Range" Binding="{Binding Range}" IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Damage" Binding="{Binding Damage}" IsReadOnly="True"
                                     HeaderStyle="{StaticResource CenterGridHeaderStyle}">
                     <DataGridTextColumn.ElementStyle>
@@ -54,7 +60,13 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Class" Binding="{Binding ChipClass}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Class" Binding="{Binding ChipClass}" IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
@@ -64,12 +76,12 @@
             </DataGrid.RowDetailsTemplate>
             <DataGrid.Resources>
                 <Style TargetType="DataGridRow">
-                    <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
+                    <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick" />
                 </Style>
             </DataGrid.Resources>
         </DataGrid>
-        <TextBox Name="SearchText" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" KeyDown="SearchText_KeyDown"/>
-        <Button Name="Search" Content="Search" Width="60" Click="Search_Click" Canvas.Left="86" Canvas.Top="37" Grid.Column="1" Margin="40,38,40,350"/>
-        <Button Name="AddToPack" Content="Add to Pack" Grid.Column="1" HorizontalAlignment="Left" Margin="26,95,0,0" VerticalAlignment="Top" Width="90" Click="AddToPack_Click"/>
+        <TextBox Name="SearchText" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" KeyDown="SearchText_KeyDown" />
+        <Button Name="Search" Content="Search" Width="60" Click="Search_Click" Canvas.Left="86" Canvas.Top="37" Grid.Column="1" Margin="40,38,40,350" />
+        <Button Name="AddToPack" Content="Add to Pack" Grid.Column="1" HorizontalAlignment="Left" Margin="26,95,0,0" VerticalAlignment="Top" Width="90" Click="AddToPack_Click" />
     </Grid>
 </Window>

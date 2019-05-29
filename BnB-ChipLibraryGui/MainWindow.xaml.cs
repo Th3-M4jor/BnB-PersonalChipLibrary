@@ -1,12 +1,11 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Collections.Generic;
-using System;
 
 namespace BnB_ChipLibraryGui
 {
@@ -15,12 +14,11 @@ namespace BnB_ChipLibraryGui
     /// </summary>
     public partial class MainWindow : Window
     {
-        public bool SortDesc { get; private set; }
-        public Chip.ChipRanges RangeOption { get; private set; }
-        public ChipLibrary.LibrarySortOptions SortOption { get; private set; }
-
         private Hand handWindow;
         private SearchWindow searchWindow;
+        public Chip.ChipRanges RangeOption { get; private set; }
+        public bool SortDesc { get; private set; }
+        public ChipLibrary.LibrarySortOptions SortOption { get; private set; }
 
         public MainWindow()
         {
@@ -34,7 +32,6 @@ namespace BnB_ChipLibraryGui
             {
                 using (var chipFile = System.IO.File.OpenText("./userChips.dat"))
                 {
-
                     while (!chipFile.EndOfStream)
                     {
                         var line = chipFile.ReadLine();
@@ -87,7 +84,27 @@ namespace BnB_ChipLibraryGui
                 };
                 searchWindow.Hide();
             };
+        }
 
+        public void LoadChips()
+        {
+            ChipLibrary.ChipListOptions listAll = ChipLibrary.ChipListOptions.DisplayAll;
+            if (ShowNotOwned == null) return;
+            if (ShowNotOwned.IsChecked.HasValue && ShowNotOwned.IsChecked == true)
+            {
+                listAll = ChipLibrary.ChipListOptions.DisplayOwned;
+            }
+            UserChips.ItemsSource = ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc);
+        }
+
+        public void SetMessage(string message, SolidColorBrush colorBrush)
+        {
+            if (colorBrush == null)
+            {
+                colorBrush = Brushes.Black;
+            }
+            FoundChips.Foreground = colorBrush;
+            FoundChips.Text = message;
         }
 
         private void AddChip()
@@ -95,7 +112,6 @@ namespace BnB_ChipLibraryGui
             if (!(UserChips.SelectedItem is Chip selected)) return;
             try
             {
-
                 if (selected.ChipCount <= 0 || selected.NumInHand >= selected.ChipCount || selected.UsedInBattle >= selected.ChipCount)
                 {
                     MessageBox.Show("Cannot add another copy of " + selected.Name + " to your hand", "AddToHand", MessageBoxButton.OK);
@@ -133,6 +149,11 @@ namespace BnB_ChipLibraryGui
             LoadChips();
         }
 
+        private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            AddChip();
+        }
+
         private void ExitClicked(object sender, CancelEventArgs e)
         {
             var toSave = ChipLibrary.Instance.GetList(ChipLibrary.ChipListOptions.DisplayOwned,
@@ -149,7 +170,6 @@ namespace BnB_ChipLibraryGui
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-
             if (sender != null && UserChips.SelectedItems != null && UserChips.SelectedItems.Count == 1)
             {
                 DataGridRow dgr = UserChips.ItemContainerGenerator.ContainerFromItem(UserChips.SelectedItem) as DataGridRow;
@@ -160,44 +180,12 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        private void SortReverse(object sender, RoutedEventArgs e)
-        {
-            this.SortDesc = !this.SortDesc;
-            LoadChips();
-        }
-
         private void JackOut()
         {
             FoundChips.Foreground = Brushes.Red;
             int handSize = this.handWindow.ClearHand().numRemoved;
             uint count = ChipLibrary.Instance.JackOut();
             FoundChips.Text = count + " chip(s) refreshed\n" + handSize + " chip(s) cleared from hand";
-        }
-
-        private void SearchChip()
-        {
-            searchWindow.Show();
-        }
-
-        public void SetMessage(string message, SolidColorBrush colorBrush)
-        {
-            if (colorBrush == null)
-            {
-                colorBrush = Brushes.Black;
-            }
-            FoundChips.Foreground = colorBrush;
-            FoundChips.Text = message;
-        }
-
-        public void LoadChips()
-        {
-            ChipLibrary.ChipListOptions listAll = ChipLibrary.ChipListOptions.DisplayAll;
-            if (ShowNotOwned == null) return;
-            if (ShowNotOwned.IsChecked.HasValue && ShowNotOwned.IsChecked == true)
-            {
-                listAll = ChipLibrary.ChipListOptions.DisplayOwned;
-            }
-            UserChips.ItemsSource = ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc);
         }
 
         private void RangeClick(object sender, RoutedEventArgs e)
@@ -229,7 +217,6 @@ namespace BnB_ChipLibraryGui
 
         private void RemoveChip()
         {
-
             if (UserChips.SelectedItem != null)
             {
                 Chip selected = UserChips.SelectedItem as Chip;
@@ -244,6 +231,11 @@ namespace BnB_ChipLibraryGui
                     MessageBox.Show("Cannot remove a chip you don't have");
                 }
             }
+        }
+
+        private void SearchChip()
+        {
+            searchWindow.Show();
         }
 
         private void ShowOwned(object sender, RoutedEventArgs e)
@@ -286,9 +278,10 @@ namespace BnB_ChipLibraryGui
             LoadChips();
         }
 
-        private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void SortReverse(object sender, RoutedEventArgs e)
         {
-            AddChip();
+            this.SortDesc = !this.SortDesc;
+            LoadChips();
         }
     }
 }

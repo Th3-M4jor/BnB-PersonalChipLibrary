@@ -30,22 +30,24 @@ namespace BnB_ChipLibraryGui
         public string All { get; set; }
 
         public decimal AverageDamage { get; private set; }
+
         public char ChipClass
         {
             get => ChipType.ToString()[0];
         }
 
-        public byte NumInHand {
+        public byte NumInHand
+        {
             get => _numInHand;
             set
             {
-                if(this.ChipCount < 0)
+                if (this.ChipCount < 0)
                 {
                     _numInHand = 0;
                     return;
                 }
 
-                if(value <= this.ChipCount)
+                if (value <= this.ChipCount)
                 {
                     _numInHand = value;
                 }
@@ -56,12 +58,12 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-
         public sbyte ChipCount { get; set; }
         public ChipElements ChipElement { get; private set; }
         public ChipRanges ChipRange { get; private set; }
         public ChipSkills ChipSkill { get; private set; }
         public ChipTypes ChipType { get; private set; }
+
         [JsonProperty("Damage")]
         public string Damage
         {
@@ -104,6 +106,7 @@ namespace BnB_ChipLibraryGui
         }
 
         public uint MaxDamage { get; private set; }
+
         [JsonProperty("Name")]
         public string Name { get; set; }
 
@@ -152,6 +155,7 @@ namespace BnB_ChipLibraryGui
         }
 
         public byte UsedInBattle { get; set; }
+
         public Chip()
         {
             AverageDamage = 0;
@@ -211,10 +215,9 @@ namespace BnB_ChipLibraryGui
             return this.All;
         }
 
-
         public override bool Equals(object obj)
         {
-            if(obj is Chip)
+            if (obj is Chip)
             {
                 return this.Name == ((Chip)obj).Name;
             }

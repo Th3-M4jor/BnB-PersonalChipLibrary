@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace BnB_ChipLibraryGui
 {
@@ -24,6 +14,32 @@ namespace BnB_ChipLibraryGui
             InitializeComponent();
         }
 
+        private void AddChipToPack()
+        {
+            if (SearchResultGrid.SelectedItem is Chip selected)
+            {
+                ChipLibrary.Instance.GetChip(selected.Name).ChipCount++;
+                (this.Owner as MainWindow).LoadChips();
+                MessageBox.Show("A copy of " + selected.Name + "\nhas been added to your pack!");
+            }
+            else
+            {
+                MessageBox.Show("No chip is currently selected!");
+            }
+        }
+
+        private void AddToPack_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender == null) return;
+            AddChipToPack();
+        }
+
+        private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender == null) return;
+            AddChipToPack();
+        }
+
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (sender != null && SearchResultGrid.SelectedItems != null && SearchResultGrid.SelectedItems.Count == 1)
@@ -34,12 +50,6 @@ namespace BnB_ChipLibraryGui
                     (dgr as DataGridRow).IsSelected = false;
                 }
             }
-        }
-
-        private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (sender == null) return;
-            AddChipToPack();
         }
 
         private void Search_Click(object sender, RoutedEventArgs e)
@@ -56,12 +66,6 @@ namespace BnB_ChipLibraryGui
                 return;
             }
             SearchResultGrid.ItemsSource = chips;
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            e.Cancel = true;
-            this.Hide();
         }
 
         private void SearchText_KeyDown(object sender, KeyEventArgs e)
@@ -83,25 +87,10 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        private void AddToPack_Click(object sender, RoutedEventArgs e)
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (sender == null) return;
-            AddChipToPack();
+            e.Cancel = true;
+            this.Hide();
         }
-
-        private void AddChipToPack()
-        {
-            if (SearchResultGrid.SelectedItem is Chip selected)
-            {
-                ChipLibrary.Instance.GetChip(selected.Name).ChipCount++;
-                (this.Owner as MainWindow).LoadChips();
-                MessageBox.Show("A copy of " + selected.Name + "\nhas been added to your pack!");
-            }
-            else
-            {
-                MessageBox.Show("No chip is currently selected!");
-            }
-        }
-
     }
 }

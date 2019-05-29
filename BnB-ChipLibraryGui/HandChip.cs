@@ -5,10 +5,34 @@ namespace BnB_ChipLibraryGui
 {
     public class HandChip
     {
-
         /*
          * <DataGridTextColumn Header="Num" Binding="{Binding Num}" IsReadOnly="True"/>
          */
+
+        private string _name;
+
+        private Chip self;
+
+        public char ChipClass
+        {
+            get => this.self.ChipClass;
+        }
+
+        public string Damage
+        {
+            get => this.self.Damage;
+        }
+
+        public string Description
+        {
+            get => self.Description;
+        }
+
+        public BitmapImage ElementImage
+        {
+            get => ChipImages.Instance[this.self.ChipElement];
+        }
+
         public string Name
         {
             get => _name;
@@ -20,14 +44,6 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        public string Skill
-        {
-            get
-            {
-                return this.self.Skill;
-            }
-        }
-
         public string Range
         {
             get
@@ -36,25 +52,15 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        public string Damage
+        public string Skill
         {
-            get => this.self.Damage;
+            get
+            {
+                return this.self.Skill;
+            }
         }
 
-        public BitmapImage ElementImage
-        {
-            get => ChipImages.Instance[this.self.ChipElement];
-        }
-
-        public char ChipClass
-        {
-            get => this.self.ChipClass;
-        }
-
-        public string Description
-        {
-            get => self.Description;
-        }
+        public bool Used { get; set; }
 
         public HandChip(string chipName)
         {
@@ -62,11 +68,5 @@ namespace BnB_ChipLibraryGui
             _name = chipName;
             Used = false;
         }
-
-        public bool Used { get; set; }
-
-        private string _name;
-        private Chip self;
-
     }
 }
