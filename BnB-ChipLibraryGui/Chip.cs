@@ -18,7 +18,7 @@ namespace BnB_ChipLibraryGui
 
         public enum ChipSkills
         {
-            Sense, Info, Coding, Strength, Speed, Stamina, Charm, Bravery, Affinity, None
+            Sense, Info, Coding, Strength, Speed, Stamina, Charm, Bravery, Affinity, Varies, None
         }
 
         public enum ChipTypes
@@ -30,6 +30,7 @@ namespace BnB_ChipLibraryGui
         public string All { get; set; }
 
         public decimal AverageDamage { get; private set; }
+
         public char ChipClass
         {
             get => ChipType.ToString()[0];
@@ -40,6 +41,7 @@ namespace BnB_ChipLibraryGui
         public ChipRanges ChipRange { get; private set; }
         public ChipSkills ChipSkill { get; private set; }
         public ChipTypes ChipType { get; private set; }
+
         [JsonProperty("Damage")]
         public string Damage
         {
@@ -82,6 +84,7 @@ namespace BnB_ChipLibraryGui
         }
 
         public uint MaxDamage { get; private set; }
+
         [JsonProperty("Name")]
         public string Name { get; set; }
 
@@ -130,6 +133,7 @@ namespace BnB_ChipLibraryGui
         }
 
         public uint UsedInBattle { get; set; }
+
         public Chip()
         {
             AverageDamage = 0;
