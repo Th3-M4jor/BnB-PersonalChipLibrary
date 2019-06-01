@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.Win32;
 
 namespace BnB_ChipLibraryGui
 {
@@ -145,6 +146,10 @@ namespace BnB_ChipLibraryGui
                 case "Search":
                     SearchChip();
                     break;
+
+                case "FolderExport":
+                    ExportChips();
+                    break;
             }
             LoadChips();
         }
@@ -276,6 +281,29 @@ namespace BnB_ChipLibraryGui
                     break;
             }
             LoadChips();
+        }
+
+        private void ExportChips()
+        {
+            try
+            {
+                string toWrite = ChipLibrary.Instance.GenerateExport();
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                    FilterIndex = 1,
+                    DefaultExt = ".txt",
+                    FileName = "Pack"
+                };
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    File.WriteAllText(saveFileDialog.FileName, toWrite);
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
         private void SortReverse(object sender, RoutedEventArgs e)

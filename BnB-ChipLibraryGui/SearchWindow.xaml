@@ -16,11 +16,15 @@
             <ColumnDefinition />
             <ColumnDefinition Width="140" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="131" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
         <DataGrid Name="SearchResultGrid" AutoGenerateColumns="false" SelectionMode="Single"
-                  HorizontalAlignment="Left" Margin="0,0,0,5" Grid.Column="0" Grid.Row="0"
+                  HorizontalAlignment="Left" Margin="0,0,0,10" Grid.Column="0" Grid.Row="0"
                   Width="350" CanUserSortColumns="False" CanUserAddRows="False"
                   CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False"
-                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.RowSpan="2">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True"
                                     HeaderStyle="{StaticResource CenterGridHeaderStyle}" Width="Auto">
@@ -80,8 +84,8 @@
                 </Style>
             </DataGrid.Resources>
         </DataGrid>
-        <TextBox Name="SearchText" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" KeyDown="SearchText_KeyDown" />
-        <Button Name="Search" Content="Search" Width="60" Click="Search_Click" Canvas.Left="86" Canvas.Top="37" Grid.Column="1" Margin="40,38,40,350" />
-        <Button Name="AddToPack" Content="Add to Pack" Grid.Column="1" HorizontalAlignment="Left" Margin="26,95,0,0" VerticalAlignment="Top" Width="90" Click="AddToPack_Click" />
+        <TextBox Name="SearchText" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" KeyDown="SearchText_KeyDown" />
+        <Button Name="Search" Content="Search" Click="Search_Click" Canvas.Left="86" Canvas.Top="37" Grid.Column="1" Grid.Row="0" Margin="40,38,40,69" />
+        <Button Name="AddToPack" Content="Add to Pack" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="26,95,0,0" VerticalAlignment="Top" Width="90" Click="AddToPack_Click" Height="20" />
     </Grid>
 </Window>

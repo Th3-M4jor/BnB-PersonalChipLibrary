@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace BnB_ChipLibraryGui
 {
@@ -121,6 +122,37 @@ namespace BnB_ChipLibraryGui
                 }
             }
             return toReturn;
+        }
+
+        public string GenerateExport()
+        {
+            StringBuilder build = new StringBuilder();
+            var toSave = this.GetList(ChipListOptions.DisplayOwned,
+                LibrarySortOptions.Name, Chip.ChipRanges.All, false);
+            uint numWritten = 0;
+            foreach (Chip chip in toSave)
+            {
+                if (chip.ChipCount <= 0)
+                {
+                    continue;
+                }
+
+                build.Append(chip.Name);
+                numWritten++;
+                if (chip.ChipCount > 1)
+                {
+                    build.Append(" x");
+                    build.Append(chip.ChipCount);
+                }
+
+                build.Append(", ");
+            }
+            if (numWritten == 0)
+            {
+                throw new Exception("Pack is empty");
+            }
+            build.Remove(build.Length - 2, 2);
+            return build.ToString();
         }
     }
 }
