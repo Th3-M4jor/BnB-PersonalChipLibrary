@@ -6,7 +6,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Microsoft.Win32;
+using System.Windows.Forms;
+using MessageBox = System.Windows.MessageBox;
 
 namespace BnB_ChipLibraryGui
 {
@@ -285,17 +286,18 @@ namespace BnB_ChipLibraryGui
 
         private void ExportChips()
         {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                FilterIndex = 1,
+                DefaultExt = ".txt",
+                FileName = "Pack"
+            };
             try
             {
                 string toWrite = ChipLibrary.Instance.GenerateExport();
-                SaveFileDialog saveFileDialog = new SaveFileDialog
-                {
-                    Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*",
-                    FilterIndex = 1,
-                    DefaultExt = ".txt",
-                    FileName = "Pack"
-                };
-                if (saveFileDialog.ShowDialog() == true)
+
+                if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     File.WriteAllText(saveFileDialog.FileName, toWrite);
                 }
@@ -303,6 +305,10 @@ namespace BnB_ChipLibraryGui
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
+            }
+            finally
+            {
+                saveFileDialog.Dispose();
             }
         }
 

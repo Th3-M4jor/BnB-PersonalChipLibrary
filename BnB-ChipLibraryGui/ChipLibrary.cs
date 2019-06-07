@@ -1,8 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.IO;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BnB_ChipLibraryGui
 {
@@ -32,9 +36,10 @@ namespace BnB_ChipLibraryGui
 
         private ChipLibrary()
         {
-            using (System.Net.WebClient wc = new System.Net.WebClient())
+            System.Net.WebClient wc = new System.Net.WebClient();
+            try
             {
-                var json = wc.DownloadString("http://spartan364.hopto.org/chips.json");
+                string json = wc.DownloadString("http://spartan364.hopto.org/chips.json");
                 json = json.Replace("â€™", "'");
                 var result = JsonConvert.DeserializeObject<List<Chip>>(json);
                 this.Library = new Dictionary<string, Chip>(result.Count);
@@ -42,6 +47,26 @@ namespace BnB_ChipLibraryGui
                 {
                     this.Library.Add(aChip.Name.ToLower(), aChip);
                 });
+                SaveBackup(json);
+            }
+            catch (Exception e) when (e is System.Net.WebException)
+            {
+                string json = GetLocalFile();
+                if (json == string.Empty)
+                {
+                    System.Windows.MessageBox.Show("No data backup and cannot contact server");
+                    throw new NullReferenceException("Cannot access server and no backup");
+                }
+                var result = JsonConvert.DeserializeObject<List<Chip>>(json);
+                this.Library = new Dictionary<string, Chip>(result.Count);
+                result.ForEach(delegate (Chip aChip)
+                {
+                    this.Library.Add(aChip.Name.ToLower(), aChip);
+                });
+            }
+            finally
+            {
+                wc.Dispose();
             }
         }
 
@@ -153,6 +178,40 @@ namespace BnB_ChipLibraryGui
             }
             build.Remove(build.Length - 2, 2);
             return build.ToString();
+        }
+
+        private void SaveBackup(string backup)
+        {
+            using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null))
+            {
+                if (isoStore.FileExists("chips.json"))
+                {
+                    StreamReader reader = new StreamReader(isoStore.OpenFile("chips.json", FileMode.Open));
+                    string json = reader.ReadToEnd();
+                    reader.Close();
+                    if (backup.Equals(json)) return;
+                }
+                StreamWriter writer = new StreamWriter(isoStore.OpenFile("chips.json", FileMode.Create));
+                writer.Write(backup);
+                writer.Close();
+            }
+        }
+
+        private string GetLocalFile()
+        {
+            using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null))
+            {
+                if (isoStore.FileExists("chips.json"))
+                {
+                    var stream = isoStore.OpenFile("chips.json", FileMode.Open);
+                    StreamReader reader = new StreamReader(stream);
+                    string json = reader.ReadToEnd();
+                    reader.Close();
+                    stream.Close();
+                    return json;
+                }
+                else return string.Empty;
+            }
         }
     }
 }
