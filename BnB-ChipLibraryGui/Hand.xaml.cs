@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -56,6 +58,38 @@ namespace BnB_ChipLibraryGui
             this.ChipsInHand = new ObservableCollection<HandChip>(hand);
             this.PlayerHand.ItemsSource = this.ChipsInHand;
             this.ChipsInHand.CollectionChanged += HandCollectionChanged;
+        }
+
+        public string GetHand()
+        {
+            if (ChipsInHand.Count == 0)
+            {
+                string[] EmptyString = new string[1] { "empty" };
+                return JsonConvert.SerializeObject(EmptyString);
+                //return "[\"empty\"]";
+            }
+
+            string[] HandToReturn = new string[ChipsInHand.Count];
+            int i = 0;
+            foreach (HandChip chip in ChipsInHand)
+            {
+                HandToReturn[i] = chip.Name;
+                i++;
+            }
+            return JsonConvert.SerializeObject(HandToReturn);
+            /*StringBuilder build = new StringBuilder();
+            build.Append('[');
+            foreach (HandChip chip in ChipsInHand)
+            {
+                build.Append('\"');
+                build.Append(chip.Name);
+                build.Append('\"');
+                build.Append(", ");
+            }
+            build.Remove(build.Length - 2, 2);
+            build.Append(']');
+            return build.ToString();*/
+            //return "[" + string.Join(", ", ChipsInHand) + "]";
         }
 
         public void AddChip(Chip newChip)
@@ -134,6 +168,7 @@ namespace BnB_ChipLibraryGui
             {
                 this.Hide();
             }
+            (this.Owner as MainWindow).HandUpdated();
         }
 
         private void RemoveFromHand_Click(object sender, RoutedEventArgs e)

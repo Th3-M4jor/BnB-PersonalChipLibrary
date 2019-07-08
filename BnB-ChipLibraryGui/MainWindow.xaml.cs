@@ -16,11 +16,15 @@ namespace BnB_ChipLibraryGui
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static readonly System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
+
         private Hand handWindow;
         private SearchWindow searchWindow;
+        private GroupHands grouphands;
         public Chip.ChipRanges RangeOption { get; private set; }
         public bool SortDesc { get; private set; }
         public ChipLibrary.LibrarySortOptions SortOption { get; private set; }
+        public bool InGroup { get; private set; }
 
         public MainWindow()
         {
@@ -97,6 +101,24 @@ namespace BnB_ChipLibraryGui
                 listAll = ChipLibrary.ChipListOptions.DisplayOwned;
             }
             UserChips.ItemsSource = ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc);
+        }
+
+        public string GetHand()
+        {
+            return handWindow.GetHand();
+        }
+
+        public void HandUpdated()
+        {
+            if (grouphands != null)
+            {
+                grouphands.HandUpdate(true);
+            }
+        }
+
+        public void GroupClosed()
+        {
+            grouphands = null;
         }
 
         public void SetMessage(string message, SolidColorBrush colorBrush)
@@ -316,6 +338,81 @@ namespace BnB_ChipLibraryGui
         {
             this.SortDesc = !this.SortDesc;
             LoadChips();
+        }
+
+        private void JoinClick(object sender, RoutedEventArgs e)
+        {
+            if (this.grouphands != null)
+            {
+                MessageBox.Show("You are already in a group, you must leave it if you wish to join a different one");
+                return;
+            }
+            var res = MessageBox.Show("This will transmit your hand data to a remote server", "ShareHand", MessageBoxButton.OKCancel);
+            if (res == MessageBoxResult.Cancel) return;
+            QuestionWindow questionWindow = new QuestionWindow("JoinGroup", "Please enter your Navi's name, no spaces please");
+            if (questionWindow.ShowDialog() == false)
+            {
+                MessageBox.Show("Join Canceled");
+                return;
+            }
+            string NaviName = questionWindow.GetAnswer();
+            questionWindow = new QuestionWindow("DMName", "Please enter the name of the group your DM created");
+            if (questionWindow.ShowDialog() == false)
+            {
+                MessageBox.Show("Join Canceled");
+                return;
+            }
+            string DMName = questionWindow.GetAnswer();
+            if (!GroupHands.CheckSessionExists(DMName))
+            {
+                MessageBox.Show("That session does not yet exist, check the group name and try again");
+                return;
+            }
+
+            try
+            {
+                grouphands = new GroupHands(this, DMName, NaviName, false);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("An error has occurred, inform Major");
+                grouphands = null;
+                return;
+            }
+            grouphands.Show();
+            //MessageBox.Show("Group Joined");
+        }
+
+        private void CreateClick(object sender, RoutedEventArgs e)
+        {
+            if (this.grouphands != null)
+            {
+                MessageBox.Show("You are already in a group, you must leave it if you wish to join a different one");
+                return;
+            }
+            QuestionWindow questionWindow = new QuestionWindow("CreateGroup", "Please enter the group name");
+            if (questionWindow.ShowDialog() == false)
+            {
+                MessageBox.Show("Create Canceled");
+                return;
+            }
+            string DMName = questionWindow.GetAnswer();
+            if (GroupHands.CheckSessionExists(DMName))
+            {
+                MessageBox.Show("That session already exists, try a different name");
+                return;
+            }
+            try
+            {
+                grouphands = new GroupHands(this, DMName, DMName, true);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("An error has occurred, inform Major");
+                grouphands = null;
+                return;
+            }
+            grouphands.Show();
         }
     }
 }
