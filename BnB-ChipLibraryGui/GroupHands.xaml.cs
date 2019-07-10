@@ -96,10 +96,10 @@ namespace BnB_ChipLibraryGui
                 if (manual == false && (LastUpdated + MinuteInMiliseconds) > DateTimeOffset.Now.ToUnixTimeMilliseconds())
                     return;
                 string hand = null;
-                this.Dispatcher.Invoke((Action)(() =>
+                this.Dispatcher.Invoke(() =>
                 {//this refer to form in WPF application
                     hand = (this.Owner as MainWindow).GetHand();
-                }));
+                });
                 using (System.Net.WebClient wc = new System.Net.WebClient())
                 {
                     System.Collections.Specialized.NameValueCollection postData =
@@ -122,11 +122,10 @@ namespace BnB_ChipLibraryGui
                         this.sessionClosed = true;
                         this.Close();
                     }
-                    //result = result.Replace("\\\\r\\\\n", System.Environment.NewLine);
-                    this.Dispatcher.Invoke((Action)(() =>
+                    this.Dispatcher.Invoke(() =>
                     {//this refer to form in WPF application
                         this.Hands.Text = result;
-                    }));
+                    });
                 }
                 LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             }
