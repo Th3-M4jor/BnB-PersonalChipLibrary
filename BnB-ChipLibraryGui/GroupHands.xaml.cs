@@ -56,30 +56,34 @@ namespace BnB_ChipLibraryGui
                     }
                 }
             }
-            else
+            string hand = (this.Owner as MainWindow).GetHand();
+            currentHand = hand;
+            using (System.Net.WebClient wc = new System.Net.WebClient())
             {
-                string hand = (this.Owner as MainWindow).GetHand();
-                currentHand = hand;
-                using (System.Net.WebClient wc = new System.Net.WebClient())
-                {
-                    System.Collections.Specialized.NameValueCollection postData =
-                        new System.Collections.Specialized.NameValueCollection()
-                        {
+                System.Collections.Specialized.NameValueCollection postData =
+                    new System.Collections.Specialized.NameValueCollection()
+                    {
                             { "DMName", DMName },
                             {"PlayerName", PlayerName },
-                            {"hand", hand}
-                        };
-                    string result = Encoding.UTF8.GetString(wc.UploadValues(ChipPage, postData));
-                    if (result.Equals("closed", StringComparison.OrdinalIgnoreCase))
-                    {
-                        throw new Exception("ServerError");
-                    }
-                    this.Hands.Text = result;
+                            {"hand", hand},
+                            {"join", "true"}
+                    };
+                string result = Encoding.UTF8.GetString(wc.UploadValues(ChipPage, postData));
+                if (result.Equals("closed", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new Exception("ServerError");
                 }
+                if (result.Equals("taken", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new Exception("Name Taken");
+                }
+                this.Hands.Text = result;
             }
             LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            updateInterval = new Timer(MinuteInMiliseconds);
-            updateInterval.Enabled = true;
+            updateInterval = new Timer(MinuteInMiliseconds)
+            {
+                Enabled = true
+            };
             updateInterval.Elapsed += OnTimedEvent;
         }
 
@@ -165,7 +169,7 @@ namespace BnB_ChipLibraryGui
                 new System.Collections.Specialized.NameValueCollection()
                 {
                     { "DMName", DMName },
-                    { "PlayerName", DMName },
+                    { "PlayerName", PlayerName },
                     { "close", "true" }
                 };
                 string result = Encoding.UTF8.GetString(wc.UploadValues(ChipPage, postData));

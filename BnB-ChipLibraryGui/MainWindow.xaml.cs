@@ -373,9 +373,16 @@ namespace BnB_ChipLibraryGui
             {
                 grouphands = new GroupHands(this, DMName, NaviName, false);
             }
-            catch (Exception)
+            catch (Exception except)
             {
-                MessageBox.Show("An error has occurred, inform Major");
+                if (except.Message == "Name Taken")
+                {
+                    MessageBox.Show("That name is already taken, try a different one");
+                }
+                else
+                {
+                    MessageBox.Show("An error has occurred, inform Major");
+                }
                 grouphands = null;
                 return;
             }
