@@ -110,7 +110,7 @@ namespace BnB_ChipLibraryGui
                     new System.Collections.Specialized.NameValueCollection()
                     {
                     { "DMName", DMName },
-                    { "PlayerName", DMName },
+                    { "PlayerName", PlayerName },
                     };
                     if (hand != currentHand)
                     {
