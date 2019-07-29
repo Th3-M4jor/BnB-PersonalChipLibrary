@@ -92,6 +92,11 @@ namespace BnB_ChipLibraryGui
             HandUpdate();
         }
 
+        public bool IsSessionClosed()
+        {
+            return this.sessionClosed;
+        }
+
         public void HandUpdate(bool manual = false)
         {
             if (sessionClosed) return;
@@ -179,6 +184,7 @@ namespace BnB_ChipLibraryGui
                 }
             }
             this.updateInterval.Stop();
+            this.updateInterval.Dispose();
             sessionClosed = true;
         }
 

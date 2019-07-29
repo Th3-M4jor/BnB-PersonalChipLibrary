@@ -118,7 +118,10 @@ namespace BnB_ChipLibraryGui
 
         public void GroupClosed()
         {
-            grouphands = null;
+            this.Dispatcher.Invoke(() =>
+            {//this refer to form in WPF application
+                grouphands = null;
+            });
         }
 
         public void SetMessage(string message, SolidColorBrush colorBrush)
@@ -342,14 +345,14 @@ namespace BnB_ChipLibraryGui
 
         private void JoinClick(object sender, RoutedEventArgs e)
         {
-            if (this.grouphands != null)
+            if (this.grouphands != null && this.grouphands.IsSessionClosed() == false)
             {
                 MessageBox.Show("You are already in a group, you must leave it if you wish to join a different one");
                 return;
             }
             var res = MessageBox.Show("This will transmit your hand data to a remote server", "ShareHand", MessageBoxButton.OKCancel);
             if (res == MessageBoxResult.Cancel) return;
-            QuestionWindow questionWindow = new QuestionWindow("JoinGroup", "Please enter your Navi's name, no spaces please");
+            QuestionWindow questionWindow = new QuestionWindow("JoinGroup", "Please enter your Navi's name");
             if (questionWindow.ShowDialog() == false)
             {
                 MessageBox.Show("Join Canceled");
@@ -392,7 +395,7 @@ namespace BnB_ChipLibraryGui
 
         private void CreateClick(object sender, RoutedEventArgs e)
         {
-            if (this.grouphands != null)
+            if (this.grouphands != null && this.grouphands.IsSessionClosed() == false)
             {
                 MessageBox.Show("You are already in a group, you must leave it if you wish to join a different one");
                 return;
