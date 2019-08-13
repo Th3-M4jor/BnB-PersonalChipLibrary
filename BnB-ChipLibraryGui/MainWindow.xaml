@@ -98,6 +98,11 @@
                     <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick" />
                 </Style>
             </DataGrid.Resources>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="{Binding ChipColor}" />
+                </Style>
+            </DataGrid.RowStyle>
         </DataGrid>
         <Canvas HorizontalAlignment="Left" Height="451" VerticalAlignment="Top" Width="192" Grid.Column="1" Margin="0,2,0,0">
             <Label Content="Ranges" Canvas.Left="20" Canvas.Top="92" />

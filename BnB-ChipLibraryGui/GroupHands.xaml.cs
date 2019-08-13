@@ -131,6 +131,7 @@ namespace BnB_ChipLibraryGui
                         this.sessionClosed = true;
                         this.Close();
                     }
+
                     this.Dispatcher.Invoke(() =>
                     {//this refer to form in WPF application
                         this.Hands.Text = result;

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace BnB_ChipLibraryGui
@@ -25,6 +26,9 @@ namespace BnB_ChipLibraryGui
         {
             Standard, Mega, Giga
         }
+
+        public static SolidColorBrush MegaChipColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#90f8f8"));
+        public static SolidColorBrush GigaChipColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#f8c8d8"));
 
         [JsonProperty("All")]
         public string All { get; set; }
@@ -59,6 +63,7 @@ namespace BnB_ChipLibraryGui
         }
 
         public sbyte ChipCount { get; set; }
+        public SolidColorBrush ChipColor { get; private set; }
         public ChipElements ChipElement { get; private set; }
         public ChipRanges ChipRange { get; private set; }
         public ChipSkills ChipSkill { get; private set; }
@@ -150,6 +155,21 @@ namespace BnB_ChipLibraryGui
                 else
                 {
                     this.ChipType = (ChipTypes)Enum.Parse(typeof(ChipTypes), value);
+                }
+
+                switch (this.ChipType)
+                {
+                    case ChipTypes.Standard:
+                        this.ChipColor = Brushes.White;
+                        break;
+
+                    case ChipTypes.Mega:
+                        this.ChipColor = MegaChipColor;
+                        break;
+
+                    case ChipTypes.Giga:
+                        this.ChipColor = GigaChipColor;
+                        break;
                 }
             }
         }
