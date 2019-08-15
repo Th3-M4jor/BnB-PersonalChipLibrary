@@ -182,7 +182,10 @@ namespace BnB_ChipLibraryGui
 
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            AddChip();
+            if (this.UserChips.IsMouseOver)
+            {
+                AddChip();
+            }
         }
 
         private void ExitClicked(object sender, CancelEventArgs e)

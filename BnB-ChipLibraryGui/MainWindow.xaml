@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BnB_ChipLibraryGui"
         mc:Ignorable="d"
         Closing="ExitClicked" MinHeight="490"
-        Title="BnBChipManager" Height="500" Width="650.73" MouseDown="Grid_MouseLeftButtonDown">
+        Title="BnBChipManager" Height="500" Width="650.73" MouseDown="Grid_MouseLeftButtonDown" MouseDoubleClick="DataGridRow_MouseDoubleClick">
     <Window.Resources>
         <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -93,11 +93,6 @@
                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="300" />
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
-            <DataGrid.Resources>
-                <Style TargetType="DataGridRow">
-                    <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick" />
-                </Style>
-            </DataGrid.Resources>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Setter Property="Background" Value="{Binding ChipColor}" />
