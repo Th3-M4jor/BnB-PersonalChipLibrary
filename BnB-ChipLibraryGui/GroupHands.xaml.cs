@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -131,10 +132,37 @@ namespace BnB_ChipLibraryGui
                         this.sessionClosed = true;
                         this.Close();
                     }
+                    string playerHandText;
+                    if (result.Equals("empty", StringComparison.OrdinalIgnoreCase))
+                    {
+                        playerHandText = result;
+                    }
+                    else
+                    {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        Dictionary<string, string[]> res;
+                        try
+                        {
+                            res = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(result);
+                        }
+                        catch (JsonException)
+                        {
+                            MessageBox.Show("An error occurred");
+                            return;
+                        }
+                        foreach (var entry in res)
+                        {
+                            stringBuilder.Append(entry.Key);
+                            stringBuilder.Append(":\n\t");
+                            stringBuilder.Append(string.Join(", ", entry.Value));
+                            stringBuilder.Append("\n");
+                        }
+                        playerHandText = stringBuilder.ToString();
+                    }
 
                     this.Dispatcher.Invoke(() =>
                     {//this refer to form in WPF application
-                        this.Hands.Text = result;
+                        this.Hands.Text = playerHandText;
                     });
                 }
                 LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
