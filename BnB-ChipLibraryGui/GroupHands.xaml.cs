@@ -101,7 +101,7 @@ namespace BnB_ChipLibraryGui
         public void HandUpdate(bool manual = false)
         {
             if (sessionClosed) return;
-            lock (updateLock)
+            lock (updateLock) //acquire mutex
             {
                 if (manual == false && (LastUpdated + MinuteInMiliseconds) > DateTimeOffset.Now.ToUnixTimeMilliseconds())
                     return;
@@ -161,12 +161,13 @@ namespace BnB_ChipLibraryGui
                     }
 
                     this.Dispatcher.Invoke(() =>
-                    {//this refer to form in WPF application
+                    {
+                        //because you cannot update window properties on a different thread
                         this.Hands.Text = playerHandText;
                     });
                 }
                 LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            }
+            } //release mutex
         }
 
         public static bool CheckSessionExists(string DMName)
