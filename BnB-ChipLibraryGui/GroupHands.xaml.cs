@@ -145,9 +145,10 @@ namespace BnB_ChipLibraryGui
                         {
                             res = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(result);
                         }
-                        catch (JsonException)
+                        catch (JsonException e)
                         {
-                            MessageBox.Show("An error occurred");
+                            MessageBox.Show("An error occurred, inform Major");
+                            MessageBox.Show(e.Message);
                             return;
                         }
                         foreach (var entry in res)
