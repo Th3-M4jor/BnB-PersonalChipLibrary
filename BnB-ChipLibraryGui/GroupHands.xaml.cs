@@ -78,7 +78,35 @@ namespace BnB_ChipLibraryGui
                 {
                     throw new Exception("Name Taken");
                 }
-                this.Hands.Text = result;
+                string playerHandText;
+                if (result.Equals("empty", StringComparison.OrdinalIgnoreCase))
+                {
+                    playerHandText = result;
+                }
+                else
+                {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    Dictionary<string, string[]> res;
+                    try
+                    {
+                        res = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(result);
+                    }
+                    catch (JsonException e)
+                    {
+                        MessageBox.Show("An error occurred, inform Major");
+                        MessageBox.Show(e.Message);
+                        return;
+                    }
+                    foreach (var entry in res)
+                    {
+                        stringBuilder.Append(entry.Key);
+                        stringBuilder.Append(":\n\t");
+                        stringBuilder.Append(string.Join(", ", entry.Value));
+                        stringBuilder.Append("\n");
+                    }
+                    playerHandText = stringBuilder.ToString();
+                }
+                this.Hands.Text = playerHandText;
             }
             LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             updateInterval = new Timer(MinuteInMiliseconds)
