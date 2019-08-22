@@ -40,7 +40,6 @@ namespace BnB_ChipLibraryGui
             this.PlayerName = PlayerName;
             this.DMName = DMName;
             this.IsCreator = isCreator;
-            this.Hands.Text = "empty";
             if (isCreator)
             {
                 using (System.Net.WebClient wc = new System.Net.WebClient())
@@ -78,35 +77,13 @@ namespace BnB_ChipLibraryGui
                 {
                     throw new Exception("Name Taken");
                 }
-                string playerHandText;
-                if (result.Equals("empty", StringComparison.OrdinalIgnoreCase))
+                List<GroupedHand> hands = null;
+                if (!result.Equals("empty", StringComparison.OrdinalIgnoreCase))
                 {
-                    playerHandText = result;
+                    hands = ConvertToHands(result);
                 }
-                else
-                {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    Dictionary<string, string[]> res;
-                    try
-                    {
-                        res = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(result);
-                    }
-                    catch (JsonException e)
-                    {
-                        MessageBox.Show("An error occurred, inform Major");
-                        MessageBox.Show(e.Message);
-                        return;
-                    }
-                    foreach (var entry in res)
-                    {
-                        stringBuilder.Append(entry.Key);
-                        stringBuilder.Append(":\n\t");
-                        stringBuilder.Append(string.Join(", ", entry.Value));
-                        stringBuilder.Append("\n");
-                    }
-                    playerHandText = stringBuilder.ToString();
-                }
-                this.Hands.Text = playerHandText;
+
+                this.Players.ItemsSource = hands;
             }
             LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             updateInterval = new Timer(MinuteInMiliseconds)
@@ -160,39 +137,16 @@ namespace BnB_ChipLibraryGui
                         this.sessionClosed = true;
                         this.Close();
                     }
-                    string playerHandText;
-                    if (result.Equals("empty", StringComparison.OrdinalIgnoreCase))
+                    List<GroupedHand> hands = null;
+                    if (!result.Equals("empty", StringComparison.OrdinalIgnoreCase))
                     {
-                        playerHandText = result;
-                    }
-                    else
-                    {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        Dictionary<string, string[]> res;
-                        try
-                        {
-                            res = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(result);
-                        }
-                        catch (JsonException e)
-                        {
-                            MessageBox.Show("An error occurred, inform Major");
-                            MessageBox.Show(e.Message);
-                            return;
-                        }
-                        foreach (var entry in res)
-                        {
-                            stringBuilder.Append(entry.Key);
-                            stringBuilder.Append(":\n\t");
-                            stringBuilder.Append(string.Join(", ", entry.Value));
-                            stringBuilder.Append("\n");
-                        }
-                        playerHandText = stringBuilder.ToString();
+                        hands = ConvertToHands(result);
                     }
 
                     this.Dispatcher.Invoke(() =>
                     {
                         //because you cannot update window properties on a different thread
-                        this.Hands.Text = playerHandText;
+                        this.Players.ItemsSource = hands;
                     });
                 }
                 LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
@@ -250,6 +204,54 @@ namespace BnB_ChipLibraryGui
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             HandUpdate(true);
+        }
+
+        protected class GroupedHand
+        {
+            public string Name { get; private set; }
+            public string Hand { get; private set; }
+
+            public GroupedHand(string name, string hand)
+            {
+                this.Name = name ?? throw new ArgumentNullException();
+                this.Hand = hand ?? throw new ArgumentNullException();
+            }
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender != null && Players.SelectedItems != null && Players.SelectedItems.Count == 1)
+            {
+                DataGridRow dgr = Players.ItemContainerGenerator.ContainerFromItem(Players.SelectedItem) as DataGridRow;
+                if (!dgr.IsMouseOver)
+                {
+                    (dgr as DataGridRow).IsSelected = false;
+                }
+            }
+        }
+
+        private List<GroupedHand> ConvertToHands(string json)
+        {
+            Dictionary<string, string[]> res;
+            List<GroupedHand> hands = new List<GroupedHand>();
+            try
+            {
+                res = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(json);
+            }
+            catch (JsonException e)
+            {
+                MessageBox.Show("An error occurred, inform Major");
+                MessageBox.Show(e.Message);
+                return null;
+            }
+            foreach (var entry in res)
+            {
+                Array.Sort(entry.Value);
+                string desc = string.Join(", ", entry.Value);
+                string name = entry.Key;
+                hands.Add(new GroupedHand(name, desc));
+            }
+            return hands;
         }
     }
 }
