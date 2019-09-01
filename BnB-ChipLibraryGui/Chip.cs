@@ -67,6 +67,10 @@ namespace BnB_ChipLibraryGui
         public ChipElements ChipElement { get; private set; }
         public ChipRanges ChipRange { get; private set; }
         public ChipSkills ChipSkill { get; private set; }
+
+        [JsonProperty("Hits")]
+        public string Hits { get; set; }
+
         public ChipTypes ChipType { get; private set; }
 
         [JsonProperty("Damage")]
@@ -75,7 +79,7 @@ namespace BnB_ChipLibraryGui
             get => _damage;
             set
             {
-                if (value == null || value == "N/A" || value == string.Empty)
+                if (value == null || value == "N/A" || value == string.Empty || value == "--")
                 {
                     this.AverageDamage = 0;
                     this.MaxDamage = 0;
@@ -131,7 +135,7 @@ namespace BnB_ChipLibraryGui
             get => ChipSkill.ToString();
             set
             {
-                if (value == "N/A" || value == null || value == string.Empty)
+                if (value == "N/A" || value == null || value == "--" || value == string.Empty)
                 {
                     this.ChipSkill = ChipSkills.None;
                 }
@@ -184,7 +188,7 @@ namespace BnB_ChipLibraryGui
             NumInHand = 0;
         }
 
-        public Chip(string name, string range, string skill, string damage, string element, string type, string description, string All)
+        public Chip(string name, string range, string skill, string damage, string hits, string element, string type, string description, string All)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.Range = range;
@@ -197,6 +201,7 @@ namespace BnB_ChipLibraryGui
             this.ChipCount = 0;
             this.UsedInBattle = 0;
             this.NumInHand = 0;
+            this.Hits = hits;
         }
 
         public HandChip MakeHandChip()

@@ -60,6 +60,14 @@ namespace BnB_ChipLibraryGui
             }
         }
 
+        public string Hits
+        {
+            get
+            {
+                return this.self.Hits;
+            }
+        }
+
         public bool Used { get; set; }
 
         public HandChip(string chipName)
