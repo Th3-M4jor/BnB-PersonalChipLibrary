@@ -102,6 +102,7 @@ namespace BnB_ChipLibraryGui
         [JsonProperty("Element")]
         public string[] Element
         {
+            get => this._element;
             set
             {
                 this.ChipElement = new ChipElements[value.Length];
@@ -109,6 +110,8 @@ namespace BnB_ChipLibraryGui
                 {
                     this.ChipElement[i] = (ChipElements)Enum.Parse(typeof(ChipElements), value[i]);
                 }
+
+                this._element = value;
             }
         }
 
@@ -268,5 +271,7 @@ namespace BnB_ChipLibraryGui
         private string _damage;
 
         private byte _numInHand;
+
+        private string[] _element;
     }
 }

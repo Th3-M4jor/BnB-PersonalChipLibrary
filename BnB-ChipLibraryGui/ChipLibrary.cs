@@ -102,8 +102,8 @@ namespace BnB_ChipLibraryGui
                     return toReturn.OrderBy(a => a.ChipType).ThenByDescending(a => a.ChipCount).ThenBy(a => a.Name).ToList();
 
                 case LibrarySortOptions.Element:
-                    if (invert) toReturn.OrderByDescending(a => a.ChipElement).ThenBy(a => a.ChipType).ThenBy(a => a.Name).ToList();
-                    return toReturn.OrderBy(a => a.ChipElement).ThenBy(a => a.Name).ToList();
+                    if (invert) return toReturn.OrderByDescending(a => a.ChipElement[0]).ThenBy(a => a.Name).ToList();
+                    return toReturn.OrderBy(a => a.ChipElement[0]).ThenBy(a => a.Name).ToList();
 
                 case LibrarySortOptions.MaxDamage:
                     if (invert) return toReturn.OrderBy(a => a.MaxDamage).ThenBy(a => a.Name).ToList();
