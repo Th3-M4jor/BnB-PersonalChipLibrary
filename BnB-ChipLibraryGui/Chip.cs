@@ -64,7 +64,7 @@ namespace BnB_ChipLibraryGui
 
         public sbyte ChipCount { get; set; }
         public SolidColorBrush ChipColor { get; private set; }
-        public ChipElements ChipElement { get; private set; }
+        public ChipElements[] ChipElement { get; private set; }
         public ChipRanges ChipRange { get; private set; }
         public ChipSkills ChipSkill { get; private set; }
 
@@ -100,12 +100,15 @@ namespace BnB_ChipLibraryGui
         public string Description { get; set; }
 
         [JsonProperty("Element")]
-        public string Element
+        public string[] Element
         {
-            get => ChipElement.ToString();
             set
             {
-                this.ChipElement = (ChipElements)Enum.Parse(typeof(ChipElements), value);
+                this.ChipElement = new ChipElements[value.Length];
+                for (int i = 0; i < value.Length; i++)
+                {
+                    this.ChipElement[i] = (ChipElements)Enum.Parse(typeof(ChipElements), value[i]);
+                }
             }
         }
 
@@ -188,7 +191,7 @@ namespace BnB_ChipLibraryGui
             NumInHand = 0;
         }
 
-        public Chip(string name, string range, string skill, string damage, string hits, string element, string type, string description, string All)
+        public Chip(string name, string range, string skill, string damage, string hits, string[] element, string type, string description, string All)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.Range = range;

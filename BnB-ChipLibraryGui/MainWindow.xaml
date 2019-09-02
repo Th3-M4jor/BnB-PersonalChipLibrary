@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BnB_ChipLibraryGui"
         mc:Ignorable="d"
         Closing="ExitClicked" MinHeight="490"
-        Title="BnBChipManager" Height="500" Width="650.73" MouseDown="Grid_MouseLeftButtonDown" MouseDoubleClick="DataGridRow_MouseDoubleClick">
+        Title="BnBChipManager" Height="500" Width="679.73" MouseDown="Grid_MouseLeftButtonDown" MouseDoubleClick="DataGridRow_MouseDoubleClick">
     <Window.Resources>
         <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -23,7 +23,7 @@
         </Grid.RowDefinitions>
         <DataGrid Name="UserChips" AutoGenerateColumns="false" SelectionMode="Single"
                   HorizontalAlignment="Left" Margin="0,0,0,5" Grid.Column="0" Grid.Row="0"
-                  Width="431" CanUserSortColumns="False" CanUserAddRows="False"
+                  Width="460" CanUserSortColumns="False" CanUserAddRows="False"
                   CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False"
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <DataGrid.Columns>
