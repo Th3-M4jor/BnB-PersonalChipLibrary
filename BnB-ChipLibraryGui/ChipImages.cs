@@ -143,7 +143,7 @@ namespace BnB_ChipLibraryGui
 
                 Bitmap img3 = new Bitmap(width, height);
                 Graphics g = Graphics.FromImage(img3);
-                g.Clear(System.Drawing.Color.White);
+                g.Clear(System.Drawing.Color.Transparent);
                 width = 0;
                 for (int i = 0; i < elem.Length; i++)
                 {

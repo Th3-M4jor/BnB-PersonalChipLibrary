@@ -133,18 +133,21 @@ namespace BnB_ChipLibraryGui
         }
 
         [JsonProperty("Skill")]
-        public string Skill
+        public string[] Skill
         {
-            get => ChipSkill.ToString();
             set
             {
-                if (value == "N/A" || value == null || value == "--" || value == string.Empty)
+                if (value.Length > 1)
+                {
+                    this.ChipSkill = ChipSkills.Varies;
+                }
+                else if (value[0] == "N/A" || value[0] == null || value[0] == "--" || value[0] == string.Empty)
                 {
                     this.ChipSkill = ChipSkills.None;
                 }
                 else
                 {
-                    this.ChipSkill = (ChipSkills)Enum.Parse(typeof(ChipSkills), value);
+                    this.ChipSkill = (ChipSkills)Enum.Parse(typeof(ChipSkills), value[0]);
                 }
             }
         }
@@ -191,7 +194,7 @@ namespace BnB_ChipLibraryGui
             NumInHand = 0;
         }
 
-        public Chip(string name, string range, string skill, string damage, string hits, string[] element, string type, string description, string All)
+        public Chip(string name, string range, string[] skill, string damage, string hits, string[] element, string type, string description, string All)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.Range = range;

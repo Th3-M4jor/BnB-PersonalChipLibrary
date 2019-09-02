@@ -35,7 +35,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Skill" Binding="{Binding Skill}" IsReadOnly="True"
+                <DataGridTextColumn Header="Skill" Binding="{Binding ChipSkill}" IsReadOnly="True"
                                     HeaderStyle="{StaticResource CenterGridHeaderStyle}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">

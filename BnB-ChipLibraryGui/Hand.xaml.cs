@@ -73,7 +73,10 @@ namespace BnB_ChipLibraryGui
             int i = 0;
             foreach (HandChip chip in ChipsInHand)
             {
-                HandToReturn[i] = chip.Name;
+                if (chip.Used)
+                    HandToReturn[i] = chip.Name + '*';
+                else
+                    HandToReturn[i] = chip.Name;
                 i++;
             }
             return JsonConvert.SerializeObject(HandToReturn);

@@ -170,6 +170,13 @@ namespace BnB_ChipLibraryGui
                     build.Append(chip.ChipCount);
                 }
 
+                if (chip.UsedInBattle > 0)
+                {
+                    build.Append(" (");
+                    build.Append(chip.UsedInBattle);
+                    build.Append(" Used)");
+                }
+
                 build.Append(", ");
             }
             if (numWritten == 0)

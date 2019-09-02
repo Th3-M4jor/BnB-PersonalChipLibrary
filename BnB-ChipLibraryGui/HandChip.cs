@@ -52,11 +52,11 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        public string Skill
+        public Chip.ChipSkills Skill
         {
             get
             {
-                return this.self.Skill;
+                return this.self.ChipSkill;
             }
         }
 
