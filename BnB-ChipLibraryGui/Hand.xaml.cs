@@ -204,5 +204,6 @@ namespace BnB_ChipLibraryGui
                 MessageBox.Show("No chip is currently selected!");
             }
         }
+
     }
 }

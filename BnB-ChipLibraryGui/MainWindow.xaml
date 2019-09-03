@@ -98,7 +98,7 @@
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
                     <TextBlock Background="GhostWhite" Text="{Binding Description}" TextWrapping="Wrap"
-                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="300" />
+                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="330" />
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
             <DataGrid.RowStyle>
