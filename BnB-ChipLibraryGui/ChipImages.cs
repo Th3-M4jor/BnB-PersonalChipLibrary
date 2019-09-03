@@ -195,19 +195,20 @@ namespace BnB_ChipLibraryGui
 
         private BitmapImage DownloadBitmap(string Url)
         {
+            byte[] data;
             using (System.Net.WebClient wc = new System.Net.WebClient())
             {
-                var data = wc.DownloadData(Url);
-                using (var stream = new MemoryStream(data))
-                {
-                    var bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.StreamSource = stream;
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmap.EndInit();
-                    bitmap.Freeze();
-                    return bitmap;
-                }
+                data = wc.DownloadData(Url);
+            }
+            using (var stream = new MemoryStream(data))
+            {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.StreamSource = stream;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                bitmap.Freeze();
+                return bitmap;
             }
         }
     }
