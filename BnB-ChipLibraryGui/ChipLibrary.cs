@@ -42,11 +42,12 @@ namespace BnB_ChipLibraryGui
                 string json = wc.DownloadString("http://spartan364.hopto.org/chips.json");
                 json = json.Replace("â€™", "'");
                 var result = JsonConvert.DeserializeObject<List<Chip>>(json);
-                this.Library = new Dictionary<string, Chip>(result.Count);
-                result.ForEach(delegate (Chip aChip)
+                Library = new Dictionary<string, Chip>(result.Count);
+                
+                foreach(Chip chip in result)
                 {
-                    this.Library.Add(aChip.Name.ToLower(), aChip);
-                });
+                    Library.Add(chip.Name.ToLower(), chip);
+                }
                 SaveBackup(json);
             }
             catch (Exception e) when (e is System.Net.WebException)
@@ -77,24 +78,24 @@ namespace BnB_ChipLibraryGui
             else return null;
         }
 
+        public Task GetList(ChipListOptions AllOrOwned, LibrarySortOptions sortOptions, Chip.ChipRanges rangeOption, bool invert, Action<List<Chip>> action)
+        {
+            return Task.Run(() =>
+            {
+                var res = GetList(AllOrOwned, sortOptions, rangeOption, invert);
+                action(res);
+            });
+        }
+
         public List<Chip> GetList(ChipListOptions AllOrOwned, LibrarySortOptions sortOptions, Chip.ChipRanges rangeOption, bool invert)
         {
             List<Chip> toReturn;
-            /*foreach (var item in this.Library)
-            {
-                if (item.Value.ChipCount != 0 || AllOrOwned == ChipListOptions.DisplayAll)
-                {
-                    if (rangeOption == Chip.ChipRanges.All || item.Value.ChipRange == rangeOption)
-                    {
-                        toReturn.Add(item.Value);
-                    }
-                }
-            }*/
+            
             if (AllOrOwned == ChipListOptions.DisplayAll)
             {
                 toReturn = (from kvp in this.Library
-                            where (rangeOption == Chip.ChipRanges.All ||
-                            kvp.Value.ChipRange == rangeOption)
+                            where rangeOption == Chip.ChipRanges.All ||
+                            kvp.Value.ChipRange == rangeOption
                             select kvp.Value).ToList();
             }
             else

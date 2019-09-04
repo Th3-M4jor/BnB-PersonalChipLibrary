@@ -34,9 +34,9 @@ namespace BnB_ChipLibraryGui
             InitializeComponent();
             bool chipsOwned = false;
             List<HandChip> playerHand = new List<HandChip>();
-            if (System.IO.File.Exists("./userChips.dat"))
+            if (File.Exists("./userChips.dat"))
             {
-                using (var chipFile = System.IO.File.OpenText("./userChips.dat"))
+                using (var chipFile = File.OpenText("./userChips.dat"))
                 {
                     while (!chipFile.EndOfStream)
                     {
@@ -100,7 +100,15 @@ namespace BnB_ChipLibraryGui
             {
                 listAll = ChipLibrary.ChipListOptions.DisplayOwned;
             }
-            UserChips.ItemsSource = ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc);
+            //UserChips.ItemsSource = ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc);
+            ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc, (List<Chip> res) =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    UserChips.ItemsSource = res;
+                });
+            });
+     
         }
 
         public string GetHand()
@@ -182,7 +190,7 @@ namespace BnB_ChipLibraryGui
 
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (this.UserChips.IsMouseOver)
+            if (UserChips.IsMouseOver)
             {
                 AddChip();
             }
@@ -192,7 +200,7 @@ namespace BnB_ChipLibraryGui
         {
             var toSave = ChipLibrary.Instance.GetList(ChipLibrary.ChipListOptions.DisplayOwned,
                 ChipLibrary.LibrarySortOptions.Name, Chip.ChipRanges.All, false);
-            using (var chipFile = new StreamWriter(new FileStream("./userChips.dat", System.IO.FileMode.Create)))
+            using (var chipFile = new StreamWriter(new FileStream("./userChips.dat", FileMode.Create)))
             {
                 foreach (Chip chip in toSave)
                 {
@@ -217,7 +225,7 @@ namespace BnB_ChipLibraryGui
         private void JackOut()
         {
             FoundChips.Foreground = Brushes.Red;
-            int handSize = this.handWindow.ClearHand().numRemoved;
+            int handSize = handWindow.ClearHand().numRemoved;
             uint count = ChipLibrary.Instance.JackOut();
             FoundChips.Text = count + " chip(s) refreshed\n" + handSize + " chip(s) cleared from hand";
         }

@@ -136,6 +136,11 @@ namespace BnB_ChipLibraryGui
                 {
                     combinedImages.Add(elem, finalResult);
                 }
+                img3.Dispose();
+                foreach(var item in imagesToCombine)
+                {
+                    item.Dispose();
+                }
                 return finalResult;
             }
         }
@@ -149,7 +154,7 @@ namespace BnB_ChipLibraryGui
                 BitmapEncoder enc = new BmpBitmapEncoder();
                 enc.Frames.Add(BitmapFrame.Create(bitmapImage));
                 enc.Save(outStream);
-                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
+                Bitmap bitmap = new Bitmap(outStream);
 
                 return new Bitmap(bitmap);
             }
