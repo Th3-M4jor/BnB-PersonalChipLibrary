@@ -138,7 +138,7 @@ namespace BnB_ChipLibraryGui
         public List<Chip> Search(string name)
         {
             name = name.ToLower();
-            List<Chip> toReturn = new List<Chip>();
+            /*List<Chip> toReturn = new List<Chip>();
             foreach (var item in this.Library)
             {
                 if (item.Key.Contains(name))
@@ -146,7 +146,8 @@ namespace BnB_ChipLibraryGui
                     toReturn.Add(item.Value);
                 }
             }
-            return toReturn;
+            return toReturn;*/
+            return (from kvp in this.Library where kvp.Key.Contains(name) select kvp.Value).ToList();
         }
 
         public string GenerateExport()
