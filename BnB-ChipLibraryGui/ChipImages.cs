@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.IsolatedStorage;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
@@ -38,16 +39,22 @@ namespace BnB_ChipLibraryGui
 
         private const string woodURL = "http://vignette.wikia.nocookie.net/megaman/images/8/83/BC_Element_Wood.png";
 
-        private static string[] URLs =
+        private static readonly string[] URLs =
         {
             fireURL, aquaURL, elecURL, woodURL, windURL, swordURL, breakURL, cursorURL, recoveryURL, invisURL, objectURL, nullURL
+        };
+
+        private static readonly string[] imageFileNames =
+        {
+            "Fire.png", "Aqua.png", "Elec.png", "Wood.png", "Wind.png", "Sword.png", "Break.png",
+            "Cursor.png", "Recovery.png", "Invis.png", "Object.png", "Null.png"
         };
 
         private static readonly Lazy<ChipImages> lazy = new Lazy<ChipImages>(() => new ChipImages());
 
         private readonly BitmapImage[] images;
 
-        private Dictionary<Chip.ChipElements[], BitmapImage> combinedImages;
+        private readonly Dictionary<Chip.ChipElements[], BitmapImage> combinedImages;
 
         public static ChipImages Instance
         {
@@ -60,34 +67,7 @@ namespace BnB_ChipLibraryGui
         private ChipImages()
         {
             images = new BitmapImage[elementCount];
-            /*images[0] = new BitmapImage(new Uri(fireURL));
-
-            images[1] = new BitmapImage(new Uri(aquaURL));
-
-            images[2] = new BitmapImage(new Uri(elecURL));
-
-            images[3] = new BitmapImage(new Uri(woodURL));
-
-            images[4] = new BitmapImage(new Uri(windURL));
-
-            images[5] = new BitmapImage(new Uri(swordURL));
-
-            images[6] = new BitmapImage(new Uri(breakURL));
-
-            images[7] = new BitmapImage(new Uri(cursorURL));
-
-            images[8] = new BitmapImage(new Uri(recoveryURL));
-
-            images[9] = new BitmapImage(new Uri(invisURL));
-
-            images[10] = new BitmapImage(new Uri(objectURL));
-
-            images[11] = new BitmapImage(new Uri(nullURL));
-            */
-            for (int i = 0; i < elementCount; i++)
-            {
-                images[i] = this.DownloadBitmap(URLs[i]);
-            }
+            LoadImages();
 
             combinedImages = new Dictionary<Chip.ChipElements[], BitmapImage>();
         }
@@ -102,7 +82,7 @@ namespace BnB_ChipLibraryGui
                 }
                 else
                 {
-                    return getCombinedImage(elem);
+                    return GetCombinedImage(elem);
                 }
             }
         }
@@ -115,9 +95,9 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        private BitmapImage getCombinedImage(Chip.ChipElements[] elem)
+        private BitmapImage GetCombinedImage(Chip.ChipElements[] elem)
         {
-            if (this.combinedImages.TryGetValue(elem, out BitmapImage toReturn))
+            if (combinedImages.TryGetValue(elem, out BitmapImage toReturn))
             {
                 return toReturn;
             }
@@ -143,7 +123,7 @@ namespace BnB_ChipLibraryGui
 
                 Bitmap img3 = new Bitmap(width, height);
                 Graphics g = Graphics.FromImage(img3);
-                g.Clear(System.Drawing.Color.Transparent);
+                g.Clear(Color.Transparent);
                 width = 0;
                 for (int i = 0; i < elem.Length; i++)
                 {
@@ -154,13 +134,13 @@ namespace BnB_ChipLibraryGui
                 BitmapImage finalResult = ToBitmapImage(img3);
                 if (cacheResult)
                 {
-                    this.combinedImages.Add(elem, finalResult);
+                    combinedImages.Add(elem, finalResult);
                 }
                 return finalResult;
             }
         }
 
-        private Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
+        private static Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
         {
             // BitmapImage bitmapImage = new BitmapImage(new Uri("../Images/test.png", UriKind.Relative));
 
@@ -191,6 +171,52 @@ namespace BnB_ChipLibraryGui
 
                 return bitmapImage;
             }
+        }
+
+        private void LoadImages()
+        {
+            using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null))
+            {
+
+                for(int i = 0; i < images.Length; i++)
+                {
+                    if(isoStore.FileExists(imageFileNames[i]))
+                    {
+                        var stream = isoStore.OpenFile(imageFileNames[i], FileMode.Open);
+                        images[i] = MakeBitmapFromStream(stream);
+                        stream.Close();
+                    }
+                    else
+                    {
+                        images[i] = DownloadBitmap(URLs[i]);
+                        SaveBitmap(images[i], imageFileNames[i]);
+                    }
+                }
+                    
+            }
+        }
+
+        private void SaveBitmap(BitmapImage toSave, string filename)
+        {
+            var bitmap = BitmapImage2Bitmap(toSave);
+            using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null))
+            {
+                var stream = isoStore.OpenFile(filename, FileMode.Create);
+                bitmap.Save(stream, ImageFormat.Png);
+                stream.Close();
+            }
+            bitmap.Dispose();
+        }
+
+        private BitmapImage MakeBitmapFromStream(Stream streamSource)
+        {
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.StreamSource = streamSource;
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
         }
 
         private BitmapImage DownloadBitmap(string Url)

@@ -79,8 +79,8 @@ namespace BnB_ChipLibraryGui
 
         public List<Chip> GetList(ChipListOptions AllOrOwned, LibrarySortOptions sortOptions, Chip.ChipRanges rangeOption, bool invert)
         {
-            List<Chip> toReturn = new List<Chip>();
-            foreach (var item in this.Library)
+            List<Chip> toReturn;
+            /*foreach (var item in this.Library)
             {
                 if (item.Value.ChipCount != 0 || AllOrOwned == ChipListOptions.DisplayAll)
                 {
@@ -89,8 +89,21 @@ namespace BnB_ChipLibraryGui
                         toReturn.Add(item.Value);
                     }
                 }
+            }*/
+            if (AllOrOwned == ChipListOptions.DisplayAll)
+            {
+                toReturn = (from kvp in this.Library
+                            where (rangeOption == Chip.ChipRanges.All ||
+                            kvp.Value.ChipRange == rangeOption)
+                            select kvp.Value).ToList();
             }
-            //toReturn.OrderBy(a => a.Name).ThenBy(a => a.averageDamage);
+            else
+            {
+                toReturn = (from kvp in this.Library
+                            where (rangeOption == Chip.ChipRanges.All ||
+                            kvp.Value.ChipRange == rangeOption) && kvp.Value.ChipCount != 0
+                            select kvp.Value).ToList();
+            }
             switch (sortOptions)
             {
                 case LibrarySortOptions.AvgDamage:
