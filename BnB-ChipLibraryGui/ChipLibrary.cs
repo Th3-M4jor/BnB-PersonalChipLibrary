@@ -28,10 +28,7 @@ namespace BnB_ChipLibraryGui
 
         public static ChipLibrary Instance
         {
-            get
-            {
-                return lazy.Value;
-            }
+            get => lazy.Value;
         }
 
         private ChipLibrary()
@@ -40,7 +37,7 @@ namespace BnB_ChipLibraryGui
             try
             {
                 string json = wc.DownloadString("http://spartan364.hopto.org/chips.json");
-                json = json.Replace("â€™", "'");
+                json = json.Replace("â€™", "'"); //replace unicode apostraphe with ascii one
                 var result = JsonConvert.DeserializeObject<List<Chip>>(json);
                 Library = new Dictionary<string, Chip>(result.Count);
                 
@@ -76,15 +73,6 @@ namespace BnB_ChipLibraryGui
             bool exists = this.Library.TryGetValue(name.ToLower(), out Chip toReturn);
             if (exists) return toReturn;
             else return null;
-        }
-
-        public Task GetList(ChipListOptions AllOrOwned, LibrarySortOptions sortOptions, Chip.ChipRanges rangeOption, bool invert, Action<List<Chip>> action)
-        {
-            return Task.Run(() =>
-            {
-                var res = GetList(AllOrOwned, sortOptions, rangeOption, invert);
-                action(res);
-            });
         }
 
         public List<Chip> GetList(ChipListOptions AllOrOwned, LibrarySortOptions sortOptions, Chip.ChipRanges rangeOption, bool invert)

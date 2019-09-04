@@ -27,8 +27,8 @@ namespace BnB_ChipLibraryGui
             Standard, Mega, Giga
         }
 
-        public static SolidColorBrush MegaChipColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#90f8f8"));
-        public static SolidColorBrush GigaChipColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#f8c8d8"));
+        public static readonly SolidColorBrush MegaChipColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#90f8f8");
+        public static readonly SolidColorBrush GigaChipColor = (SolidColorBrush)new BrushConverter().ConvertFrom("#f8c8d8");
 
         [JsonProperty("All")]
         public string All { get; set; }

@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
+using System.Threading.Tasks;
 
 namespace BnB_ChipLibraryGui
 {
@@ -101,8 +102,10 @@ namespace BnB_ChipLibraryGui
                 listAll = ChipLibrary.ChipListOptions.DisplayOwned;
             }
             //UserChips.ItemsSource = ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc);
-            ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc, (List<Chip> res) =>
+            Task.Run(() =>
             {
+                //take sorting operation off of the UI thread
+                var res = ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc);
                 this.Dispatcher.Invoke(() =>
                 {
                     UserChips.ItemsSource = res;
@@ -127,7 +130,8 @@ namespace BnB_ChipLibraryGui
         public void GroupClosed()
         {
             this.Dispatcher.Invoke(() =>
-            {//this refer to form in WPF application
+            {
+                //Dispatcher must be used to invoke if UI elements may get updated off of the UI thread
                 grouphands = null;
             });
         }
@@ -217,7 +221,7 @@ namespace BnB_ChipLibraryGui
                 DataGridRow dgr = UserChips.ItemContainerGenerator.ContainerFromItem(UserChips.SelectedItem) as DataGridRow;
                 if (!dgr.IsMouseOver)
                 {
-                    (dgr as DataGridRow).IsSelected = false;
+                    dgr.IsSelected = false;
                 }
             }
         }

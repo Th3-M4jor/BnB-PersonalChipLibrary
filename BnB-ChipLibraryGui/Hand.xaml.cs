@@ -74,25 +74,13 @@ namespace BnB_ChipLibraryGui
             foreach (HandChip chip in ChipsInHand)
             {
                 if (chip.Used)
-                    HandToReturn[i] = chip.Name + '*';
+                    HandToReturn[i] = chip.Name + '*'; //asterisk to indicate it is used
                 else
                     HandToReturn[i] = chip.Name;
                 i++;
             }
             return JsonConvert.SerializeObject(HandToReturn);
-            /*StringBuilder build = new StringBuilder();
-            build.Append('[');
-            foreach (HandChip chip in ChipsInHand)
-            {
-                build.Append('\"');
-                build.Append(chip.Name);
-                build.Append('\"');
-                build.Append(", ");
-            }
-            build.Remove(build.Length - 2, 2);
-            build.Append(']');
-            return build.ToString();*/
-            //return "[" + string.Join(", ", ChipsInHand) + "]";
+            
         }
 
         public void AddChip(Chip newChip)
