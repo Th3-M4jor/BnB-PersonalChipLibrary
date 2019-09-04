@@ -23,7 +23,7 @@
         </Grid.RowDefinitions>
         <DataGrid Name="Players" Margin="0,10" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" CanUserSortColumns="False"
                   CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False"
-                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" SelectionMode="Extended">
+                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" SelectionMode="Extended" RowDetailsVisibilityMode="Visible">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True"
                                     HeaderStyle="{StaticResource CenterGridHeaderStyle}" Width="275">
