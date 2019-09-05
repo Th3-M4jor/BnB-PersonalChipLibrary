@@ -72,9 +72,10 @@ namespace BnB_ChipLibraryGui
             {
                 ShowNotOwned.IsChecked = true;
             }
-            LoadChips();
+
             this.SourceInitialized += (s, a) =>
             {
+                LoadChips();
                 this.handWindow = new Hand(playerHand)
                 {
                     Owner = this
@@ -106,12 +107,8 @@ namespace BnB_ChipLibraryGui
             {
                 //take sorting operation off of the UI thread
                 var res = ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc);
-                this.Dispatcher.Invoke(() =>
-                {
-                    UserChips.ItemsSource = res;
-                });
+                this.Dispatcher.Invoke(() => UserChips.ItemsSource = res);
             });
-     
         }
 
         public string GetHand()
@@ -289,41 +286,6 @@ namespace BnB_ChipLibraryGui
             LoadChips();
         }
 
-        private void SortClick(object sender, RoutedEventArgs e)
-        {
-            switch ((e.Source as FrameworkElement).Name)
-            {
-                case "SortByName":
-                    this.SortOption = ChipLibrary.LibrarySortOptions.Name;
-                    break;
-
-                case "SortByAvgDamage":
-                    this.SortOption = ChipLibrary.LibrarySortOptions.AvgDamage;
-                    break;
-
-                case "SortByMaxDamage":
-                    this.SortOption = ChipLibrary.LibrarySortOptions.MaxDamage;
-                    break;
-
-                case "SortByOwned":
-                    this.SortOption = ChipLibrary.LibrarySortOptions.Owned;
-                    break;
-
-                case "SortByElement":
-                    this.SortOption = ChipLibrary.LibrarySortOptions.Element;
-                    break;
-
-                case "SortByRange":
-                    this.SortOption = ChipLibrary.LibrarySortOptions.Range;
-                    break;
-
-                case "SortBySkill":
-                    this.SortOption = ChipLibrary.LibrarySortOptions.Skill;
-                    break;
-            }
-            LoadChips();
-        }
-
         private void ExportChips()
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
@@ -438,6 +400,44 @@ namespace BnB_ChipLibraryGui
                 return;
             }
             grouphands.Show();
+        }
+
+        private void CmbSortOption_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (CmbSortOption.SelectedIndex)
+            {
+                case 0:
+                    this.SortOption = ChipLibrary.LibrarySortOptions.Name;
+                    break;
+
+                case 1:
+                    this.SortOption = ChipLibrary.LibrarySortOptions.AvgDamage;
+                    break;
+
+                case 2:
+                    this.SortOption = ChipLibrary.LibrarySortOptions.MaxDamage;
+                    break;
+
+                case 3:
+                    this.SortOption = ChipLibrary.LibrarySortOptions.Owned;
+                    break;
+
+                case 4:
+                    this.SortOption = ChipLibrary.LibrarySortOptions.Element;
+                    break;
+
+                case 5:
+                    this.SortOption = ChipLibrary.LibrarySortOptions.Range;
+                    break;
+
+                case 6:
+                    this.SortOption = ChipLibrary.LibrarySortOptions.Skill;
+                    break;
+
+                default:
+                    return;
+            }
+            LoadChips();
         }
     }
 }
