@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace BnB_ChipLibraryGui
@@ -21,6 +22,10 @@ namespace BnB_ChipLibraryGui
         {
             Name, Element, AvgDamage, Owned, MaxDamage, Skill, Range
         }
+
+        public const string ChipUrl = "https://docs.google.com/feeds/download/documents/export/Export?id=1lvAKkymOplIJj6jS-N5__9aLIDXI6bETIMz01MK9MfY&exportFormat=txt";
+
+        public const string regexVal = @"(.+?)\s-\s(.+?)\s\|\s(.+?)\s\|\s(.+?)\s\|\s(\d+d\d+|--)\s?(?:damage)?\s?\|?\s?(Mega|Giga)?\s\|\s(\d+|\d+-\d+|--)\s?(?:hits?)?\.?";
 
         private static readonly Lazy<ChipLibrary> lazy = new Lazy<ChipLibrary>(() => new ChipLibrary());
 
@@ -40,8 +45,8 @@ namespace BnB_ChipLibraryGui
                 json = json.Replace("â€™", "'"); //replace unicode apostraphe with ascii one
                 var result = JsonConvert.DeserializeObject<List<Chip>>(json);
                 Library = new Dictionary<string, Chip>(result.Count);
-                
-                foreach(Chip chip in result)
+
+                foreach (Chip chip in result)
                 {
                     Library.Add(chip.Name.ToLower(), chip);
                 }
@@ -78,7 +83,7 @@ namespace BnB_ChipLibraryGui
         public List<Chip> GetList(ChipListOptions AllOrOwned, LibrarySortOptions sortOptions, Chip.ChipRanges rangeOption, bool invert)
         {
             List<Chip> toReturn;
-            
+
             if (AllOrOwned == ChipListOptions.DisplayAll)
             {
                 toReturn = (from kvp in this.Library

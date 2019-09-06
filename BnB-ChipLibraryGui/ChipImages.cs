@@ -78,11 +78,16 @@ namespace BnB_ChipLibraryGui
             {
                 if (elem.Length == 1)
                 {
+                    if (images[(int)elem[0]].IsFrozen == false)
+                        throw new Exception();
+
                     return images[(int)elem[0]];
                 }
                 else
                 {
-                    return GetCombinedImage(elem);
+                    var res = GetCombinedImage(elem);
+                    if (res.IsFrozen == false) throw new Exception();
+                    return res;
                 }
             }
         }
@@ -137,7 +142,7 @@ namespace BnB_ChipLibraryGui
                     combinedImages.Add(elem, finalResult);
                 }
                 img3.Dispose();
-                foreach(var item in imagesToCombine)
+                foreach (var item in imagesToCombine)
                 {
                     item.Dispose();
                 }
@@ -182,10 +187,9 @@ namespace BnB_ChipLibraryGui
         {
             using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null))
             {
-
-                for(int i = 0; i < images.Length; i++)
+                for (int i = 0; i < images.Length; i++)
                 {
-                    if(isoStore.FileExists(imageFileNames[i]))
+                    if (isoStore.FileExists(imageFileNames[i]))
                     {
                         var stream = isoStore.OpenFile(imageFileNames[i], FileMode.Open);
                         images[i] = MakeBitmapFromStream(stream);
@@ -197,7 +201,6 @@ namespace BnB_ChipLibraryGui
                         SaveBitmap(images[i], imageFileNames[i]);
                     }
                 }
-                    
             }
         }
 
