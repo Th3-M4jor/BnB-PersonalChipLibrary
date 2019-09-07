@@ -120,7 +120,7 @@ namespace BnB_ChipLibraryGui
         {
             if (grouphands != null)
             {
-                grouphands.HandUpdate(true);
+                Task.Run(() => grouphands.HandUpdate(true));
             }
         }
 
