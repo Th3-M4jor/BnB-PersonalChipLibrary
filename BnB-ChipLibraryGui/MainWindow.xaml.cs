@@ -75,7 +75,7 @@ namespace BnB_ChipLibraryGui
 
             this.SourceInitialized += (s, a) =>
             {
-                LoadChips();
+                LoadChips(chipsOwned);
                 this.handWindow = new Hand(playerHand)
                 {
                     Owner = this
@@ -94,11 +94,11 @@ namespace BnB_ChipLibraryGui
             };
         }
 
-        public void LoadChips()
+        public void LoadChips(bool forceDisplayAll = false)
         {
             ChipLibrary.ChipListOptions listAll = ChipLibrary.ChipListOptions.DisplayAll;
             if (ShowNotOwned == null) return;
-            if (ShowNotOwned.IsChecked.HasValue && ShowNotOwned.IsChecked == true)
+            if ((ShowNotOwned.IsChecked.HasValue && ShowNotOwned.IsChecked == true) || forceDisplayAll == true)
             {
                 listAll = ChipLibrary.ChipListOptions.DisplayOwned;
             }

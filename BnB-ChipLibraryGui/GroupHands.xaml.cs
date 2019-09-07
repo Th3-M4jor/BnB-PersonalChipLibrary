@@ -29,7 +29,7 @@ namespace BnB_ChipLibraryGui
         private long LastUpdated;
         private readonly Timer updateInterval;
         private readonly object updateLock = new object();
-        private static readonly int MinuteInMiliseconds = 60000;
+        private const int MinuteInMiliseconds = 60000;
         private bool sessionClosed = false;
         private string currentHand;
 
@@ -93,7 +93,7 @@ namespace BnB_ChipLibraryGui
             updateInterval.Elapsed += OnTimedEvent;
         }
 
-        private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             HandUpdate();
         }
@@ -112,7 +112,8 @@ namespace BnB_ChipLibraryGui
                     return;
                 string hand = null;
                 this.Dispatcher.Invoke(() =>
-                {//this refer to form in WPF application
+                {
+                    //Because this might not be done on the UI thread
                     hand = (this.Owner as MainWindow).GetHand();
                 });
                 using (System.Net.WebClient wc = new System.Net.WebClient())
@@ -143,11 +144,8 @@ namespace BnB_ChipLibraryGui
                         hands = ConvertToHands(result);
                     }
 
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        //because you cannot update window properties on a different thread
-                        this.Players.ItemsSource = hands;
-                    });
+                    //because you cannot update window properties on a different thread
+                    this.Dispatcher.Invoke(() => this.Players.ItemsSource = hands);
                 }
                 LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             } //release mutex
@@ -203,7 +201,13 @@ namespace BnB_ChipLibraryGui
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            HandUpdate(true);
+            if ((LastUpdated + (MinuteInMiliseconds / 24)) > DateTimeOffset.Now.ToUnixTimeMilliseconds())
+            {
+                MessageBox.Show("This was updated less than a minute ago");
+                return;
+            }
+
+            Task.Run(() => HandUpdate(true));
         }
 
         protected class GroupedHand

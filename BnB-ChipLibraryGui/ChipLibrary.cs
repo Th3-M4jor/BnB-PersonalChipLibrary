@@ -86,14 +86,14 @@ namespace BnB_ChipLibraryGui
 
             if (AllOrOwned == ChipListOptions.DisplayAll)
             {
-                toReturn = (from kvp in this.Library
+                toReturn = (from kvp in this.Library.AsParallel().WithMergeOptions(ParallelMergeOptions.FullyBuffered)
                             where rangeOption == Chip.ChipRanges.All ||
                             kvp.Value.ChipRange == rangeOption
                             select kvp.Value).ToList();
             }
             else
             {
-                toReturn = (from kvp in this.Library
+                toReturn = (from kvp in this.Library.AsParallel().WithMergeOptions(ParallelMergeOptions.FullyBuffered)
                             where (rangeOption == Chip.ChipRanges.All ||
                             kvp.Value.ChipRange == rangeOption) && kvp.Value.ChipCount != 0
                             select kvp.Value).ToList();
@@ -101,28 +101,28 @@ namespace BnB_ChipLibraryGui
             switch (sortOptions)
             {
                 case LibrarySortOptions.AvgDamage:
-                    if (invert) return toReturn.OrderBy(a => a.AverageDamage).ThenBy(a => a.Name).ToList();
-                    return toReturn.OrderByDescending(a => a.AverageDamage).ThenBy(a => a.Name).ToList();
+                    if (invert) return toReturn.OrderBy(a => a.AverageDamage).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
+                    return toReturn.OrderByDescending(a => a.AverageDamage).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
 
                 case LibrarySortOptions.Owned:
                     if (invert) return toReturn.OrderBy(a => a.ChipType).ThenBy(a => a.ChipCount).ThenBy(a => a.Name).ToList();
                     return toReturn.OrderBy(a => a.ChipType).ThenByDescending(a => a.ChipCount).ThenBy(a => a.Name).ToList();
 
                 case LibrarySortOptions.Element:
-                    if (invert) return toReturn.OrderByDescending(a => a.ChipElement[0]).ThenBy(a => a.Name).ToList();
-                    return toReturn.OrderBy(a => a.ChipElement[0]).ThenBy(a => a.Name).ToList();
+                    if (invert) return toReturn.OrderByDescending(a => a.ChipElement[0]).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
+                    return toReturn.OrderBy(a => a.ChipElement[0]).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
 
                 case LibrarySortOptions.MaxDamage:
                     if (invert) return toReturn.OrderBy(a => a.MaxDamage).ThenBy(a => a.Name).ToList();
                     return toReturn.OrderByDescending(a => a.MaxDamage).ThenBy(a => a.Name).ToList();
 
                 case LibrarySortOptions.Skill:
-                    if (invert) return toReturn.OrderByDescending(a => a.ChipSkill).ThenBy(a => a.Name).ToList();
-                    return toReturn.OrderBy(a => a.ChipSkill).ThenBy(a => a.Name).ToList();
+                    if (invert) return toReturn.OrderByDescending(a => a.ChipSkill).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
+                    return toReturn.OrderBy(a => a.ChipSkill).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
 
                 case LibrarySortOptions.Range:
-                    if (invert) return toReturn.OrderByDescending(a => a.ChipRange).ThenBy(a => a.Name).ToList();
-                    return toReturn.OrderBy(a => a.ChipRange).ThenBy(a => a.Name).ToList();
+                    if (invert) return toReturn.OrderByDescending(a => a.ChipRange).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
+                    return toReturn.OrderBy(a => a.ChipRange).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
 
                 case LibrarySortOptions.Name:
                 default:
@@ -154,7 +154,9 @@ namespace BnB_ChipLibraryGui
                 }
             }
             return toReturn;*/
-            return (from kvp in this.Library where kvp.Key.Contains(name) select kvp.Value).ToList();
+            return (from kvp in this.Library.AsParallel().WithMergeOptions(ParallelMergeOptions.FullyBuffered)
+                    where kvp.Key.Contains(name)
+                    select kvp.Value).ToList();
         }
 
         public string GenerateExport()
