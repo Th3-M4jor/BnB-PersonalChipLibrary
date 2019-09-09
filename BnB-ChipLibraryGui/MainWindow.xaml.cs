@@ -227,10 +227,9 @@ namespace BnB_ChipLibraryGui
         {
             FoundChips.Foreground = Brushes.Red;
             int handSize = handWindow.ClearHand().numRemoved;
-            //uint count = ChipLibrary.Instance.JackOut();
-            //FoundChips.Text = count + " chip(s) refreshed\n" + handSize + " chip(s) cleared from hand";
-            ChipLibrary.Instance.JackOut((count) =>
+            Task.Run(() =>
             {
+                uint count = ChipLibrary.Instance.JackOut();
                 this.Dispatcher.Invoke(() =>
                 {
                     FoundChips.Text = count + " chip(s) refreshed\n" + handSize + " chip(s) cleared from hand";
@@ -304,11 +303,14 @@ namespace BnB_ChipLibraryGui
             };
             try
             {
-                string toWrite = ChipLibrary.Instance.GenerateExport();
-
                 if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    File.WriteAllText(saveFileDialog.FileName, toWrite);
+                    string fName = saveFileDialog.FileName;
+                    Task.Run(() =>
+                    {
+                        string toWrite = ChipLibrary.Instance.GenerateExport();
+                        File.WriteAllText(fName, toWrite);
+                    });
                 }
             }
             catch (Exception e)
@@ -374,6 +376,7 @@ namespace BnB_ChipLibraryGui
                 return;
             }
             grouphands.Show();
+
             //MessageBox.Show("Group Joined");
         }
 

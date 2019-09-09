@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Security.Cryptography;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -29,7 +30,7 @@ namespace BnB_ChipLibraryGui
 
         private static readonly Lazy<ChipLibrary> lazy = new Lazy<ChipLibrary>(() => new ChipLibrary());
 
-        private readonly Dictionary<string, Chip> Library;
+        private readonly ConcurrentDictionary<string, Chip> Library;
 
         public static ChipLibrary Instance
         {
@@ -44,11 +45,11 @@ namespace BnB_ChipLibraryGui
                 string json = wc.DownloadString("http://spartan364.hopto.org/chips.json");
                 json = json.Replace("â€™", "'"); //replace unicode apostraphe with ascii one
                 var result = JsonConvert.DeserializeObject<List<Chip>>(json);
-                Library = new Dictionary<string, Chip>(result.Count);
+                Library = new ConcurrentDictionary<string, Chip>();
 
                 foreach (Chip chip in result)
                 {
-                    Library.Add(chip.Name.ToLower(), chip);
+                    Library.TryAdd(chip.Name.ToLower(), chip);
                 }
                 SaveBackup(json);
             }
@@ -61,10 +62,10 @@ namespace BnB_ChipLibraryGui
                     throw new NullReferenceException("Cannot access server and no backup");
                 }
                 var result = JsonConvert.DeserializeObject<List<Chip>>(json);
-                this.Library = new Dictionary<string, Chip>(result.Count);
+                this.Library = new ConcurrentDictionary<string, Chip>();
                 result.ForEach(delegate (Chip aChip)
                 {
-                    this.Library.Add(aChip.Name.ToLower(), aChip);
+                    this.Library.TryAdd(aChip.Name.ToLower(), aChip);
                 });
             }
             finally
@@ -131,19 +132,15 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        public void JackOut(Action<uint> callback)
+        public uint JackOut()
         {
-
-            Task.Run(() =>
+            uint countRefreshed = 0;
+            foreach (var chip in this.Library)
             {
-                uint countRefreshed = 0;
-                foreach (var chip in this.Library)
-                {
-                    countRefreshed += chip.Value.UsedInBattle;
-                    chip.Value.UsedInBattle = 0;
-                }
-                callback(countRefreshed);
-            });
+                countRefreshed += chip.Value.UsedInBattle;
+                chip.Value.UsedInBattle = 0;
+            }
+            return countRefreshed;
         }
 
         public List<Chip> Search(string name)
