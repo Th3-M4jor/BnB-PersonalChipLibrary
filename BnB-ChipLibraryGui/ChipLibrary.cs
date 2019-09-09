@@ -131,15 +131,19 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        public uint JackOut()
+        public void JackOut(Action<uint> callback)
         {
-            uint countRefreshed = 0;
-            foreach (var chip in this.Library)
+
+            Task.Run(() =>
             {
-                countRefreshed += chip.Value.UsedInBattle;
-                chip.Value.UsedInBattle = 0;
-            }
-            return countRefreshed;
+                uint countRefreshed = 0;
+                foreach (var chip in this.Library)
+                {
+                    countRefreshed += chip.Value.UsedInBattle;
+                    chip.Value.UsedInBattle = 0;
+                }
+                callback(countRefreshed);
+            });
         }
 
         public List<Chip> Search(string name)

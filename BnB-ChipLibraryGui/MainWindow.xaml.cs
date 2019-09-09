@@ -227,8 +227,15 @@ namespace BnB_ChipLibraryGui
         {
             FoundChips.Foreground = Brushes.Red;
             int handSize = handWindow.ClearHand().numRemoved;
-            uint count = ChipLibrary.Instance.JackOut();
-            FoundChips.Text = count + " chip(s) refreshed\n" + handSize + " chip(s) cleared from hand";
+            //uint count = ChipLibrary.Instance.JackOut();
+            //FoundChips.Text = count + " chip(s) refreshed\n" + handSize + " chip(s) cleared from hand";
+            ChipLibrary.Instance.JackOut((count) =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    FoundChips.Text = count + " chip(s) refreshed\n" + handSize + " chip(s) cleared from hand";
+                });
+            });
         }
 
         private void RangeClick(object sender, RoutedEventArgs e)
