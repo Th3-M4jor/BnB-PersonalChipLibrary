@@ -358,24 +358,29 @@ namespace BnB_ChipLibraryGui
                 return;
             }
 
-            try
+            grouphands = new GroupHands(this, DMName, NaviName, false);
+
+            Task.Run(() =>
             {
-                grouphands = new GroupHands(this, DMName, NaviName, false);
-            }
-            catch (Exception except)
-            {
-                if (except.Message == "Name Taken")
+                try
                 {
-                    MessageBox.Show("That name is already taken, try a different one");
+                    grouphands.Init();
                 }
-                else
+                catch (Exception except)
                 {
-                    MessageBox.Show("An error has occurred, inform Major");
+                    if (except.Message == "Name Taken")
+                    {
+                        MessageBox.Show("That name is already taken, try a different one");
+                    }
+                    else
+                    {
+                        MessageBox.Show("An error has occurred, inform Major");
+                    }
+                    grouphands = null;
+                    return;
                 }
-                grouphands = null;
-                return;
-            }
-            grouphands.Show();
+                this.Dispatcher.Invoke(() => grouphands.Show());
+            });
 
             //MessageBox.Show("Group Joined");
         }
@@ -399,17 +404,24 @@ namespace BnB_ChipLibraryGui
                 MessageBox.Show("That session already exists, try a different name");
                 return;
             }
-            try
+
+            grouphands = new GroupHands(this, DMName, DMName, true);
+
+            Task.Run(() => //move more work off of the main thread
             {
-                grouphands = new GroupHands(this, DMName, DMName, true);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("An error has occurred, inform Major");
-                grouphands = null;
-                return;
-            }
-            grouphands.Show();
+                try
+                {
+                    grouphands.Init();
+                }
+                catch(Exception except)
+                {
+                    MessageBox.Show("An error has occurred, inform Major");
+                    MessageBox.Show(except.Message);
+                    grouphands = null;
+                    return;
+                }
+                this.Dispatcher.Invoke(() => grouphands.Show());
+            });
         }
 
         private void CmbSortOption_SelectionChanged(object sender, SelectionChangedEventArgs e)

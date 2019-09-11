@@ -23,23 +23,33 @@ namespace BnB_ChipLibraryGui
     {
         public string PlayerName { get; private set; }
         public string DMName { get; private set; }
-        public bool IsCreator { get; private set; }
+        public readonly bool isCreator;
         private static readonly string ChipPage = "http://spartan364.hopto.org/handupdate.php";
         private static readonly string createGroupPage = "http://spartan364.hopto.org/reqid.php";
         private long LastUpdated;
-        private readonly Timer updateInterval;
+        private Timer updateInterval;
         private readonly object updateLock = new object();
         private const int MinuteInMiliseconds = 60000;
         private bool sessionClosed = false;
         private string currentHand;
+        public bool initialized = false;
 
         public GroupHands(Window owner, string DMName, string PlayerName, bool isCreator)
         {
             InitializeComponent();
+            this.Hide();
             this.Owner = owner;
             this.PlayerName = PlayerName;
             this.DMName = DMName;
-            this.IsCreator = isCreator;
+            this.isCreator = isCreator;
+        }
+
+        public void Init()
+        {
+            if(initialized)
+            {
+                throw new Exception("Already initialized");
+            }
             if (isCreator)
             {
                 using (System.Net.WebClient wc = new System.Net.WebClient())
@@ -56,8 +66,7 @@ namespace BnB_ChipLibraryGui
                     }
                 }
             }
-            string hand = (this.Owner as MainWindow).GetHand();
-            currentHand = hand;
+            this.Dispatcher.Invoke(() => currentHand = (this.Owner as MainWindow).GetHand());
             using (System.Net.WebClient wc = new System.Net.WebClient())
             {
                 System.Collections.Specialized.NameValueCollection postData =
@@ -65,7 +74,7 @@ namespace BnB_ChipLibraryGui
                     {
                             { "DMName", DMName },
                             {"PlayerName", PlayerName },
-                            {"hand", hand},
+                            {"hand", currentHand},
                             {"join", "true"}
                     };
                 string result = Encoding.UTF8.GetString(wc.UploadValues(ChipPage, postData));
@@ -83,7 +92,9 @@ namespace BnB_ChipLibraryGui
                     hands = ConvertToHands(result);
                 }
 
-                this.Players.ItemsSource = hands;
+                this.Dispatcher.Invoke(() => { 
+                    this.Players.ItemsSource = hands;
+                });
             }
             LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             updateInterval = new Timer(MinuteInMiliseconds)
@@ -106,6 +117,7 @@ namespace BnB_ChipLibraryGui
         public void HandUpdate(bool manual = false)
         {
             if (sessionClosed) return;
+
             lock (updateLock) //acquire mutex
             {
                 if (manual == false && (LastUpdated + MinuteInMiliseconds) > DateTimeOffset.Now.ToUnixTimeMilliseconds())
