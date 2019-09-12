@@ -416,39 +416,40 @@ namespace BnB_ChipLibraryGui
         {
             bool chipsOwned = false;
             List<HandChip> playerHand = new List<HandChip>();
-            if (File.Exists("./userChips.dat"))
+            if (!File.Exists("./userChips.dat"))
             {
-                using (var chipFile = File.OpenText("./userChips.dat"))
+                return (playerHand, chipsOwned);
+            }
+            using (var chipFile = File.OpenText("./userChips.dat"))
+            {
+                while (!chipFile.EndOfStream)
                 {
-                    while (!chipFile.EndOfStream)
+                    var line = chipFile.ReadLine();
+                    line.Trim();
+                    var input = line.Split(':');
+                    sbyte count = sbyte.Parse(input[1]);
+                    byte used = byte.Parse(input[2]);
+                    Chip toModify = ChipLibrary.Instance.GetChip(input[0]);
+                    if (toModify == null)
                     {
-                        var line = chipFile.ReadLine();
-                        line.Trim();
-                        var input = line.Split(':');
-                        sbyte count = sbyte.Parse(input[1]);
-                        byte used = byte.Parse(input[2]);
-                        Chip toModify = ChipLibrary.Instance.GetChip(input[0]);
-                        if (toModify == null)
-                        {
-                            MessageBox.Show("The chip " + input[0] + " doesn't exist, ignoring", "ChipLibrary", MessageBoxButton.OK);
-                            continue;
-                        }
-                        toModify.ChipCount = count;
-                        toModify.UsedInBattle = used;
-                        if (input.Length == 4)
-                        {
-                            byte numInHand = byte.Parse(input[3]);
-                            toModify.NumInHand = numInHand;
-                            for (int i = 0; i < numInHand; i++)
-                            {
-                                playerHand.Add(toModify.MakeHandChip());
-                            }
-                        }
-                        chipsOwned = true;
+                        MessageBox.Show("The chip " + input[0] + " doesn't exist, ignoring", "ChipLibrary", MessageBoxButton.OK);
+                        continue;
                     }
+                    toModify.ChipCount = count;
+                    toModify.UsedInBattle = used;
+                    if (input.Length == 4)
+                    {
+                        byte numInHand = byte.Parse(input[3]);
+                        toModify.NumInHand = numInHand;
+                        for (int i = 0; i < numInHand; i++)
+                        {
+                            playerHand.Add(toModify.MakeHandChip());
+                        }
+                    }
+                    chipsOwned = true;
                 }
             }
-            return (playerHand,chipsOwned);
+            return (playerHand, chipsOwned);
         }
 
     }
