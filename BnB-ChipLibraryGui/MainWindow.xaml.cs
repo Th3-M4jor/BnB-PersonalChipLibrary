@@ -17,7 +17,6 @@ namespace BnB_ChipLibraryGui
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static readonly System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
 
         private Hand handWindow;
         private SearchWindow searchWindow;
@@ -33,40 +32,8 @@ namespace BnB_ChipLibraryGui
             this.SortOption = ChipLibrary.LibrarySortOptions.Name;
             this.RangeOption = Chip.ChipRanges.All;
             InitializeComponent();
-            bool chipsOwned = false;
-            List<HandChip> playerHand = new List<HandChip>();
-            if (File.Exists("./userChips.dat"))
-            {
-                using (var chipFile = File.OpenText("./userChips.dat"))
-                {
-                    while (!chipFile.EndOfStream)
-                    {
-                        var line = chipFile.ReadLine();
-                        line.Trim();
-                        var input = line.Split(':');
-                        sbyte count = sbyte.Parse(input[1]);
-                        byte used = byte.Parse(input[2]);
-                        Chip toModify = ChipLibrary.Instance.GetChip(input[0]);
-                        if (toModify == null)
-                        {
-                            MessageBox.Show("The chip " + input[0] + " doesn't exist, ignoring", "ChipLibrary", MessageBoxButton.OK);
-                            continue;
-                        }
-                        toModify.ChipCount = count;
-                        toModify.UsedInBattle = used;
-                        if (input.Length == 4)
-                        {
-                            byte numInHand = byte.Parse(input[3]);
-                            toModify.NumInHand = numInHand;
-                            for (int i = 0; i < numInHand; i++)
-                            {
-                                playerHand.Add(toModify.MakeHandChip());
-                            }
-                        }
-                        chipsOwned = true;
-                    }
-                }
-            }
+
+            var (playerHand, chipsOwned) = this.LoadChipFile();
 
             if (chipsOwned)
             {
@@ -94,21 +61,16 @@ namespace BnB_ChipLibraryGui
             };
         }
 
-        public void LoadChips(bool forceDisplayAll = false)
+        public async void LoadChips(bool forceDisplayOwned = false)
         {
             ChipLibrary.ChipListOptions listAll = ChipLibrary.ChipListOptions.DisplayAll;
             if (ShowNotOwned == null) return;
-            if ((ShowNotOwned.IsChecked.HasValue && ShowNotOwned.IsChecked == true) || forceDisplayAll == true)
+            if ((ShowNotOwned.IsChecked.HasValue && ShowNotOwned.IsChecked == true) || forceDisplayOwned == true)
             {
                 listAll = ChipLibrary.ChipListOptions.DisplayOwned;
             }
-            //UserChips.ItemsSource = ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc);
-            Task.Run(() =>
-            {
-                //take sorting operation off of the UI thread
-                var res = ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc);
-                this.Dispatcher.Invoke(() => UserChips.ItemsSource = res);
-            });
+            var res = await ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc);
+            UserChips.ItemsSource = res;
         }
 
         public string GetHand()
@@ -197,15 +159,16 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        private void ExitClicked(object sender, CancelEventArgs e)
+        private async void ExitClicked(object sender, CancelEventArgs e)
         {
-            var toSave = ChipLibrary.Instance.GetList(ChipLibrary.ChipListOptions.DisplayOwned,
+            var toSave = await ChipLibrary.Instance.GetList(ChipLibrary.ChipListOptions.DisplayOwned,
                 ChipLibrary.LibrarySortOptions.Name, Chip.ChipRanges.All, false);
-            using (var chipFile = new StreamWriter(new FileStream("./userChips.dat", FileMode.Create)))
+            using (var chipFile = File.CreateText("./userChips.dat"))
             {
                 foreach (Chip chip in toSave)
                 {
-                    chipFile.WriteLine("{0}:{1}:{2}:{3}", chip.Name, chip.ChipCount, chip.UsedInBattle, chip.NumInHand);
+                    string toWrite = string.Format("{0}:{1}:{2}:{3}", chip.Name, chip.ChipCount, chip.UsedInBattle, chip.NumInHand);
+                    await chipFile.WriteLineAsync(toWrite);
                 }
             }
             handWindow.Close();
@@ -223,18 +186,12 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        private void JackOut()
+        private async void JackOut()
         {
             FoundChips.Foreground = Brushes.Red;
             int handSize = handWindow.ClearHand().numRemoved;
-            Task.Run(() =>
-            {
-                uint count = ChipLibrary.Instance.JackOut();
-                this.Dispatcher.Invoke(() =>
-                {
-                    FoundChips.Text = count + " chip(s) refreshed\n" + handSize + " chip(s) cleared from hand";
-                });
-            });
+            uint count = await ChipLibrary.Instance.JackOut();
+            FoundChips.Text = count + " chip(s) refreshed\n" + handSize + " chip(s) cleared from hand";
         }
 
         private void RangeClick(object sender, RoutedEventArgs e)
@@ -292,7 +249,7 @@ namespace BnB_ChipLibraryGui
             LoadChips();
         }
 
-        private void ExportChips()
+        private async void ExportChips()
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
@@ -306,11 +263,12 @@ namespace BnB_ChipLibraryGui
                 if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     string fName = saveFileDialog.FileName;
-                    Task.Run(() =>
-                    {
-                        string toWrite = ChipLibrary.Instance.GenerateExport();
-                        File.WriteAllText(fName, toWrite);
-                    });
+                    string toWrite = await ChipLibrary.Instance.GenerateExport();
+                    //File.WriteAllText(fName, toWrite);
+                    StreamWriter writer = File.CreateText(fName);
+                    await writer.WriteAsync(toWrite);
+                    await writer.FlushAsync();
+                    writer.Dispose();
                 }
             }
             catch (Exception e)
@@ -329,7 +287,7 @@ namespace BnB_ChipLibraryGui
             LoadChips();
         }
 
-        private void JoinClick(object sender, RoutedEventArgs e)
+        private async void JoinClick(object sender, RoutedEventArgs e)
         {
             if (this.grouphands != null && this.grouphands.IsSessionClosed() == false)
             {
@@ -352,40 +310,36 @@ namespace BnB_ChipLibraryGui
                 return;
             }
             string DMName = questionWindow.GetAnswer();
-            if (!GroupHands.CheckSessionExists(DMName))
+            if (!await GroupHands.CheckSessionExists(DMName))
             {
                 MessageBox.Show("That session does not yet exist, check the group name and try again");
                 return;
             }
 
             grouphands = new GroupHands(this, DMName, NaviName, false);
-
-            Task.Run(() =>
+            try
             {
-                try
+                await grouphands.Init();
+            }
+            catch (Exception except)
+            {
+                if (except.Message == "Name Taken")
                 {
-                    grouphands.Init();
+                    MessageBox.Show("That name is already taken, try a different one");
                 }
-                catch (Exception except)
+                else
                 {
-                    if (except.Message == "Name Taken")
-                    {
-                        MessageBox.Show("That name is already taken, try a different one");
-                    }
-                    else
-                    {
-                        MessageBox.Show("An error has occurred, inform Major");
-                    }
-                    grouphands = null;
-                    return;
+                    MessageBox.Show("An error has occurred, inform Major");
                 }
-                this.Dispatcher.Invoke(() => grouphands.Show());
-            });
+                grouphands = null;
+                return;
+            }
+            grouphands.Show();
 
             //MessageBox.Show("Group Joined");
         }
 
-        private void CreateClick(object sender, RoutedEventArgs e)
+        private async void CreateClick(object sender, RoutedEventArgs e)
         {
             if (this.grouphands != null && this.grouphands.IsSessionClosed() == false)
             {
@@ -399,29 +353,25 @@ namespace BnB_ChipLibraryGui
                 return;
             }
             string DMName = questionWindow.GetAnswer();
-            if (GroupHands.CheckSessionExists(DMName))
+            if (await GroupHands.CheckSessionExists(DMName))
             {
                 MessageBox.Show("That session already exists, try a different name");
                 return;
             }
 
             grouphands = new GroupHands(this, DMName, DMName, true);
-
-            Task.Run(() => //move more work off of the main thread
+            try
             {
-                try
-                {
-                    grouphands.Init();
-                }
-                catch(Exception except)
-                {
-                    MessageBox.Show("An error has occurred, inform Major");
-                    MessageBox.Show(except.Message);
-                    grouphands = null;
-                    return;
-                }
-                this.Dispatcher.Invoke(() => grouphands.Show());
-            });
+                await grouphands.Init();
+            }
+            catch (Exception except)
+            {
+                MessageBox.Show("An error has occurred, inform Major");
+                MessageBox.Show(except.Message);
+                grouphands = null;
+                return;
+            }
+            grouphands.Show();
         }
 
         private void CmbSortOption_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -461,5 +411,45 @@ namespace BnB_ChipLibraryGui
             }
             LoadChips();
         }
+
+        private (List<HandChip> playerHand, bool ownsChips) LoadChipFile()
+        {
+            bool chipsOwned = false;
+            List<HandChip> playerHand = new List<HandChip>();
+            if (File.Exists("./userChips.dat"))
+            {
+                using (var chipFile = File.OpenText("./userChips.dat"))
+                {
+                    while (!chipFile.EndOfStream)
+                    {
+                        var line = chipFile.ReadLine();
+                        line.Trim();
+                        var input = line.Split(':');
+                        sbyte count = sbyte.Parse(input[1]);
+                        byte used = byte.Parse(input[2]);
+                        Chip toModify = ChipLibrary.Instance.GetChip(input[0]);
+                        if (toModify == null)
+                        {
+                            MessageBox.Show("The chip " + input[0] + " doesn't exist, ignoring", "ChipLibrary", MessageBoxButton.OK);
+                            continue;
+                        }
+                        toModify.ChipCount = count;
+                        toModify.UsedInBattle = used;
+                        if (input.Length == 4)
+                        {
+                            byte numInHand = byte.Parse(input[3]);
+                            toModify.NumInHand = numInHand;
+                            for (int i = 0; i < numInHand; i++)
+                            {
+                                playerHand.Add(toModify.MakeHandChip());
+                            }
+                        }
+                        chipsOwned = true;
+                    }
+                }
+            }
+            return (playerHand,chipsOwned);
+        }
+
     }
 }

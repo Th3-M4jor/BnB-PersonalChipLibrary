@@ -21,6 +21,8 @@ namespace BnB_ChipLibraryGui
     /// </summary>
     public partial class GroupHands : Window
     {
+        public static readonly System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
+
         public string PlayerName { get; private set; }
         public string DMName { get; private set; }
         public readonly bool isCreator;
@@ -44,58 +46,52 @@ namespace BnB_ChipLibraryGui
             this.isCreator = isCreator;
         }
 
-        public void Init()
+        public async Task Init()
         {
-            if(initialized)
+            if (initialized)
             {
                 throw new Exception("Already initialized");
             }
             if (isCreator)
             {
-                using (System.Net.WebClient wc = new System.Net.WebClient())
-                {
-                    System.Collections.Specialized.NameValueCollection postData =
-                        new System.Collections.Specialized.NameValueCollection()
-                        {
-                            { "DMName", DMName }
-                        };
-                    string result = Encoding.UTF8.GetString(wc.UploadValues(createGroupPage, postData));
-                    if (!result.Equals("ready", StringComparison.OrdinalIgnoreCase))
+                var stringContent = new System.Net.Http.FormUrlEncodedContent(new[]
                     {
-                        throw new Exception("ServerError");
-                    }
-                }
-            }
-            this.Dispatcher.Invoke(() => currentHand = (this.Owner as MainWindow).GetHand());
-            using (System.Net.WebClient wc = new System.Net.WebClient())
-            {
-                System.Collections.Specialized.NameValueCollection postData =
-                    new System.Collections.Specialized.NameValueCollection()
-                    {
-                            { "DMName", DMName },
-                            {"PlayerName", PlayerName },
-                            {"hand", currentHand},
-                            {"join", "true"}
-                    };
-                string result = Encoding.UTF8.GetString(wc.UploadValues(ChipPage, postData));
-                if (result.Equals("closed", StringComparison.OrdinalIgnoreCase))
+                        new KeyValuePair<string, string>("DMName", DMName),
+                    });
+                var res = await client.PostAsync(createGroupPage, stringContent);
+                string textResult = await res.Content.ReadAsStringAsync();
+                if (!textResult.Equals("ready", StringComparison.OrdinalIgnoreCase))
                 {
                     throw new Exception("ServerError");
                 }
-                if (result.Equals("taken", StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new Exception("Name Taken");
-                }
-                List<GroupedHand> hands = null;
-                if (!result.Equals("empty", StringComparison.OrdinalIgnoreCase))
-                {
-                    hands = ConvertToHands(result);
-                }
-
-                this.Dispatcher.Invoke(() => { 
-                    this.Players.ItemsSource = hands;
-                });
             }
+            this.Dispatcher.Invoke(() => currentHand = (this.Owner as MainWindow).GetHand());
+            var postContent = new System.Net.Http.FormUrlEncodedContent(new[]
+                {
+                        new KeyValuePair<string, string>("DMName", DMName),
+                        new KeyValuePair<string, string>("PlayerName", PlayerName),
+                        new KeyValuePair<string, string>("hand", currentHand),
+                        new KeyValuePair<string, string>("join", "true")
+                });
+            string postRes = await (await client.PostAsync(ChipPage, postContent)).Content.ReadAsStringAsync();
+            if (postRes.Equals("closed", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new Exception("ServerError");
+            }
+            if (postRes.Equals("taken", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new Exception("Name Taken");
+            }
+            List<GroupedHand> hands = null;
+            if (!postRes.Equals("empty", StringComparison.OrdinalIgnoreCase))
+            {
+                hands = ConvertToHands(postRes);
+            }
+
+            this.Dispatcher.Invoke(() =>
+            {
+                this.Players.ItemsSource = hands;
+            });
             LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             updateInterval = new Timer(MinuteInMiliseconds)
             {
@@ -163,21 +159,17 @@ namespace BnB_ChipLibraryGui
             } //release mutex
         }
 
-        public static bool CheckSessionExists(string DMName)
+        public static async Task<bool> CheckSessionExists(string DMName)
         {
-            using (System.Net.WebClient wc = new System.Net.WebClient())
+            var postContent = new System.Net.Http.FormUrlEncodedContent(new[]
             {
-                System.Collections.Specialized.NameValueCollection postData =
-                new System.Collections.Specialized.NameValueCollection()
-                {
-                    { "DMName", DMName },
-                    { "PlayerName", DMName }
-                };
-                string result = Encoding.UTF8.GetString(wc.UploadValues(ChipPage, postData));
-                if (result.Equals("closed", StringComparison.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
+                new KeyValuePair<string, string>("DMName", DMName),
+                new KeyValuePair<string, string>("PlayerName", DMName)
+            });
+            string result = await (await client.PostAsync(ChipPage, postContent)).Content.ReadAsStringAsync();
+            if (result.Equals("closed", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
             }
             return true;
         }
