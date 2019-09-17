@@ -228,10 +228,13 @@ namespace BnB_ChipLibraryGui
         private BitmapImage DownloadBitmap(string Url)
         {
             byte[] data;
-            using (System.Net.WebClient wc = new System.Net.WebClient())
-            {
-                data = wc.DownloadData(Url);
-            }
+            //using (System.Net.WebClient wc = new System.Net.WebClient())
+            //{
+            //data = wc.DownloadData(Url);
+            var task = MainWindow.client.GetByteArrayAsync(Url);
+            task.Wait();
+            data = task.Result;
+            //}
             using (var stream = new MemoryStream(data))
             {
                 var bitmap = new BitmapImage();

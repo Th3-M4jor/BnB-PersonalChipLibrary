@@ -17,6 +17,7 @@ namespace BnB_ChipLibraryGui
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static readonly System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
 
         private Hand handWindow;
         private SearchWindow searchWindow;

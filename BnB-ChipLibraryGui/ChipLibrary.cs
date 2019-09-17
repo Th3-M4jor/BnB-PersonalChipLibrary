@@ -39,10 +39,13 @@ namespace BnB_ChipLibraryGui
 
         private ChipLibrary()
         {
-            System.Net.WebClient wc = new System.Net.WebClient();
+            //System.Net.WebClient wc = new System.Net.WebClient();
             try
             {
-                string json = wc.DownloadString("http://spartan364.hopto.org/chips.json");
+                //string json = wc.DownloadString("http://spartan364.hopto.org/chips.json");
+                var task = MainWindow.client.GetStringAsync("http://spartan364.hopto.org/chips.json");
+                task.Wait();
+                string json = task.Result;
                 json = json.Replace("â€™", "'"); //replace unicode apostraphe with ascii one
                 var result = JsonConvert.DeserializeObject<List<Chip>>(json);
                 Library = new ConcurrentDictionary<string, Chip>();
@@ -53,7 +56,7 @@ namespace BnB_ChipLibraryGui
                 }
                 SaveBackup(json);
             }
-            catch (Exception e) when (e is System.Net.WebException)
+            catch (Exception)
             {
                 string json = GetLocalFile();
                 if (json == string.Empty)
@@ -63,14 +66,14 @@ namespace BnB_ChipLibraryGui
                 }
                 var result = JsonConvert.DeserializeObject<List<Chip>>(json);
                 this.Library = new ConcurrentDictionary<string, Chip>();
-                result.ForEach(delegate (Chip aChip)
+                foreach (Chip chip in result)
+                {
+                    Library.TryAdd(chip.Name.ToLower(), chip);
+                }
+                /*result.ForEach( (Chip aChip)
                 {
                     this.Library.TryAdd(aChip.Name.ToLower(), aChip);
-                });
-            }
-            finally
-            {
-                wc.Dispose();
+                });*/
             }
         }
 

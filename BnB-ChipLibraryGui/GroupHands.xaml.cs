@@ -1,18 +1,15 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Timer = System.Timers.Timer;
 
 namespace BnB_ChipLibraryGui
 {
@@ -21,7 +18,6 @@ namespace BnB_ChipLibraryGui
     /// </summary>
     public partial class GroupHands : Window
     {
-        public static readonly System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
 
         public string PlayerName { get; private set; }
         public string DMName { get; private set; }
@@ -31,6 +27,7 @@ namespace BnB_ChipLibraryGui
         private long LastUpdated;
         private Timer updateInterval;
         private readonly object updateLock = new object();
+        private readonly Semaphore netLock;
         private const int MinuteInMiliseconds = 60000;
         private bool sessionClosed = false;
         private string currentHand;
@@ -39,6 +36,7 @@ namespace BnB_ChipLibraryGui
         public GroupHands(Window owner, string DMName, string PlayerName, bool isCreator)
         {
             InitializeComponent();
+            netLock = new Semaphore(1, 1);
             this.Hide();
             this.Owner = owner;
             this.PlayerName = PlayerName;
@@ -58,12 +56,13 @@ namespace BnB_ChipLibraryGui
                     {
                         new KeyValuePair<string, string>("DMName", DMName),
                     });
-                var res = await client.PostAsync(createGroupPage, stringContent);
+                var res = await MainWindow.client.PostAsync(createGroupPage, stringContent);
                 string textResult = await res.Content.ReadAsStringAsync();
                 if (!textResult.Equals("ready", StringComparison.OrdinalIgnoreCase))
                 {
                     throw new Exception("ServerError");
                 }
+                stringContent.Dispose();
             }
             this.Dispatcher.Invoke(() => currentHand = (this.Owner as MainWindow).GetHand());
             var postContent = new System.Net.Http.FormUrlEncodedContent(new[]
@@ -73,7 +72,7 @@ namespace BnB_ChipLibraryGui
                         new KeyValuePair<string, string>("hand", currentHand),
                         new KeyValuePair<string, string>("join", "true")
                 });
-            string postRes = await (await client.PostAsync(ChipPage, postContent)).Content.ReadAsStringAsync();
+            string postRes = await (await MainWindow.client.PostAsync(ChipPage, postContent)).Content.ReadAsStringAsync();
             if (postRes.Equals("closed", StringComparison.OrdinalIgnoreCase))
             {
                 throw new Exception("ServerError");
@@ -98,6 +97,7 @@ namespace BnB_ChipLibraryGui
                 Enabled = true
             };
             updateInterval.Elapsed += OnTimedEvent;
+            postContent.Dispose();
         }
 
         private void OnTimedEvent(object source, ElapsedEventArgs e)
@@ -110,53 +110,74 @@ namespace BnB_ChipLibraryGui
             return this.sessionClosed;
         }
 
-        public void HandUpdate(bool manual = false)
+        public async void HandUpdate(bool manual = false)
         {
             if (sessionClosed) return;
 
-            lock (updateLock) //acquire mutex
+            //lock (updateLock) //acquire mutex
+            //{
+            System.Net.Http.FormUrlEncodedContent postContent = null;
+            netLock.WaitOne();
+            try
             {
                 if (manual == false && (LastUpdated + MinuteInMiliseconds) > DateTimeOffset.Now.ToUnixTimeMilliseconds())
                     return;
                 string hand = null;
                 this.Dispatcher.Invoke(() =>
                 {
-                    //Because this might not be done on the UI thread
-                    hand = (this.Owner as MainWindow).GetHand();
+                        //Because this might not be done on the UI thread
+                        hand = (this.Owner as MainWindow).GetHand();
                 });
-                using (System.Net.WebClient wc = new System.Net.WebClient())
-                {
-                    System.Collections.Specialized.NameValueCollection postData =
-                    new System.Collections.Specialized.NameValueCollection()
-                    {
-                    { "DMName", DMName },
-                    { "PlayerName", PlayerName },
-                    };
-                    if (hand != currentHand)
-                    {
-                        postData.Add("hand", hand);
-                        currentHand = hand;
-                    }
-                    string result = Encoding.UTF8.GetString(wc.UploadValues(ChipPage, postData));
-                    if (result.Equals("closed", StringComparison.OrdinalIgnoreCase))
-                    {
-                        MessageBox.Show("The group was closed");
-                        (this.Owner as MainWindow).GroupClosed();
-                        updateInterval.Dispose();
-                        this.sessionClosed = true;
-                        this.Close();
-                    }
-                    List<GroupedHand> hands = null;
-                    if (!result.Equals("empty", StringComparison.OrdinalIgnoreCase))
-                    {
-                        hands = ConvertToHands(result);
-                    }
 
-                    //because you cannot update window properties on a different thread
-                    this.Dispatcher.Invoke(() => this.Players.ItemsSource = hands);
+                postContent = new System.Net.Http.FormUrlEncodedContent(new[]
+                {
+                        new KeyValuePair<string, string>("DMName", DMName),
+                        new KeyValuePair<string, string>("PlayerName", PlayerName),
+                        new KeyValuePair<string, string>("hand", currentHand),
+                    });
+                this.currentHand = hand;
+                //var httpRes = MainWindow.client.PostAsync(ChipPage, postContent);
+                //httpRes.Wait();
+                //var stringTask = httpRes.Result.Content.ReadAsStringAsync();
+                //stringTask.Wait();
+                //string result = stringTask.Result;
+                string result = await (
+                    await MainWindow.client.PostAsync(ChipPage, postContent)
+                    ).Content.ReadAsStringAsync();
+                if (result.Equals("closed", StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show("The group was closed");
+                    (this.Owner as MainWindow).GroupClosed();
+                    updateInterval.Dispose();
+                    this.sessionClosed = true;
+                    this.Close();
                 }
-                LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            } //release mutex
+                List<GroupedHand> hands = null;
+                if (!result.Equals("empty", StringComparison.OrdinalIgnoreCase))
+                {
+                    hands = ConvertToHands(result);
+                }
+
+                //because you cannot update window properties on a different thread
+                this.Dispatcher.Invoke(() => this.Players.ItemsSource = hands);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("An error has occurred");
+                MessageBox.Show(e.Message);
+                return;
+            }
+            finally
+            {
+                if (postContent != null)
+                {
+                    postContent.Dispose();
+                }
+                netLock.Release();
+            }
+            //}
+            LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            //release mutex
         }
 
         public static async Task<bool> CheckSessionExists(string DMName)
@@ -166,7 +187,7 @@ namespace BnB_ChipLibraryGui
                 new KeyValuePair<string, string>("DMName", DMName),
                 new KeyValuePair<string, string>("PlayerName", DMName)
             });
-            string result = await (await client.PostAsync(ChipPage, postContent)).Content.ReadAsStringAsync();
+            string result = await (await MainWindow.client.PostAsync(ChipPage, postContent)).Content.ReadAsStringAsync();
             if (result.Equals("closed", StringComparison.OrdinalIgnoreCase))
             {
                 return false;
