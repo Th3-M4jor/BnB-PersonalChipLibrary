@@ -190,8 +190,10 @@ namespace BnB_ChipLibraryGui
             string result = await (await MainWindow.client.PostAsync(ChipPage, postContent)).Content.ReadAsStringAsync();
             if (result.Equals("closed", StringComparison.OrdinalIgnoreCase))
             {
+                postContent.Dispose();
                 return false;
             }
+            postContent.Dispose();
             return true;
         }
 
@@ -204,24 +206,38 @@ namespace BnB_ChipLibraryGui
                 e.Cancel = true;
                 return;
             }
-            using (System.Net.WebClient wc = new System.Net.WebClient())
+            var postContent = new System.Net.Http.FormUrlEncodedContent(new[]
             {
-                System.Collections.Specialized.NameValueCollection postData =
-                new System.Collections.Specialized.NameValueCollection()
-                {
-                    { "DMName", DMName },
-                    { "PlayerName", PlayerName },
-                    { "close", "true" }
-                };
-                string result = Encoding.UTF8.GetString(wc.UploadValues(ChipPage, postData));
+                new KeyValuePair<string, string>("DMName", DMName),
+                new KeyValuePair<string, string>("PlayerName", DMName),
+                new KeyValuePair<string, string>("close", "true")
+            });
+            try
+            {
+                var httpRes = MainWindow.client.PostAsync(ChipPage, postContent);
+                httpRes.Wait();
+                var stringTask = httpRes.Result.Content.ReadAsStringAsync();
+                stringTask.Wait();
+                string result = stringTask.Result;
+                //string result = Encoding.UTF8.GetString(wc.UploadValues(ChipPage, postData));
                 if (!result.Equals("closed", StringComparison.OrdinalIgnoreCase))
                 {
                     MessageBox.Show("A server error occurred, inform Major");
                 }
             }
-            this.updateInterval.Stop();
-            this.updateInterval.Dispose();
-            sessionClosed = true;
+            catch (Exception except)
+            {
+                MessageBox.Show("Something went wrong, inform Major");
+                MessageBox.Show(except.Message);
+            }
+            finally
+            {
+                postContent.Dispose();
+                this.updateInterval.Stop();
+                this.updateInterval.Dispose();
+                sessionClosed = true;
+
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
