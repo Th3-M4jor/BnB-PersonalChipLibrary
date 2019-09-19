@@ -66,10 +66,10 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTemplateColumn Header="Element" IsReadOnly="True">
+                <DataGridTemplateColumn Header="Element" IsReadOnly="True" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Source="{Binding ElementImage}" />
+                            <Image Source="{Binding ElementImage}" Stretch="Uniform" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
