@@ -179,7 +179,7 @@ namespace BnB_ChipLibraryGui
         {
             if (sender != null && UserChips.SelectedItems != null && UserChips.SelectedItems.Count == 1)
             {
-                DataGridRow dgr = UserChips.ItemContainerGenerator.ContainerFromItem(UserChips.SelectedItem) as DataGridRow;
+                if (!(UserChips.ItemContainerGenerator.ContainerFromItem(UserChips.SelectedItem) is DataGridRow dgr)) return;
                 if (!dgr.IsMouseOver)
                 {
                     dgr.IsSelected = false;
@@ -452,6 +452,5 @@ namespace BnB_ChipLibraryGui
             }
             return (playerHand, chipsOwned);
         }
-
     }
 }

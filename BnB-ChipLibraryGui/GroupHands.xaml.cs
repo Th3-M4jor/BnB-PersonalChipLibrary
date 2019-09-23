@@ -18,7 +18,6 @@ namespace BnB_ChipLibraryGui
     /// </summary>
     public partial class GroupHands : Window
     {
-
         public string PlayerName { get; private set; }
         public string DMName { get; private set; }
         public readonly bool isCreator;
@@ -124,8 +123,8 @@ namespace BnB_ChipLibraryGui
                 string hand = null;
                 this.Dispatcher.Invoke(() =>
                 {
-                        //Because this might not be done on the UI thread
-                        hand = (this.Owner as MainWindow).GetHand();
+                    //Because this might not be done on the UI thread
+                    hand = (this.Owner as MainWindow).GetHand();
                 });
 
                 postContent = new System.Net.Http.FormUrlEncodedContent(new[]
@@ -146,10 +145,15 @@ namespace BnB_ChipLibraryGui
                 if (result.Equals("closed", StringComparison.OrdinalIgnoreCase))
                 {
                     MessageBox.Show("The group was closed");
-                    (this.Owner as MainWindow).GroupClosed();
-                    updateInterval.Dispose();
-                    this.sessionClosed = true;
-                    this.Close();
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        (this.Owner as MainWindow).GroupClosed();
+
+                        updateInterval.Dispose();
+                        this.sessionClosed = true;
+                        this.Close();
+                    });
+                    return;
                 }
                 List<GroupedHand> hands = null;
                 if (!result.Equals("empty", StringComparison.OrdinalIgnoreCase))
@@ -164,6 +168,7 @@ namespace BnB_ChipLibraryGui
             {
                 MessageBox.Show("An error has occurred");
                 MessageBox.Show(e.Message);
+
                 return;
             }
             finally
@@ -235,7 +240,6 @@ namespace BnB_ChipLibraryGui
                 this.updateInterval.Stop();
                 this.updateInterval.Dispose();
                 sessionClosed = true;
-
             }
         }
 
