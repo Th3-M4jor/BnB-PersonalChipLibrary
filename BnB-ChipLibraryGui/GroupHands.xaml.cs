@@ -26,7 +26,6 @@ namespace BnB_ChipLibraryGui
         private static readonly string createGroupPage = "http://spartan364.hopto.org/reqid.php";
         private long LastUpdated;
         private Timer updateInterval;
-        private readonly object updateLock = new object();
         private readonly Semaphore netLock;
         private const int MinuteInMiliseconds = 60000;
         private bool sessionClosed = false;
