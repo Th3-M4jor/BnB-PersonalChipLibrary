@@ -89,6 +89,9 @@
     <Compile Include="GroupHands.xaml.cs">
       <DependentUpon>GroupHands.xaml</DependentUpon>
     </Compile>
+    <Compile Include="HandTab.xaml.cs">
+      <DependentUpon>HandTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="QuestionWindow.xaml.cs">
       <DependentUpon>QuestionWindow.xaml</DependentUpon>
     </Compile>
@@ -100,6 +103,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Hand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="HandTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

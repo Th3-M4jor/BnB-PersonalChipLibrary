@@ -11,10 +11,19 @@ using System.Windows.Media;
 namespace BnB_ChipLibraryGui
 {
     /// <summary>
-    /// Interaction logic for Hand.xaml
+    /// Interaction logic for HandTab.xaml
     /// </summary>
-    public partial class Hand : Window
+    public partial class HandTab : UserControl
     {
+        public HandTab(IEnumerable<HandChip> hand)
+        {
+            InitializeComponent();
+            txtNum.Text = 10 + "";
+            this.ChipsInHand = new ObservableCollection<HandChip>(hand);
+            this.PlayerHand.ItemsSource = this.ChipsInHand;
+            this.ChipsInHand.CollectionChanged += HandCollectionChanged;
+        }
+
         private int _numValue = 2;
 
         public int NumValue
@@ -51,14 +60,7 @@ namespace BnB_ChipLibraryGui
         //private List<HandChip> ChipsInHand;
         private readonly ObservableCollection<HandChip> ChipsInHand;
 
-        public Hand(IEnumerable<HandChip> hand)
-        {
-            InitializeComponent();
-            txtNum.Text = 10 + "";
-            this.ChipsInHand = new ObservableCollection<HandChip>(hand);
-            this.PlayerHand.ItemsSource = this.ChipsInHand;
-            this.ChipsInHand.CollectionChanged += HandCollectionChanged;
-        }
+        
 
         public string GetHand()
         {
@@ -80,7 +82,7 @@ namespace BnB_ChipLibraryGui
                 i++;
             }
             return JsonConvert.SerializeObject(HandToReturn);
-            
+
         }
 
         public void AddChip(Chip newChip)
@@ -129,10 +131,11 @@ namespace BnB_ChipLibraryGui
             var (numRemoved, numUsed) = this.ClearHand();
             string message = "Hand cleared, " + numRemoved + " chips removed\nof which "
                 + numUsed + " were used.";
-            (this.Owner as MainWindow).SetMessage(message, Brushes.Red);
-            (this.Owner as MainWindow).LoadChips();
+            //(this.Owner as MainWindow).SetMessage(message, Brushes.Red);
+            //(this.Owner as MainWindow).LoadChips();
             e.Cancel = true;
-            this.Hide();
+            
+            //this.Hide();
         }
 
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)

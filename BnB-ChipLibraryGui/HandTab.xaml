@@ -1,22 +1,21 @@
-﻿<Window x:Class="BnB_ChipLibraryGui.Hand"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BnB_ChipLibraryGui"
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        mc:Ignorable="d" Closing="Window_Closing" MinHeight="130"
-        Title="Hand" Height="355" Width="505" MouseDown="Grid_MouseLeftButtonDown"
-        WindowStartupLocation="CenterScreen">
-    <Window.Resources>
+﻿<UserControl x:Class="BnB_ChipLibraryGui.HandTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BnB_ChipLibraryGui"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="679.73">
+    <UserControl.Resources>
         <Style x:Key="CenterGridHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
-    </Window.Resources>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="97" />
+            <ColumnDefinition Width="278" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="82" />
@@ -24,7 +23,7 @@
         </Grid.RowDefinitions>
         <DataGrid Name="PlayerHand" AutoGenerateColumns="false" SelectionMode="Single"
                   HorizontalAlignment="Left" Height="auto" VerticalAlignment="Stretch" Margin="0,0,0,5"
-                  Width="391.6" CanUserSortColumns="False" CanUserAddRows="False"
+                  Width="392" CanUserSortColumns="False" CanUserAddRows="False"
                   CanUserDeleteRows="False" CanUserResizeColumns="False" CanUserResizeRows="False"
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.RowSpan="2">
             <DataGrid.Columns>
@@ -107,7 +106,7 @@
             <Button x:Name="cmdUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
             <Button x:Name="cmdDown" x:FieldModifier="private"  Content="˅" Width="15" Click="CmdDown_Click" />
         </StackPanel>
-        <Label Content="Size" HorizontalAlignment="Center" Margin="37,10,10,0" VerticalAlignment="Top" Width="50" Height="25" Grid.Column="1" />
-        <Button Name="RemoveFromHand" Content="Remove" Grid.Column="1" HorizontalAlignment="Left" Margin="12,10,0,0" VerticalAlignment="Top" Width="75" Grid.Row="1" Click="RemoveFromHand_Click" />
+        <Label Content="Size" HorizontalAlignment="Center" Margin="123,10,105,0" VerticalAlignment="Top" Width="50" Height="25" Grid.Column="1" />
+        <Button Name="RemoveFromHand" Content="Remove" Grid.Column="1" HorizontalAlignment="Left" Margin="12,10,0,0" VerticalAlignment="Top" Width="75" Grid.Row="1" Click="RemoveFromHand_Click" Height="20" />
     </Grid>
-</Window>
+</UserControl>
