@@ -162,7 +162,7 @@ namespace BnB_ChipLibraryGui
             {
                 this.Hide();
             }
-            (this.Owner as MainWindow).HandUpdated();
+            (Window.GetWindow(this) as MainWindow).HandUpdated();
         }
 
         private void RemoveFromHand_Click(object sender, RoutedEventArgs e)
@@ -184,7 +184,8 @@ namespace BnB_ChipLibraryGui
                         if (selected.Used == true)
                         {
                             ChipLibrary.Instance.GetChip(selected.Name).UsedInBattle++;
-                            (this.Owner as MainWindow).LoadChips();
+                            //(this.Owner as MainWindow).LoadChips();
+                            (Window.GetWindow(this) as MainWindow).LoadChips();
                         }
                         break;
                     }
