@@ -19,7 +19,7 @@ namespace BnB_ChipLibraryGui
     {
         public static readonly System.Net.Http.HttpClient client = new System.Net.Http.HttpClient();
 
-        private Hand handWindow;
+        //private Hand handWindow;
         private SearchWindow searchWindow;
         private GroupHands grouphands;
         public Chip.ChipRanges RangeOption { get; private set; }
@@ -44,15 +44,15 @@ namespace BnB_ChipLibraryGui
             this.SourceInitialized += (s, a) =>
             {
                 LoadChips(chipsOwned);
-                this.handWindow = new Hand(playerHand)
+                /*this.handWindow = new Hand(playerHand)
                 {
                     Owner = this
-                };
-
-                if (playerHand.Count > 0)
+                };*/
+                this.HandWindowObject.SetHand(playerHand);
+                /*if (playerHand.Count > 0)
                 {
                     handWindow.Show();
-                }
+                }*/
 
                 searchWindow = new SearchWindow
                 {
@@ -76,7 +76,7 @@ namespace BnB_ChipLibraryGui
 
         public string GetHand()
         {
-            return handWindow.GetHand();
+            return this.HandWindowObject.GetHand();
         }
 
         public void HandUpdated()
@@ -117,7 +117,7 @@ namespace BnB_ChipLibraryGui
                     return;
                 }
 
-                handWindow.AddChip(selected);
+                this.HandWindowObject.AddChip(selected);
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -172,7 +172,7 @@ namespace BnB_ChipLibraryGui
                     await chipFile.WriteLineAsync(toWrite);
                 }
             }
-            handWindow.Close();
+            //handWindow.Close();
         }
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -190,7 +190,7 @@ namespace BnB_ChipLibraryGui
         private async void JackOut()
         {
             FoundChips.Foreground = Brushes.Red;
-            int handSize = handWindow.ClearHand().numRemoved;
+            int handSize = this.HandWindowObject.ClearHand().numRemoved;
             uint count = await ChipLibrary.Instance.JackOut();
             FoundChips.Text = count + " chip(s) refreshed\n" + handSize + " chip(s) cleared from hand";
         }

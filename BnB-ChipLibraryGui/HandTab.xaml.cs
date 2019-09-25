@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -15,13 +16,21 @@ namespace BnB_ChipLibraryGui
     /// </summary>
     public partial class HandTab : UserControl
     {
-        public HandTab(IEnumerable<HandChip> hand)
+        public HandTab()
         {
             InitializeComponent();
-            txtNum.Text = 10 + "";
-            this.ChipsInHand = new ObservableCollection<HandChip>(hand);
+            txtNum.Text = 2 + "";
+            this.ChipsInHand = new ObservableCollection<HandChip>();
             this.PlayerHand.ItemsSource = this.ChipsInHand;
             this.ChipsInHand.CollectionChanged += HandCollectionChanged;
+        }
+
+        public void SetHand(IEnumerable<HandChip> hand)
+        {
+            foreach(var chip in hand)
+            {
+                ChipsInHand.Add(chip);
+            }
         }
 
         private int _numValue = 2;
@@ -154,13 +163,14 @@ namespace BnB_ChipLibraryGui
         private void HandCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (sender == null) return;
-            if (ChipsInHand.Count > 0)
+            if (ChipsInHand.Count > 0 && this.Visibility != Visibility.Visible)
             {
-                this.Show();
+                this.Visibility = Visibility.Visible;
             }
             else if (ChipsInHand.Count == 0)
             {
-                this.Hide();
+                this.Visibility = Visibility.Hidden;
+                this.Dispatcher.BeginInvoke((Action)(() => { (Window.GetWindow(this) as MainWindow).Pack.IsSelected = true; }));
             }
             (Window.GetWindow(this) as MainWindow).HandUpdated();
         }
