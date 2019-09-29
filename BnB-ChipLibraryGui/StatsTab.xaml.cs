@@ -39,22 +39,128 @@ namespace BnB_ChipLibraryGui
 
         private void CmdUp_Click(object sender, RoutedEventArgs e)
         {
-            if (sender == null) return;
-            if (sender is Button downButton)
+            if (sender == null || !(sender is Button upButton)) return;
+            string skill = upButton.Name.Substring(0, upButton.Name.Length - 2);
+            Chip.ChipSkills naviSkill = (Chip.ChipSkills)Enum.Parse(typeof(Chip.ChipSkills), skill);
+            StatNames stat;
+            switch (naviSkill)
             {
-                string skill = downButton.Name.Substring(0, downButton.Name.Length - 4);
+                case Chip.ChipSkills.Sense:
+                case Chip.ChipSkills.Info:
+                case Chip.ChipSkills.Coding:
+                    stat = StatNames.Mind;
+                    break;
+
+                case Chip.ChipSkills.Strength:
+                case Chip.ChipSkills.Speed:
+                case Chip.ChipSkills.Stamina:
+                    stat = StatNames.Body;
+                    break;
+
+                case Chip.ChipSkills.Charm:
+                case Chip.ChipSkills.Bravery:
+                case Chip.ChipSkills.Affinity:
+                    stat = StatNames.Spirit;
+                    break;
+
+                default:
+                    MainWindow.ErrorWindow();
+                    return;
             }
-            //NumValue++;
+
+            if (!PlayerStats.Instance.NaviCanIncreaseSkill(naviSkill, stat))
+            {
+                MessageBox.Show("Cannot do that, your " + stat.ToString() + " is too low");
+                return;
+            }
+            PlayerStats.Instance.NaviIncreaseSkill(naviSkill);
         }
 
         private void CmdDown_Click(object sender, RoutedEventArgs e)
         {
-            if (sender == null) return;
-            if (sender is Button upButton)
+            if (sender == null || !(sender is Button downButton)) return;
+            string skill = downButton.Name.Substring(0, downButton.Name.Length - 4);
+            Chip.ChipSkills naviSkill = (Chip.ChipSkills)Enum.Parse(typeof(Chip.ChipSkills), skill);
+            if (PlayerStats.Instance.NaviDecreaseSkill(naviSkill))
             {
-                string skill = upButton.Name.Substring(0, upButton.Name.Length - 2);
             }
-            //NumValue--;
+        }
+
+        private void OpCmdUp_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender == null || !(sender is Button upButton)) return;
+            string skill = upButton.Name.Substring(2, upButton.Name.Length - 4);
+            Chip.ChipSkills opSkill = (Chip.ChipSkills)Enum.Parse(typeof(Chip.ChipSkills), skill);
+            StatNames stat;
+            switch (opSkill)
+            {
+                case Chip.ChipSkills.Sense:
+                case Chip.ChipSkills.Info:
+                case Chip.ChipSkills.Coding:
+                    stat = StatNames.Mind;
+                    break;
+
+                case Chip.ChipSkills.Strength:
+                case Chip.ChipSkills.Speed:
+                case Chip.ChipSkills.Stamina:
+                    stat = StatNames.Body;
+                    break;
+
+                case Chip.ChipSkills.Charm:
+                case Chip.ChipSkills.Bravery:
+                case Chip.ChipSkills.Affinity:
+                    stat = StatNames.Spirit;
+                    break;
+
+                default:
+                    MainWindow.ErrorWindow();
+                    return;
+            }
+
+            if (!PlayerStats.Instance.OpCanIncreaseSkill(opSkill, stat))
+            {
+                MessageBox.Show("Cannot do that, your " + stat.ToString() + " is too low");
+                return;
+            }
+            PlayerStats.Instance.OpIncreaseSkill(opSkill);
+        }
+
+        private void OpCmdDown_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender == null || !(sender is Button downButton)) return;
+            string skill = downButton.Name.Substring(2, downButton.Name.Length - 6);
+        }
+
+        private void StatUp_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void StatDown_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void OpStatUp_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void OpStatDown_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void NaviSkillDecrement(Chip.ChipSkills skill)
+        {
+        }
+
+        private void NaviSkillIncrement(Chip.ChipSkills skill)
+        {
+        }
+
+        private void OperatorSkillDecrement(Chip.ChipSkills skill)
+        {
+        }
+
+        private void OperatorSkillIncrement(Chip.ChipSkills skill)
+        {
         }
     }
 }

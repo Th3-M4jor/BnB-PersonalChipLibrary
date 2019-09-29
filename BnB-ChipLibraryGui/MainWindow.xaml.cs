@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
 using System.Threading.Tasks;
 using System.Text;
+using System.Runtime.CompilerServices;
 
 namespace BnB_ChipLibraryGui
 {
@@ -55,6 +56,13 @@ namespace BnB_ChipLibraryGui
                 {
                     handWindow.Show();
                 }*/
+                if (playerHand.Count > 0)
+                {
+                    this.Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        this.TabHand.Visibility = Visibility.Visible;
+                    }));
+                }
 
                 searchWindow = new SearchWindow
                 {
@@ -458,5 +466,10 @@ namespace BnB_ChipLibraryGui
             }
             return (playerHand, chipsOwned);
         }
+
+        public static void ErrorWindow(
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerMemberName] string caller = null
+            ) => MessageBox.Show("And error has occurred at line " + lineNumber.ToString() + " in " + caller);
     }
 }

@@ -9,6 +9,11 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace BnB_ChipLibraryGui
 {
+    public enum StatNames
+    {
+        Mind, Body, Spirit
+    }
+
     [Serializable]
     public class PlayerStats
     {
@@ -37,9 +42,9 @@ namespace BnB_ChipLibraryGui
             if (!File.Exists("./stats.dat")) //save file doesn't exist
             {
                 NaviSkills = new byte[9];
-                NaviStats = new byte[3];
+                NaviStats = new byte[3] { 1, 1, 1 }; //initialize stats to 1
                 OperatorSkills = new byte[9];
-                OperatorStats = new byte[3];
+                OperatorStats = new byte[3] { 1, 1, 1 };
                 NaviElement = Chip.ChipElements.Null;
                 NaviName = "";
                 OperatorName = "";
@@ -86,6 +91,72 @@ namespace BnB_ChipLibraryGui
             {
                 return NaviSkills[(int)skill].ToString("+#;-#;0");
             }
+        }
+
+        public bool NaviCanIncreaseSkill(Chip.ChipSkills skill, StatNames stat)
+        {
+            if (NaviSkills[(int)skill] < (NaviStats[(int)stat] * 4))
+            {
+                return true;
+            }
+            else return false;
+        }
+
+        public void NaviIncreaseSkill(Chip.ChipSkills skill)
+        {
+            NaviSkills[(int)skill]++;
+        }
+
+        public bool NaviDecreaseSkill(Chip.ChipSkills skill)
+        {
+            if (NaviSkills[(int)skill] != 0)
+            {
+                NaviSkills[(int)skill]--;
+                return true;
+            }
+            return false;
+        }
+
+        public bool OpCanIncreaseSkill(Chip.ChipSkills skill, StatNames stat)
+        {
+            if (OperatorSkills[(int)skill] < (OperatorStats[(int)stat] * 4))
+            {
+                return true;
+            }
+            else return false;
+        }
+
+        public void OpIncreaseSkill(Chip.ChipSkills skill)
+        {
+            OperatorSkills[(int)skill]++;
+        }
+
+        public void OpDecreaseSkill(Chip.ChipSkills skill)
+        {
+            if (OperatorSkills[(int)skill] != 0)
+            {
+                OperatorSkills[(int)skill]--;
+            }
+        }
+
+        public bool OpIncreaseStat(StatNames stat)
+        {
+            if (OperatorStats[(int)stat] < 5)
+            {
+                OperatorStats[(int)stat]++;
+                return true;
+            }
+            return false;
+        }
+
+        public bool OpDecreaseStat(StatNames stat)
+        {
+            if (OperatorStats[(int)stat] != 1)
+            {
+                OperatorStats[(int)stat]--;
+                return true;
+            }
+            return false;
         }
 
         private static void SaveData()

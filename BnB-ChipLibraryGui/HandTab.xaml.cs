@@ -27,7 +27,7 @@ namespace BnB_ChipLibraryGui
 
         public void SetHand(IEnumerable<HandChip> hand)
         {
-            foreach(var chip in hand)
+            foreach (var chip in hand)
             {
                 ChipsInHand.Add(chip);
             }
@@ -69,8 +69,6 @@ namespace BnB_ChipLibraryGui
         //private List<HandChip> ChipsInHand;
         private readonly ObservableCollection<HandChip> ChipsInHand;
 
-        
-
         public string GetHand()
         {
             if (ChipsInHand.Count == 0)
@@ -91,7 +89,6 @@ namespace BnB_ChipLibraryGui
                 i++;
             }
             return JsonConvert.SerializeObject(HandToReturn);
-
         }
 
         public void AddChip(Chip newChip)
@@ -143,7 +140,7 @@ namespace BnB_ChipLibraryGui
             //(this.Owner as MainWindow).SetMessage(message, Brushes.Red);
             //(this.Owner as MainWindow).LoadChips();
             e.Cancel = true;
-            
+
             //this.Hide();
         }
 
@@ -163,14 +160,21 @@ namespace BnB_ChipLibraryGui
         private void HandCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (sender == null) return;
-            if (ChipsInHand.Count > 0 && this.Visibility != Visibility.Visible)
+            if (ChipsInHand.Count > 0 && (Window.GetWindow(this) as MainWindow).TabHand.Visibility != Visibility.Visible)
             {
-                this.Visibility = Visibility.Visible;
+                this.Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    (Window.GetWindow(this) as MainWindow).TabHand.IsSelected = true;
+                    (Window.GetWindow(this) as MainWindow).TabHand.Visibility = Visibility.Visible;
+                }));
             }
             else if (ChipsInHand.Count == 0)
             {
-                this.Visibility = Visibility.Hidden;
-                this.Dispatcher.BeginInvoke((Action)(() => { (Window.GetWindow(this) as MainWindow).Pack.IsSelected = true; }));
+                this.Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    (Window.GetWindow(this) as MainWindow).Pack.IsSelected = true;
+                    (Window.GetWindow(this) as MainWindow).TabHand.Visibility = Visibility.Hidden;
+                }));
             }
             (Window.GetWindow(this) as MainWindow).HandUpdated();
         }
@@ -206,6 +210,5 @@ namespace BnB_ChipLibraryGui
                 MessageBox.Show("No chip is currently selected!");
             }
         }
-
     }
 }
