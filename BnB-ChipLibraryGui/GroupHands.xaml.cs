@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-
 using System.Windows.Input;
 using Timer = System.Timers.Timer;
 
@@ -132,13 +131,8 @@ namespace BnB_ChipLibraryGui
                         new KeyValuePair<string, string>("DMName", DMName),
                         new KeyValuePair<string, string>("PlayerName", PlayerName),
                         new KeyValuePair<string, string>("hand", currentHand),
-                    });
+                });
                 this.currentHand = hand;
-                //var httpRes = MainWindow.client.PostAsync(ChipPage, postContent);
-                //httpRes.Wait();
-                //var stringTask = httpRes.Result.Content.ReadAsStringAsync();
-                //stringTask.Wait();
-                //string result = stringTask.Result;
                 string result = await (
                     await MainWindow.client.PostAsync(ChipPage, postContent)
                     ).Content.ReadAsStringAsync();

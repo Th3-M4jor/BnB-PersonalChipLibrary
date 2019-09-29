@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace BnB_ChipLibraryGui
 {
@@ -21,6 +22,7 @@ namespace BnB_ChipLibraryGui
 
         //private Hand handWindow;
         private SearchWindow searchWindow;
+
         private GroupHands grouphands;
         public Chip.ChipRanges RangeOption { get; private set; }
         public bool SortDesc { get; private set; }
@@ -166,11 +168,15 @@ namespace BnB_ChipLibraryGui
                 ChipLibrary.LibrarySortOptions.Name, Chip.ChipRanges.All, false);
             using (var chipFile = File.CreateText("./userChips.dat"))
             {
+                StringBuilder fullText = new StringBuilder();
                 foreach (Chip chip in toSave)
                 {
-                    string toWrite = string.Format("{0}:{1}:{2}:{3}", chip.Name, chip.ChipCount, chip.UsedInBattle, chip.NumInHand);
-                    await chipFile.WriteLineAsync(toWrite);
+                    //string toWrite = string.Format("{0}:{1}:{2}:{3}\n", chip.Name, chip.ChipCount, chip.UsedInBattle, chip.NumInHand);
+                    //await chipFile.WriteLineAsync(toWrite);
+                    //fullText.Append(toWrite);
+                    fullText.AppendFormat("{0}:{1}:{2}:{3}\n", chip.Name, chip.ChipCount, chip.UsedInBattle, chip.NumInHand);
                 }
+                chipFile.Write(fullText.ToString());
             }
             //handWindow.Close();
         }

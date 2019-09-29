@@ -92,17 +92,17 @@
     <Compile Include="HandTab.xaml.cs">
       <DependentUpon>HandTab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PlayerStats.cs" />
     <Compile Include="QuestionWindow.xaml.cs">
       <DependentUpon>QuestionWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="SearchWindow.xaml.cs">
       <DependentUpon>SearchWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="StatsTab.xaml.cs">
+      <DependentUpon>StatsTab.xaml</DependentUpon>
+    </Compile>
     <Page Include="GroupHands.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Hand.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -121,9 +121,6 @@
     <Compile Include="Chip.cs" />
     <Compile Include="ChipImages.cs" />
     <Compile Include="ChipLibrary.cs" />
-    <Compile Include="Hand.xaml.cs">
-      <DependentUpon>Hand.xaml</DependentUpon>
-    </Compile>
     <Compile Include="HandChip.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -134,6 +131,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SearchWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StatsTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

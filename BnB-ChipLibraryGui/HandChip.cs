@@ -68,6 +68,14 @@ namespace BnB_ChipLibraryGui
             }
         }
 
+        public string Bonus
+        {
+            get
+            {
+                return PlayerStats.Instance.GetBonus(self.ChipSkill);
+            }
+        }
+
         public bool Used { get; set; }
 
         public HandChip(string chipName)

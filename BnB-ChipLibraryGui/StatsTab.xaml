@@ -1,0 +1,106 @@
+﻿<UserControl x:Class="BnB_ChipLibraryGui.StatsTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:BnB_ChipLibraryGui"
+             mc:Ignorable="d"
+             d:DesignHeight="500" d:DesignWidth="680">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="35*" />
+            <ColumnDefinition Width="33*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBox Name="NaviName" HorizontalAlignment="Left" Height="23" Margin="10,26,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" TextAlignment="Center" Grid.Column="0" TextChanged="NaviName_TextChanged" />
+        <Label Content="NaviName" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Grid.Column="0" TextBlock.TextAlignment="Center" HorizontalContentAlignment="Center" Width="120" Height="26" />
+        <Label Content="NaviElement" HorizontalAlignment="Left" Margin="135,1,0,0" VerticalAlignment="Top" Height="26" Width="120" HorizontalContentAlignment="Center" />
+        <ComboBox Name="ElementBox" HorizontalAlignment="Left" Margin="135,27,0,0" VerticalAlignment="Top" Width="120" IsEditable="False" SelectionChanged="ElementBox_SelectionChanged" Height="22">
+            <ComboBoxItem IsSelected="True">Fire</ComboBoxItem>
+            <ComboBoxItem>Aqua</ComboBoxItem>
+            <ComboBoxItem>Elec</ComboBoxItem>
+            <ComboBoxItem>Wood</ComboBoxItem>
+            <ComboBoxItem>Wind</ComboBoxItem>
+            <ComboBoxItem>Sword</ComboBoxItem>
+            <ComboBoxItem>Break</ComboBoxItem>
+            <ComboBoxItem>Cursor</ComboBoxItem>
+            <ComboBoxItem>Recovery</ComboBoxItem>
+            <ComboBoxItem>Object</ComboBoxItem>
+            <ComboBoxItem>Null</ComboBoxItem>
+        </ComboBox>
+        <StackPanel Orientation="Horizontal" Name="MindPanel" Margin="52,86,229,390" Grid.Column="0" HorizontalAlignment="Left">
+            <TextBox x:Name="Mind" x:FieldModifier="private" Width="32" Text="1" IsReadOnly="True" />
+            <Button x:Name="MindUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
+            <Button x:Name="MindDown" x:FieldModifier="private"  Content="˅" Width="15" Click="CmdDown_Click" />
+        </StackPanel>
+        <Label Content="Mind:" HorizontalAlignment="Left" Margin="9,87,0,0" VerticalAlignment="Top" Height="26" Width="40" Grid.Column="0" />
+        <StackPanel Orientation="Horizontal" Name="BodyPanel" Margin="52,133,229,342" Grid.Column="0" HorizontalAlignment="Left">
+            <TextBox x:Name="Body" x:FieldModifier="private" Width="32" Text="1" IsReadOnly="True" />
+            <Button x:Name="BodyUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
+            <Button x:Name="BodyDown" x:FieldModifier="private" Content="˅" Width="15" Click="CmdDown_Click" />
+        </StackPanel>
+        <Label Content="Body:" HorizontalAlignment="Left" Margin="9,134,0,0" VerticalAlignment="Top" Grid.Column="0" Height="26" Width="39" />
+        <StackPanel Orientation="Horizontal" Name="SpiritPanel" Margin="53,181,229,292" Grid.Column="0" HorizontalAlignment="Left">
+            <TextBox x:Name="Spirit" x:FieldModifier="private" Width="32" Text="1" IsReadOnly="True" />
+            <Button x:Name="SpiritUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
+            <Button x:Name="SpiritDown" x:FieldModifier="private" Content="˅" Width="15" Click="CmdDown_Click" />
+        </StackPanel>
+        <Label Content="Spirit:" HorizontalAlignment="Left" Margin="8,182,0,0" VerticalAlignment="Top" Grid.Column="0" Height="26" Width="40" />
+        <StackPanel Orientation="Horizontal" Name="SensePanel" Margin="121,88,161,390" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left">
+            <TextBox x:Name="Sense" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
+            <Button x:Name="SenseUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
+            <Button x:Name="SenseDown" x:FieldModifier="private" Content="˅" Width="15" Click="CmdDown_Click" />
+        </StackPanel>
+        <Label Content="Sense" HorizontalAlignment="Left" Margin="121,62,0,0" VerticalAlignment="Top" Grid.Column="0" HorizontalContentAlignment="Center" Width="62" Height="26" />
+        <StackPanel Orientation="Horizontal" x:Name="SensePanel_Copy" Margin="188,88,96,390" Grid.Row="0" HorizontalAlignment="Left">
+            <TextBox x:Name="Info" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
+            <Button x:Name="InfoUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
+            <Button x:Name="InfoDown" x:FieldModifier="private" Content="˅" Width="15" Click="CmdDown_Click" />
+        </StackPanel>
+        <Label Content="Info" HorizontalAlignment="Left" Margin="188,62,0,0" VerticalAlignment="Top" Grid.Column="0" HorizontalContentAlignment="Center" Width="62" Height="26" />
+        <StackPanel Orientation="Horizontal" x:Name="SensePanel_Copy1" Margin="255,88,33,390" Grid.Row="0" HorizontalAlignment="Left">
+            <TextBox x:Name="Coding" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
+            <Button x:Name="CodingUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
+            <Button x:Name="CodingDown" x:FieldModifier="private" Content="˅" Width="15" Click="CmdDown_Click" />
+        </StackPanel>
+        <Label Content="Coding" HorizontalAlignment="Left" Margin="255,62,0,0" VerticalAlignment="Top" Grid.Column="0" HorizontalContentAlignment="Center" Width="62" Height="26" />
+        <StackPanel Orientation="Horizontal" x:Name="SensePanel_Copy2" Margin="121,136,165,342" Grid.Row="0" HorizontalAlignment="Left">
+            <TextBox x:Name="Strength" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
+            <Button x:Name="StrengthUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
+            <Button x:Name="StrengthDown" x:FieldModifier="private" Content="˅" Width="15" Click="CmdDown_Click" />
+        </StackPanel>
+        <Label Content="Strength" HorizontalAlignment="Left" Margin="118,115,0,0" VerticalAlignment="Top" Grid.Column="0" HorizontalContentAlignment="Center" Width="62" Height="26" />
+        <StackPanel Orientation="Horizontal" x:Name="SensePanel_Copy3" Margin="187,136,101,342" Grid.Row="0" HorizontalAlignment="Left">
+            <TextBox x:Name="Speed" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
+            <Button x:Name="SpeedUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
+            <Button x:Name="SpeedDown" x:FieldModifier="private" Content="˅" Width="15" Click="CmdDown_Click" />
+        </StackPanel>
+        <Label Content="Speed" HorizontalAlignment="Left" Margin="185,115,0,0" VerticalAlignment="Top" Grid.Column="0" HorizontalContentAlignment="Center" Width="62" Height="26" />
+        <StackPanel Orientation="Horizontal" x:Name="SensePanel_Copy4" Margin="257,136,31,342" Grid.Row="0" HorizontalAlignment="Left">
+            <TextBox x:Name="Stamina" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
+            <Button x:Name="StaminaUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
+            <Button x:Name="StaminaDown" x:FieldModifier="private" Content="˅" Width="15" Click="CmdDown_Click" />
+        </StackPanel>
+        <Label Content="Stamina" HorizontalAlignment="Left" Margin="255,115,0,0" VerticalAlignment="Top" Grid.Column="0" HorizontalContentAlignment="Center" Width="62" Height="26" />
+        <StackPanel Orientation="Horizontal" x:Name="SensePanel_Copy5" Margin="122,184,167,292" Grid.Row="0" HorizontalAlignment="Left">
+            <TextBox x:Name="Charm" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
+            <Button x:Name="CharmUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
+            <Button x:Name="CharmDown" x:FieldModifier="private" Content="˅" Width="15" Click="CmdDown_Click" />
+        </StackPanel>
+        <Label Content="Charm" HorizontalAlignment="Left" Margin="120,163,0,0" VerticalAlignment="Top" Grid.Column="0" HorizontalContentAlignment="Center" Width="62" Height="26" />
+        <StackPanel Orientation="Horizontal" x:Name="SensePanel_Copy6" Margin="189,184,96,292" Grid.Row="0" HorizontalAlignment="Left">
+            <TextBox x:Name="Bravery" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
+            <Button x:Name="BraveryUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
+            <Button x:Name="BraveryDown" x:FieldModifier="private" Content="˅" Width="15" Click="CmdDown_Click" />
+        </StackPanel>
+        <Label Content="Bravery" HorizontalAlignment="Left" Margin="187,163,0,0" VerticalAlignment="Top" Grid.Column="0" HorizontalContentAlignment="Center" Width="62" Height="26" />
+        <StackPanel Orientation="Horizontal" x:Name="SensePanel_Copy7" Margin="259,184,23,292" Grid.Row="0" HorizontalAlignment="Left">
+            <TextBox x:Name="Affinity" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
+            <Button x:Name="AffinityUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
+            <Button x:Name="AffinityDown" x:FieldModifier="private" Content="˅" Width="15" Click="CmdDown_Click" />
+        </StackPanel>
+        <Label Content="Affinity" HorizontalAlignment="Left" Margin="257,163,0,0" VerticalAlignment="Top" Grid.Column="0" HorizontalContentAlignment="Center" Width="62" Height="26" />
+    </Grid>
+</UserControl>
