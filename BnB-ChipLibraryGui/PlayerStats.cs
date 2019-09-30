@@ -93,6 +93,14 @@ namespace BnB_ChipLibraryGui
             }
         }
 
+        public byte GetOpSkill(Chip.ChipSkills skill) => this.OperatorSkills[(int)skill];
+
+        public byte GetOpStat(StatNames stat) => this.OperatorStats[(int)stat];
+
+        public byte GetNaviSkill(Chip.ChipSkills skill) => this.NaviSkills[(int)skill];
+
+        public byte GetNaviStat(StatNames stat) => this.NaviStats[(int)stat];
+
         public bool NaviCanIncreaseSkill(Chip.ChipSkills skill, StatNames stat)
         {
             if (NaviSkills[(int)skill] < (NaviStats[(int)stat] * 4))
@@ -144,6 +152,26 @@ namespace BnB_ChipLibraryGui
             if (OperatorStats[(int)stat] < 5)
             {
                 OperatorStats[(int)stat]++;
+                return true;
+            }
+            return false;
+        }
+
+        public bool NaviIncreaseStat(StatNames stat)
+        {
+            if (NaviStats[(int)stat] < 5)
+            {
+                NaviStats[(int)stat]++;
+                return true;
+            }
+            return false;
+        }
+
+        public bool NaviDecreaseStat(StatNames stat)
+        {
+            if (NaviStats[(int)stat] != 1)
+            {
+                NaviStats[(int)stat]--;
                 return true;
             }
             return false;
