@@ -23,6 +23,7 @@ namespace BnB_ChipLibraryGui
             this.ChipsInHand = new ObservableCollection<HandChip>();
             this.PlayerHand.ItemsSource = this.ChipsInHand;
             this.ChipsInHand.CollectionChanged += HandCollectionChanged;
+            _numValue = PlayerStats.Instance.GetNaviStat(StatNames.Mind) + PlayerStats.Instance.CustomPlusInst;
         }
 
         public void SetHand(IEnumerable<HandChip> hand)
@@ -33,7 +34,7 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        private int _numValue = 2;
+        private int _numValue;
 
         public int NumValue
         {

@@ -186,6 +186,8 @@ namespace BnB_ChipLibraryGui
                 }
                 chipFile.Write(fullText.ToString());
             }
+
+            PlayerStats.Instance.Save();
             //handWindow.Close();
         }
 

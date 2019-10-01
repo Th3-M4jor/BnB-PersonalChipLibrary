@@ -15,18 +15,19 @@ namespace BnB_ChipLibraryGui
     }
 
     [Serializable]
-    public class PlayerStats
+    public sealed class PlayerStats
     {
         public string NaviName { get; set; }
         public Chip.ChipElements NaviElement { get; private set; }
-        protected byte[] NaviStats;
-        protected byte[] NaviSkills;
+        private readonly byte[] NaviStats;
+        private readonly byte[] NaviSkills;
         public string OperatorName { get; set; }
-        protected byte[] OperatorStats;
-        protected byte[] OperatorSkills;
+        private readonly byte[] OperatorStats;
+        private readonly byte[] OperatorSkills;
         public byte ATKPlusInst { get; private set; }
         public byte HPPlusInst { get; private set; }
         public byte WPNLvLPlusInst { get; private set; }
+        public byte CustomPlusInst { get; private set; }
         private static readonly Lazy<PlayerStats> lazy = new Lazy<PlayerStats>(() => new PlayerStats());
 
         public static PlayerStats Instance
@@ -51,6 +52,7 @@ namespace BnB_ChipLibraryGui
                 ATKPlusInst = 0;
                 HPPlusInst = 0;
                 WPNLvLPlusInst = 0;
+                CustomPlusInst = 0;
                 return;
             }
 
