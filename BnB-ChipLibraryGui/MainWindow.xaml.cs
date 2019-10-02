@@ -89,6 +89,11 @@ namespace BnB_ChipLibraryGui
             return this.HandWindowObject.GetHand();
         }
 
+        public void SetGroupHand(IEnumerable<GroupHands.GroupedHand> hands)
+        {
+            this.HandWindowObject.SetGroupHand(hands);
+        }
+
         public void HandUpdated()
         {
             if (grouphands != null)

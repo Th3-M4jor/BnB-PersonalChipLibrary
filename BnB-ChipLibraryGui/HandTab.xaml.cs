@@ -36,6 +36,8 @@ namespace BnB_ChipLibraryGui
 
         private int _numValue;
 
+        private bool inGroup = false;
+
         public int NumValue
         {
             get { return _numValue; }
@@ -103,6 +105,21 @@ namespace BnB_ChipLibraryGui
             ChipsInHand.Add(newChip.MakeHandChip());
         }
 
+        public void JoinedGroup()
+        {
+            this.inGroup = true;
+            SetTabVisibility(Visibility.Visible);
+        }
+
+        public void LeftGroup()
+        {
+            this.inGroup = false;
+            if(ChipsInHand.Count == 0)
+            {
+                SetTabVisibility(Visibility.Hidden);
+            }
+        }
+
         public (int numRemoved, int numUsed) ClearHand()
         {
             int numRemoved = this.ChipsInHand.Count;
@@ -119,6 +136,11 @@ namespace BnB_ChipLibraryGui
             }
             this.ChipsInHand.Clear();
             return (numRemoved, numUsed);
+        }
+
+        public void SetGroupHand(IEnumerable<GroupHands.GroupedHand> group)
+        {
+            if (inGroup == false) throw new Exception("not in a group");
         }
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -158,10 +180,11 @@ namespace BnB_ChipLibraryGui
             selected.Used = !selected.Used;
         }
 
-        private void HandCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void SetTabVisibility(Visibility change)
         {
-            if (sender == null) return;
-            if (ChipsInHand.Count > 0 && (Window.GetWindow(this) as MainWindow).TabHand.Visibility != Visibility.Visible)
+            if (inGroup && change == Visibility.Hidden) return;
+            if ((Window.GetWindow(this) as MainWindow).TabHand.Visibility == change) return;
+            if(change == Visibility.Visible)
             {
                 this.Dispatcher.BeginInvoke((Action)(() =>
                 {
@@ -169,13 +192,30 @@ namespace BnB_ChipLibraryGui
                     (Window.GetWindow(this) as MainWindow).TabHand.Visibility = Visibility.Visible;
                 }));
             }
-            else if (ChipsInHand.Count == 0)
+            else if(change == Visibility.Hidden)
             {
                 this.Dispatcher.BeginInvoke((Action)(() =>
                 {
                     (Window.GetWindow(this) as MainWindow).Pack.IsSelected = true;
                     (Window.GetWindow(this) as MainWindow).TabHand.Visibility = Visibility.Hidden;
                 }));
+            }
+            else
+            {
+                throw new ArgumentException();
+            }
+        }
+
+        private void HandCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (sender == null) return;
+            if (ChipsInHand.Count > 0)
+            {
+                SetTabVisibility(Visibility.Visible);
+            }
+            else
+            {
+                SetTabVisibility(Visibility.Hidden);
             }
             (Window.GetWindow(this) as MainWindow).HandUpdated();
         }

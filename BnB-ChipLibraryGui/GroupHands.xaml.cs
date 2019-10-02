@@ -248,7 +248,7 @@ namespace BnB_ChipLibraryGui
             Task.Run(() => HandUpdate(true));
         }
 
-        protected class GroupedHand
+        public struct GroupedHand
         {
             public string Name { get; private set; }
             public string Hand { get; private set; }
