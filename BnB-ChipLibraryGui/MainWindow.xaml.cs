@@ -24,7 +24,6 @@ namespace BnB_ChipLibraryGui
         //private Hand handWindow;
         private SearchWindow searchWindow;
 
-        private GroupHands grouphands;
         public Chip.ChipRanges RangeOption { get; private set; }
         public bool SortDesc { get; private set; }
         public ChipLibrary.LibrarySortOptions SortOption { get; private set; }
@@ -87,28 +86,6 @@ namespace BnB_ChipLibraryGui
         public string GetHand()
         {
             return this.HandWindowObject.GetHand();
-        }
-
-        public void SetGroupHand(IEnumerable<GroupHands.GroupedHand> hands)
-        {
-            this.HandWindowObject.SetGroupHand(hands);
-        }
-
-        public void HandUpdated()
-        {
-            if (grouphands != null)
-            {
-                Task.Run(() => grouphands.HandUpdate(true));
-            }
-        }
-
-        public void GroupClosed()
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                //Dispatcher must be used to invoke if UI elements may get updated off of the UI thread
-                grouphands = null;
-            });
         }
 
         public void SetMessage(string message, SolidColorBrush colorBrush)
@@ -175,24 +152,31 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        private async void ExitClicked(object sender, CancelEventArgs e)
+        private void ExitClicked(object sender, CancelEventArgs e)
         {
-            var toSave = await ChipLibrary.Instance.GetList(ChipLibrary.ChipListOptions.DisplayOwned,
-                ChipLibrary.LibrarySortOptions.Name, Chip.ChipRanges.All, false);
-            using (var chipFile = File.CreateText("./userChips.dat"))
-            {
-                StringBuilder fullText = new StringBuilder();
-                foreach (Chip chip in toSave)
-                {
-                    //string toWrite = string.Format("{0}:{1}:{2}:{3}\n", chip.Name, chip.ChipCount, chip.UsedInBattle, chip.NumInHand);
-                    //await chipFile.WriteLineAsync(toWrite);
-                    //fullText.Append(toWrite);
-                    fullText.AppendFormat("{0}:{1}:{2}:{3}\n", chip.Name, chip.ChipCount, chip.UsedInBattle, chip.NumInHand);
-                }
-                chipFile.Write(fullText.ToString());
-            }
+            //e.Cancel = true;
 
-            PlayerStats.Instance.Save();
+            Task.Run(async () =>
+            {
+                var toSave = await ChipLibrary.Instance.GetList(ChipLibrary.ChipListOptions.DisplayOwned,
+                ChipLibrary.LibrarySortOptions.Name, Chip.ChipRanges.All, false);
+                await this.HandWindowObject.LeaveGroup();
+                using (var chipFile = File.CreateText("./userChips.dat"))
+                {
+                    StringBuilder fullText = new StringBuilder();
+                    foreach (Chip chip in toSave)
+                    {
+                        //string toWrite = string.Format("{0}:{1}:{2}:{3}\n", chip.Name, chip.ChipCount, chip.UsedInBattle, chip.NumInHand);
+                        //await chipFile.WriteLineAsync(toWrite);
+                        //fullText.Append(toWrite);
+                        fullText.AppendFormat("{0}:{1}:{2}:{3}\n", chip.Name, chip.ChipCount, chip.UsedInBattle, chip.NumInHand);
+                    }
+                    chipFile.Write(fullText.ToString());
+                }
+
+                PlayerStats.Instance.Save();
+            }).Wait(); //call an async task and wait for it to finish before exiting
+
             //handWindow.Close();
         }
 
@@ -311,7 +295,7 @@ namespace BnB_ChipLibraryGui
 
         private async void JoinClick(object sender, RoutedEventArgs e)
         {
-            if (this.grouphands != null && this.grouphands.IsSessionClosed() == false)
+            if (HandWindowObject.SessionClosed == false)
             {
                 MessageBox.Show("You are already in a group, you must leave it if you wish to join a different one");
                 return;
@@ -332,16 +316,16 @@ namespace BnB_ChipLibraryGui
                 return;
             }
             string DMName = questionWindow.GetAnswer();
-            if (!await GroupHands.CheckSessionExists(DMName))
+            if (!await HandTab.CheckSessionExists(DMName))
             {
                 MessageBox.Show("That session does not yet exist, check the group name and try again");
                 return;
             }
 
-            grouphands = new GroupHands(this, DMName, NaviName, false);
+            //grouphands = new GroupHands(this, DMName, NaviName, false);
             try
             {
-                await grouphands.Init();
+                await this.HandWindowObject.JoinGroup(DMName, NaviName, false);
             }
             catch (Exception except)
             {
@@ -351,19 +335,20 @@ namespace BnB_ChipLibraryGui
                 }
                 else
                 {
-                    MessageBox.Show("An error has occurred, inform Major");
+                    //MessageBox.Show("An error has occurred, inform Major");
+                    ErrorWindow();
                 }
-                grouphands = null;
+                //grouphands = null;
                 return;
             }
-            grouphands.Show();
+            //grouphands.Show();
 
             //MessageBox.Show("Group Joined");
         }
 
         private async void CreateClick(object sender, RoutedEventArgs e)
         {
-            if (this.grouphands != null && this.grouphands.IsSessionClosed() == false)
+            if (HandWindowObject.SessionClosed == false)
             {
                 MessageBox.Show("You are already in a group, you must leave it if you wish to join a different one");
                 return;
@@ -375,25 +360,22 @@ namespace BnB_ChipLibraryGui
                 return;
             }
             string DMName = questionWindow.GetAnswer();
-            if (await GroupHands.CheckSessionExists(DMName))
+            if (await HandTab.CheckSessionExists(DMName))
             {
                 MessageBox.Show("That session already exists, try a different name");
                 return;
             }
 
-            grouphands = new GroupHands(this, DMName, DMName, true);
             try
             {
-                await grouphands.Init();
+                await this.HandWindowObject.JoinGroup(DMName, DMName, true);
             }
             catch (Exception except)
             {
                 MessageBox.Show("An error has occurred, inform Major");
                 MessageBox.Show(except.Message);
-                grouphands = null;
                 return;
             }
-            grouphands.Show();
         }
 
         private void CmbSortOption_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -477,6 +459,6 @@ namespace BnB_ChipLibraryGui
         public static void ErrorWindow(
             [CallerLineNumber] int lineNumber = 0,
             [CallerMemberName] string caller = null
-            ) => MessageBox.Show("And error has occurred at line " + lineNumber.ToString() + " in " + caller);
+            ) => MessageBox.Show("An error has occurred at line " + lineNumber.ToString() + " in " + caller);
     }
 }

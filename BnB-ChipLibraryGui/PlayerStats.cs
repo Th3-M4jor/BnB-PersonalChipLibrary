@@ -192,7 +192,7 @@ namespace BnB_ChipLibraryGui
         private static void SaveData()
         {
             IFormatter formatter = new BinaryFormatter();
-            var stream = new FileStream("./stats.dat", FileMode.Create, FileAccess.Read);
+            var stream = new FileStream("./stats.dat", FileMode.Create);
             formatter.Serialize(stream, lazy.Value);
             stream.Dispose();
         }

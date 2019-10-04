@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Threading;
 
 namespace BnB_ChipLibraryGui
 {
@@ -24,6 +25,10 @@ namespace BnB_ChipLibraryGui
             this.PlayerHand.ItemsSource = this.ChipsInHand;
             this.ChipsInHand.CollectionChanged += HandCollectionChanged;
             _numValue = PlayerStats.Instance.GetNaviStat(StatNames.Mind) + PlayerStats.Instance.CustomPlusInst;
+            Players.Visibility = Visibility.Hidden;
+            GroupRefreshButton.Visibility = Visibility.Hidden;
+            GroupLeaveButton.Visibility = Visibility.Hidden;
+            netLock = new Semaphore(1, 1);
         }
 
         public void SetHand(IEnumerable<HandChip> hand)
@@ -35,8 +40,6 @@ namespace BnB_ChipLibraryGui
         }
 
         private int _numValue;
-
-        private bool inGroup = false;
 
         public int NumValue
         {
@@ -105,21 +108,6 @@ namespace BnB_ChipLibraryGui
             ChipsInHand.Add(newChip.MakeHandChip());
         }
 
-        public void JoinedGroup()
-        {
-            this.inGroup = true;
-            SetTabVisibility(Visibility.Visible);
-        }
-
-        public void LeftGroup()
-        {
-            this.inGroup = false;
-            if(ChipsInHand.Count == 0)
-            {
-                SetTabVisibility(Visibility.Hidden);
-            }
-        }
-
         public (int numRemoved, int numUsed) ClearHand()
         {
             int numRemoved = this.ChipsInHand.Count;
@@ -138,11 +126,6 @@ namespace BnB_ChipLibraryGui
             return (numRemoved, numUsed);
         }
 
-        public void SetGroupHand(IEnumerable<GroupHands.GroupedHand> group)
-        {
-            if (inGroup == false) throw new Exception("not in a group");
-        }
-
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (sender != null && PlayerHand.SelectedItems != null && PlayerHand.SelectedItems.Count == 1)
@@ -155,7 +138,7 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        /*private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var (numRemoved, numUsed) = this.ClearHand();
             string message = "Hand cleared, " + numRemoved + " chips removed\nof which "
@@ -165,7 +148,7 @@ namespace BnB_ChipLibraryGui
             e.Cancel = true;
 
             //this.Hide();
-        }
+        }*/
 
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -182,9 +165,9 @@ namespace BnB_ChipLibraryGui
 
         private void SetTabVisibility(Visibility change)
         {
-            if (inGroup && change == Visibility.Hidden) return;
+            if (!SessionClosed && change == Visibility.Hidden) return;
             if ((Window.GetWindow(this) as MainWindow).TabHand.Visibility == change) return;
-            if(change == Visibility.Visible)
+            if (change == Visibility.Visible)
             {
                 this.Dispatcher.BeginInvoke((Action)(() =>
                 {
@@ -192,7 +175,7 @@ namespace BnB_ChipLibraryGui
                     (Window.GetWindow(this) as MainWindow).TabHand.Visibility = Visibility.Visible;
                 }));
             }
-            else if(change == Visibility.Hidden)
+            else if (change == Visibility.Hidden)
             {
                 this.Dispatcher.BeginInvoke((Action)(() =>
                 {
@@ -217,7 +200,8 @@ namespace BnB_ChipLibraryGui
             {
                 SetTabVisibility(Visibility.Hidden);
             }
-            (Window.GetWindow(this) as MainWindow).HandUpdated();
+            //(Window.GetWindow(this) as MainWindow).HandUpdated();
+            HandUpdate();
         }
 
         private void RemoveFromHand_Click(object sender, RoutedEventArgs e)

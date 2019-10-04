@@ -114,7 +114,7 @@
             <Button x:Name="AffinityDown" x:FieldModifier="private" Content="˅" Width="15" Click="CmdDown_Click" />
         </StackPanel>
         <Label Content="Affinity" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="3" HorizontalContentAlignment="Center" Width="62" Height="26" Grid.Row="3" />
-        <TextBox x:Name="OperatorName" HorizontalAlignment="Left" Height="23" Margin="8,26,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" TextAlignment="Center" Grid.Column="0" TextChanged="NaviName_TextChanged" Grid.Row="4" />
+        <TextBox x:Name="OperatorName" HorizontalAlignment="Left" Height="23" Margin="8,26,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" TextAlignment="Center" Grid.Column="0" TextChanged="OpNameChanged" Grid.Row="4" />
         <Label Content="Operator Name" HorizontalAlignment="Left" Margin="8,0,0,0" VerticalAlignment="Top" Grid.Column="0" TextBlock.TextAlignment="Center" HorizontalContentAlignment="Center" Width="120" Height="26" Grid.Row="4" />
         <StackPanel Orientation="Horizontal" x:Name="OpMindPanel" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="62" Grid.Row="5" Height="20" Margin="0,14,7,11">
             <TextBox x:Name="OpMind" x:FieldModifier="private" Width="32" Text="1" IsReadOnly="True" />

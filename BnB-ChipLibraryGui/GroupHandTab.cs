@@ -12,41 +12,48 @@ using Timer = System.Timers.Timer;
 
 namespace BnB_ChipLibraryGui
 {
-    /// <summary>
-    /// Interaction logic for GroupHands.xaml
-    /// </summary>
-    public partial class GroupHands : Window
+    public partial class HandTab : UserControl
     {
         public string PlayerName { get; private set; }
         public string DMName { get; private set; }
-        public readonly bool isCreator;
+        public bool isCreator;
         private static readonly string ChipPage = "http://spartan364.hopto.org/handupdate.php";
         private static readonly string createGroupPage = "http://spartan364.hopto.org/reqid.php";
         private long LastUpdated;
         private Timer updateInterval;
         private readonly Semaphore netLock;
         private const int MinuteInMiliseconds = 60000;
-        private bool sessionClosed = false;
+        public bool SessionClosed { get; private set; } = true;
         private string currentHand;
         public bool initialized = false;
 
-        public GroupHands(Window owner, string DMName, string PlayerName, bool isCreator)
+        public static async Task<bool> CheckSessionExists(string DMName)
         {
-            InitializeComponent();
-            netLock = new Semaphore(1, 1);
-            this.Hide();
-            this.Owner = owner;
+            var postContent = new System.Net.Http.FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("DMName", DMName),
+                new KeyValuePair<string, string>("PlayerName", DMName)
+            });
+            string result = await (await MainWindow.client.PostAsync(ChipPage, postContent)).Content.ReadAsStringAsync();
+            if (result.Equals("closed", StringComparison.OrdinalIgnoreCase))
+            {
+                postContent.Dispose();
+                return false;
+            }
+            postContent.Dispose();
+            return true;
+        }
+
+        public async Task JoinGroup(string DMName, string PlayerName, bool isCreator)
+        {
+            if (!SessionClosed)
+            {
+                MessageBox.Show("You are already in a group");
+                return;
+            }
             this.PlayerName = PlayerName;
             this.DMName = DMName;
             this.isCreator = isCreator;
-        }
-
-        public async Task Init()
-        {
-            if (initialized)
-            {
-                throw new Exception("Already initialized");
-            }
             if (isCreator)
             {
                 var stringContent = new System.Net.Http.FormUrlEncodedContent(new[]
@@ -61,7 +68,7 @@ namespace BnB_ChipLibraryGui
                 }
                 stringContent.Dispose();
             }
-            this.Dispatcher.Invoke(() => currentHand = (this.Owner as MainWindow).GetHand());
+            currentHand = GetHand();
             var postContent = new System.Net.Http.FormUrlEncodedContent(new[]
                 {
                         new KeyValuePair<string, string>("DMName", DMName),
@@ -83,7 +90,6 @@ namespace BnB_ChipLibraryGui
             {
                 hands = ConvertToHands(postRes);
             }
-
             this.Dispatcher.Invoke(() =>
             {
                 this.Players.ItemsSource = hands;
@@ -93,8 +99,16 @@ namespace BnB_ChipLibraryGui
             {
                 Enabled = true
             };
+            await this.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                Players.Visibility = Visibility.Visible;
+                GroupRefreshButton.Visibility = Visibility.Visible;
+                GroupLeaveButton.Visibility = Visibility.Visible;
+                SetTabVisibility(Visibility.Visible);
+            }));
             updateInterval.Elapsed += OnTimedEvent;
             postContent.Dispose();
+            SessionClosed = false;
         }
 
         private void OnTimedEvent(object source, ElapsedEventArgs e)
@@ -102,14 +116,9 @@ namespace BnB_ChipLibraryGui
             HandUpdate();
         }
 
-        public bool IsSessionClosed()
-        {
-            return this.sessionClosed;
-        }
-
         public async void HandUpdate(bool manual = false)
         {
-            if (sessionClosed) return;
+            if (SessionClosed) return;
 
             //lock (updateLock) //acquire mutex
             //{
@@ -123,7 +132,7 @@ namespace BnB_ChipLibraryGui
                 this.Dispatcher.Invoke(() =>
                 {
                     //Because this might not be done on the UI thread
-                    hand = (this.Owner as MainWindow).GetHand();
+                    hand = GetHand();
                 });
 
                 postContent = new System.Net.Http.FormUrlEncodedContent(new[]
@@ -141,11 +150,15 @@ namespace BnB_ChipLibraryGui
                     MessageBox.Show("The group was closed");
                     this.Dispatcher.Invoke(() =>
                     {
-                        (this.Owner as MainWindow).GroupClosed();
-
                         updateInterval.Dispose();
-                        this.sessionClosed = true;
-                        this.Close();
+                        this.SessionClosed = true;
+                        Players.Visibility = Visibility.Hidden;
+                        GroupRefreshButton.Visibility = Visibility.Hidden;
+                        GroupLeaveButton.Visibility = Visibility.Hidden;
+                        if (this.currentHand.Length == 0)
+                        {
+                            SetTabVisibility(Visibility.Hidden);
+                        }
                     });
                     return;
                 }
@@ -178,76 +191,6 @@ namespace BnB_ChipLibraryGui
             //release mutex
         }
 
-        public static async Task<bool> CheckSessionExists(string DMName)
-        {
-            var postContent = new System.Net.Http.FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("DMName", DMName),
-                new KeyValuePair<string, string>("PlayerName", DMName)
-            });
-            string result = await (await MainWindow.client.PostAsync(ChipPage, postContent)).Content.ReadAsStringAsync();
-            if (result.Equals("closed", StringComparison.OrdinalIgnoreCase))
-            {
-                postContent.Dispose();
-                return false;
-            }
-            postContent.Dispose();
-            return true;
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (sessionClosed) return;
-            var res = MessageBox.Show("Leave the group?", "Close window?", MessageBoxButton.OKCancel);
-            if (res.Equals(MessageBoxResult.Cancel))
-            {
-                e.Cancel = true;
-                return;
-            }
-            var postContent = new System.Net.Http.FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("DMName", DMName),
-                new KeyValuePair<string, string>("PlayerName", DMName),
-                new KeyValuePair<string, string>("close", "true")
-            });
-            try
-            {
-                var httpRes = MainWindow.client.PostAsync(ChipPage, postContent);
-                httpRes.Wait();
-                var stringTask = httpRes.Result.Content.ReadAsStringAsync();
-                stringTask.Wait();
-                string result = stringTask.Result;
-                //string result = Encoding.UTF8.GetString(wc.UploadValues(ChipPage, postData));
-                if (!result.Equals("closed", StringComparison.OrdinalIgnoreCase))
-                {
-                    MessageBox.Show("A server error occurred, inform Major");
-                }
-            }
-            catch (Exception except)
-            {
-                MessageBox.Show("Something went wrong, inform Major");
-                MessageBox.Show(except.Message);
-            }
-            finally
-            {
-                postContent.Dispose();
-                this.updateInterval.Stop();
-                this.updateInterval.Dispose();
-                sessionClosed = true;
-            }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if ((LastUpdated + (MinuteInMiliseconds / 24)) > DateTimeOffset.Now.ToUnixTimeMilliseconds())
-            {
-                MessageBox.Show("This was updated less than a minute ago");
-                return;
-            }
-
-            Task.Run(() => HandUpdate(true));
-        }
-
         public struct GroupedHand
         {
             public string Name { get; private set; }
@@ -257,18 +200,6 @@ namespace BnB_ChipLibraryGui
             {
                 this.Name = name ?? throw new ArgumentNullException();
                 this.Hand = hand ?? throw new ArgumentNullException();
-            }
-        }
-
-        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (sender != null && Players.SelectedItems != null && Players.SelectedItems.Count == 1)
-            {
-                DataGridRow dgr = Players.ItemContainerGenerator.ContainerFromItem(Players.SelectedItem) as DataGridRow;
-                if (!dgr.IsMouseOver)
-                {
-                    (dgr as DataGridRow).IsSelected = false;
-                }
             }
         }
 
@@ -294,6 +225,89 @@ namespace BnB_ChipLibraryGui
                 hands.Add(new GroupedHand(name, desc));
             }
             return hands;
+        }
+
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            if ((LastUpdated + (MinuteInMiliseconds / 24)) > DateTimeOffset.Now.ToUnixTimeMilliseconds())
+            {
+                MessageBox.Show("This was updated less than a minute ago");
+                return;
+            }
+
+            Task.Run(() => HandUpdate(true));
+        }
+
+        public async Task LeaveGroup()
+        {
+            if (SessionClosed) return;
+            var postContent = new System.Net.Http.FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("DMName", DMName),
+                new KeyValuePair<string, string>("PlayerName", PlayerName),
+                new KeyValuePair<string, string>("close", "true")
+            });
+
+            /*var httpRes = MainWindow.client.PostAsync(ChipPage, postContent);
+            httpRes.Wait();
+            var stringTask = httpRes.Result.Content.ReadAsStringAsync();
+            stringTask.Wait();
+            string result = stringTask.Result;*/
+            await MainWindow.client.PostAsync(ChipPage, postContent);
+            postContent.Dispose();
+        }
+
+        private async void Leave_Click(object sender, RoutedEventArgs e)
+        {
+            if (SessionClosed) return;
+            var res = MessageBox.Show("Leave the group?", "Close window?", MessageBoxButton.OKCancel);
+            if (res.Equals(MessageBoxResult.Cancel))
+            {
+                return;
+            }
+            var postContent = new System.Net.Http.FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("DMName", DMName),
+                new KeyValuePair<string, string>("PlayerName", PlayerName),
+                new KeyValuePair<string, string>("close", "true")
+            });
+            try
+            {
+                /*var httpRes = MainWindow.client.PostAsync(ChipPage, postContent);
+                httpRes.Wait();
+                var stringTask = httpRes.Result.Content.ReadAsStringAsync();
+                stringTask.Wait();
+                string result = stringTask.Result;*/
+                string result = await (await MainWindow.client.PostAsync(ChipPage, postContent)).Content.ReadAsStringAsync();
+                //string result = Encoding.UTF8.GetString(wc.UploadValues(ChipPage, postData));
+                if (!result.Equals("closed", StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show("A server error occurred, inform Major");
+                }
+            }
+            catch (Exception except)
+            {
+                MainWindow.ErrorWindow();
+                MessageBox.Show(except.Message);
+            }
+            finally
+            {
+                postContent.Dispose();
+                this.updateInterval.Stop();
+                this.updateInterval.Dispose();
+                this.Dispatcher.Invoke(() =>
+                {
+                    updateInterval.Dispose();
+                    this.SessionClosed = true;
+                    Players.Visibility = Visibility.Hidden;
+                    GroupRefreshButton.Visibility = Visibility.Hidden;
+                    GroupLeaveButton.Visibility = Visibility.Hidden;
+                    if (this.ChipsInHand.Count == 0)
+                    {
+                        SetTabVisibility(Visibility.Hidden);
+                    }
+                });
+            }
         }
     }
 }

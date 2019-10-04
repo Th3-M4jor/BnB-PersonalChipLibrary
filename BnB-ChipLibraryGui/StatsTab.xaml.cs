@@ -24,10 +24,59 @@ namespace BnB_ChipLibraryGui
         {
             InitializeComponent();
             NaviName.Text = PlayerStats.Instance.NaviName;
+            OperatorName.Text = PlayerStats.Instance.OperatorName;
+            ElementBox.SelectedIndex = (int)PlayerStats.Instance.NaviElement;
+            foreach (var stat in Enum.GetValues(typeof(StatNames)))
+            {
+                if (this.FindName(stat.ToString()) is TextBox box)
+                {
+                    box.Text = PlayerStats.Instance.GetNaviStat((StatNames)stat).ToString();
+                }
+                else
+                {
+                    MainWindow.ErrorWindow();
+                }
+
+                if (this.FindName("Op" + stat.ToString()) is TextBox opBox)
+                {
+                    opBox.Text = PlayerStats.Instance.GetOpStat((StatNames)stat).ToString();
+                }
+                else
+                {
+                    MainWindow.ErrorWindow();
+                }
+            }
+
+            for (int i = 0; i < 9; i++)
+            {
+                Chip.ChipSkills skill = (Chip.ChipSkills)i;
+                if (this.FindName(skill.ToString()) is TextBox skillBox)
+                {
+                    skillBox.Text = PlayerStats.Instance.GetNaviSkill(skill).ToString();
+                }
+                else
+                {
+                    MainWindow.ErrorWindow();
+                }
+
+                if (this.FindName("Op" + skill.ToString()) is TextBox opSkillBox)
+                {
+                    opSkillBox.Text = PlayerStats.Instance.GetOpSkill(skill).ToString();
+                }
+                else
+                {
+                    MainWindow.ErrorWindow();
+                }
+            }
+
+            /*this.Mind.Text = PlayerStats.Instance.GetNaviStat(StatNames.Mind).ToString();
+            this.Body.Text = PlayerStats.Instance.GetNaviStat(StatNames.Body).ToString();
+            this.Spirit.Text = PlayerStats.Instance.GetNaviStat(StatNames.Spirit).ToString();*/
         }
 
         private void ElementBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!this.IsInitialized) return;
             PlayerStats.Instance.ElementChanged(ElementBox.SelectedIndex);
         }
 
@@ -35,6 +84,12 @@ namespace BnB_ChipLibraryGui
         {
             if (NaviName == null) return;
             PlayerStats.Instance.NaviName = NaviName.Text;
+        }
+
+        private void OpNameChanged(object sender, TextChangedEventArgs e)
+        {
+            if (OperatorName == null) return;
+            PlayerStats.Instance.OperatorName = OperatorName.Text;
         }
 
         private void CmdUp_Click(object sender, RoutedEventArgs e)
