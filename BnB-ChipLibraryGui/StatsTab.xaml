@@ -188,5 +188,11 @@
             <Button x:Name="OpAffinityDown" x:FieldModifier="private" Content="˅" Width="15" Click="OpCmdDown_Click" />
         </StackPanel>
         <Label Content="Affinity" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="3" HorizontalContentAlignment="Center" Width="62" Height="26" Grid.Row="7" />
+        <Label Content="Custom+ inst" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="5" HorizontalContentAlignment="Center" Width="204" Height="26" Grid.Row="2" Margin="0,0,-18,0" />
+        <StackPanel Orientation="Horizontal" x:Name="CustomPanel" Grid.Row="2" HorizontalAlignment="Center" Width="62" Grid.Column="5" VerticalAlignment="Bottom" Height="20">
+            <TextBox x:Name="CustomCt" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
+            <Button x:Name="CustomUp" x:FieldModifier="private" Content="˄" Width="15" Click="CustomUp_Click" />
+            <Button x:Name="CDown" x:FieldModifier="private" Content="˅" Width="15" Click="CustomDown_Click" />
+        </StackPanel>
     </Grid>
 </UserControl>

@@ -233,5 +233,15 @@ namespace BnB_ChipLibraryGui
                 MainWindow.ErrorWindow();
             }
         }
+
+        private void CustomUp_Click(object sender, RoutedEventArgs e)
+        {
+            CustomCt.Text = PlayerStats.Instance.IncCustomPlus().ToString();
+        }
+
+        private void CustomDown_Click(object sender, RoutedEventArgs e)
+        {
+            CustomCt.Text = PlayerStats.Instance.DecCustomPlus().ToString();
+        }
     }
 }

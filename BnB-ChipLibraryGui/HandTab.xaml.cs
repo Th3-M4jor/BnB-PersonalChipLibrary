@@ -24,11 +24,12 @@ namespace BnB_ChipLibraryGui
             this.ChipsInHand = new ObservableCollection<HandChip>();
             this.PlayerHand.ItemsSource = this.ChipsInHand;
             this.ChipsInHand.CollectionChanged += HandCollectionChanged;
-            _numValue = PlayerStats.Instance.GetNaviStat(StatNames.Mind) + PlayerStats.Instance.CustomPlusInst;
+            _numValue = PlayerStats.Instance.GetNaviStat(StatNames.Mind) + (uint)PlayerStats.Instance.CustomPlusInst;
             Players.Visibility = Visibility.Hidden;
             GroupRefreshButton.Visibility = Visibility.Hidden;
             GroupLeaveButton.Visibility = Visibility.Hidden;
             netLock = new Semaphore(1, 1);
+            PlayerStats.Instance.HandSizeChanged += HandSizeChanged;
         }
 
         public void SetHand(IEnumerable<HandChip> hand)
@@ -39,9 +40,9 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        private int _numValue;
+        private uint _numValue;
 
-        public int NumValue
+        public uint NumValue
         {
             get { return _numValue; }
             set
@@ -51,25 +52,9 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        private void CmdUp_Click(object sender, RoutedEventArgs e)
+        private void HandSizeChanged(object sender, uint size)
         {
-            NumValue++;
-        }
-
-        private void CmdDown_Click(object sender, RoutedEventArgs e)
-        {
-            NumValue--;
-        }
-
-        private void TxtNum_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (txtNum == null)
-            {
-                return;
-            }
-
-            if (!int.TryParse(txtNum.Text, out _numValue))
-                txtNum.Text = _numValue.ToString();
+            this.NumValue = size;
         }
 
         //private List<HandChip> ChipsInHand;

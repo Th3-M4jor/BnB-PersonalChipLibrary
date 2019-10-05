@@ -150,7 +150,7 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        private static Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
+        public static Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
         {
             using (MemoryStream outStream = new MemoryStream())
             {

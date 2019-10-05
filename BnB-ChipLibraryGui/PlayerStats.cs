@@ -28,6 +28,9 @@ namespace BnB_ChipLibraryGui
         public byte HPPlusInst { get; private set; }
         public byte WPNLvLPlusInst { get; private set; }
         public byte CustomPlusInst { get; private set; }
+
+        public event EventHandler<uint> HandSizeChanged;
+
         private static readonly Lazy<PlayerStats> lazy = new Lazy<PlayerStats>(() => new PlayerStats());
 
         public static PlayerStats Instance
@@ -164,6 +167,7 @@ namespace BnB_ChipLibraryGui
             if (NaviStats[(int)stat] < 5)
             {
                 NaviStats[(int)stat]++;
+                if (stat == StatNames.Mind) HandSizeChanged.Invoke(this, CustomPlusInst + (uint)NaviStats[(int)StatNames.Mind]);
                 return true;
             }
             return false;
@@ -174,6 +178,7 @@ namespace BnB_ChipLibraryGui
             if (NaviStats[(int)stat] != 1)
             {
                 NaviStats[(int)stat]--;
+                if (stat == StatNames.Mind) HandSizeChanged.Invoke(this, CustomPlusInst + (uint)NaviStats[(int)StatNames.Mind]);
                 return true;
             }
             return false;
@@ -204,6 +209,21 @@ namespace BnB_ChipLibraryGui
             PlayerStats stats = (PlayerStats)formatter.Deserialize(stream);
             stream.Dispose();
             return stats;
+        }
+
+        public byte IncCustomPlus()
+        {
+            CustomPlusInst++;
+            HandSizeChanged.Invoke(this, CustomPlusInst + (uint)NaviStats[(int)StatNames.Mind]);
+            return CustomPlusInst;
+        }
+
+        public byte DecCustomPlus()
+        {
+            if (CustomPlusInst == 0) return CustomPlusInst;
+            else CustomPlusInst--;
+            HandSizeChanged.Invoke(this, CustomPlusInst);
+            return CustomPlusInst;
         }
     }
 }
