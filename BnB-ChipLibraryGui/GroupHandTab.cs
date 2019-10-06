@@ -180,10 +180,7 @@ namespace BnB_ChipLibraryGui
             }
             finally
             {
-                if (postContent != null)
-                {
-                    postContent.Dispose();
-                }
+                postContent?.Dispose();
                 netLock.Release();
             }
             //}

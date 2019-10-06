@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using MessageBox = System.Windows.MessageBox;
 
 namespace BnB_ChipLibraryGui
 {
@@ -18,25 +19,39 @@ namespace BnB_ChipLibraryGui
     {
         public uint NewHandSize;
 
-        public HandSizeChangedEventArgs() => NewHandSize = 0;
+        public HandSizeChangedEventArgs() : base() => NewHandSize = 0;
 
-        public HandSizeChangedEventArgs(uint NewHandSize) => this.NewHandSize = NewHandSize;
+        public HandSizeChangedEventArgs(uint NewHandSize) : base() => this.NewHandSize = NewHandSize;
     }
 
-    [Serializable]
+    //[Serializable]
     public sealed class PlayerStats
     {
-        public string NaviName { get; set; }
-        public Chip.ChipElements NaviElement { get; private set; }
-        private readonly byte[] NaviStats;
-        private readonly byte[] NaviSkills;
-        public string OperatorName { get; set; }
-        private readonly byte[] OperatorStats;
-        private readonly byte[] OperatorSkills;
-        public byte ATKPlusInst { get; private set; }
-        public byte HPPlusInst { get; private set; }
-        public byte WPNLvLPlusInst { get; private set; }
-        public byte CustomPlusInst { get; private set; }
+        public string NaviName { get => statData.NaviName; set => statData.NaviName = value; }
+        public string OperatorName { get => statData.OperatorName; set => statData.OperatorName = value; }
+        public Chip.ChipElements NaviElement { get => statData.NaviElement; set => statData.NaviElement = value; }
+        public byte CustomPlusInst { get => statData.CustomPlusInst; set => statData.CustomPlusInst = value; }
+        public byte ATKPlusInst { get => statData.ATKPlusInst; set => statData.ATKPlusInst = value; }
+        public byte HPPlusInst { get => statData.HPPlusInst; set => statData.HPPlusInst = value; }
+        public byte WPNLvLPlusInst { get => statData.WPNLvLPlusInst; set => statData.WPNLvLPlusInst = value; }
+
+        [Serializable]
+        private struct StatData
+        {
+            public string NaviName { get; set; }
+            public Chip.ChipElements NaviElement { get; set; }
+            public byte[] NaviStats;
+            public byte[] NaviSkills;
+            public string OperatorName { get; set; }
+            public byte[] OperatorStats;
+            public byte[] OperatorSkills;
+            public byte ATKPlusInst { get; set; }
+            public byte HPPlusInst { get; set; }
+            public byte WPNLvLPlusInst { get; set; }
+            public byte CustomPlusInst { get; set; }
+        }
+
+        private StatData statData;
 
         public event EventHandler<HandSizeChangedEventArgs> HandSizeChanged;
 
@@ -52,38 +67,57 @@ namespace BnB_ChipLibraryGui
 
         private PlayerStats()
         {
+            statData = new StatData();
             if (!File.Exists("./stats.dat")) //save file doesn't exist
             {
-                NaviSkills = new byte[9];
-                NaviStats = new byte[3] { 1, 1, 1 }; //initialize stats to 1
-                OperatorSkills = new byte[9];
-                OperatorStats = new byte[3] { 1, 1, 1 };
-                NaviElement = Chip.ChipElements.Null;
-                NaviName = "";
-                OperatorName = "";
-                ATKPlusInst = 0;
-                HPPlusInst = 0;
-                WPNLvLPlusInst = 0;
-                CustomPlusInst = 0;
+                statData.NaviSkills = new byte[9];
+                statData.NaviStats = new byte[3] { 1, 1, 1 }; //initialize stats to 1
+                statData.OperatorSkills = new byte[9];
+                statData.OperatorStats = new byte[3] { 1, 1, 1 };
+                statData.NaviElement = Chip.ChipElements.Null;
+                statData.NaviName = "";
+                statData.OperatorName = "";
+                statData.ATKPlusInst = 0;
+                statData.HPPlusInst = 0;
+                statData.WPNLvLPlusInst = 0;
+                statData.CustomPlusInst = 0;
                 return;
             }
-
-            var currStats = LoadUP();
-            this.NaviElement = currStats.NaviElement;
-            this.NaviName = currStats.NaviName;
-            this.NaviSkills = currStats.NaviSkills;
-            this.NaviStats = currStats.NaviStats;
-            this.OperatorName = currStats.OperatorName;
-            this.OperatorSkills = currStats.OperatorSkills;
-            this.OperatorStats = currStats.OperatorStats;
-            this.ATKPlusInst = currStats.ATKPlusInst;
-            this.HPPlusInst = currStats.HPPlusInst;
-            this.WPNLvLPlusInst = currStats.WPNLvLPlusInst;
+            try
+            {
+                var currStats = LoadUP();
+                statData.NaviElement = currStats.NaviElement;
+                statData.NaviName = currStats.NaviName;
+                statData.NaviSkills = currStats.NaviSkills;
+                statData.NaviStats = currStats.NaviStats;
+                statData.OperatorName = currStats.OperatorName;
+                statData.OperatorSkills = currStats.OperatorSkills;
+                statData.OperatorStats = currStats.OperatorStats;
+                statData.ATKPlusInst = currStats.ATKPlusInst;
+                statData.HPPlusInst = currStats.HPPlusInst;
+                statData.WPNLvLPlusInst = currStats.WPNLvLPlusInst;
+            }
+            catch (Exception e) when (e is SerializationException)
+            {
+                MessageBox.Show("Unable to load Player Stats, resetting to zero");
+                File.Delete("./stats.dat");
+                statData.NaviSkills = new byte[9];
+                statData.NaviStats = new byte[3] { 1, 1, 1 }; //initialize stats to 1
+                statData.OperatorSkills = new byte[9];
+                statData.OperatorStats = new byte[3] { 1, 1, 1 };
+                statData.NaviElement = Chip.ChipElements.Null;
+                statData.NaviName = "";
+                statData.OperatorName = "";
+                statData.ATKPlusInst = 0;
+                statData.HPPlusInst = 0;
+                statData.WPNLvLPlusInst = 0;
+                statData.CustomPlusInst = 0;
+            }
         }
 
         public void ElementChanged(int element)
         {
-            this.NaviElement = (Chip.ChipElements)element;
+            statData.NaviElement = (Chip.ChipElements)element;
         }
 
         public void Save()
@@ -103,21 +137,21 @@ namespace BnB_ChipLibraryGui
             }
             else
             {
-                return NaviSkills[(int)skill].ToString("+#;-#;0");
+                return statData.NaviSkills[(int)skill].ToString("+#;-#;0");
             }
         }
 
-        public byte GetOpSkill(Chip.ChipSkills skill) => this.OperatorSkills[(int)skill];
+        public byte GetOpSkill(Chip.ChipSkills skill) => statData.OperatorSkills[(int)skill];
 
-        public byte GetOpStat(StatNames stat) => this.OperatorStats[(int)stat];
+        public byte GetOpStat(StatNames stat) => statData.OperatorStats[(int)stat];
 
-        public byte GetNaviSkill(Chip.ChipSkills skill) => this.NaviSkills[(int)skill];
+        public byte GetNaviSkill(Chip.ChipSkills skill) => statData.NaviSkills[(int)skill];
 
-        public byte GetNaviStat(StatNames stat) => this.NaviStats[(int)stat];
+        public byte GetNaviStat(StatNames stat) => statData.NaviStats[(int)stat];
 
         public bool NaviCanIncreaseSkill(Chip.ChipSkills skill, StatNames stat)
         {
-            if (NaviSkills[(int)skill] < (NaviStats[(int)stat] * 4))
+            if (statData.NaviSkills[(int)skill] < (statData.NaviStats[(int)stat] * 4))
             {
                 return true;
             }
@@ -126,14 +160,14 @@ namespace BnB_ChipLibraryGui
 
         public void NaviIncreaseSkill(Chip.ChipSkills skill)
         {
-            NaviSkills[(int)skill]++;
+            statData.NaviSkills[(int)skill]++;
         }
 
         public bool NaviDecreaseSkill(Chip.ChipSkills skill)
         {
-            if (NaviSkills[(int)skill] != 0)
+            if (statData.NaviSkills[(int)skill] != 0)
             {
-                NaviSkills[(int)skill]--;
+                statData.NaviSkills[(int)skill]--;
                 return true;
             }
             return false;
@@ -141,7 +175,7 @@ namespace BnB_ChipLibraryGui
 
         public bool OpCanIncreaseSkill(Chip.ChipSkills skill, StatNames stat)
         {
-            if (OperatorSkills[(int)skill] < (OperatorStats[(int)stat] * 4))
+            if (statData.OperatorSkills[(int)skill] < (statData.OperatorStats[(int)stat] * 4))
             {
                 return true;
             }
@@ -150,22 +184,22 @@ namespace BnB_ChipLibraryGui
 
         public void OpIncreaseSkill(Chip.ChipSkills skill)
         {
-            OperatorSkills[(int)skill]++;
+            statData.OperatorSkills[(int)skill]++;
         }
 
         public void OpDecreaseSkill(Chip.ChipSkills skill)
         {
-            if (OperatorSkills[(int)skill] != 0)
+            if (statData.OperatorSkills[(int)skill] != 0)
             {
-                OperatorSkills[(int)skill]--;
+                statData.OperatorSkills[(int)skill]--;
             }
         }
 
         public bool OpIncreaseStat(StatNames stat)
         {
-            if (OperatorStats[(int)stat] < 5)
+            if (statData.OperatorStats[(int)stat] < 5)
             {
-                OperatorStats[(int)stat]++;
+                statData.OperatorStats[(int)stat]++;
                 return true;
             }
             return false;
@@ -173,10 +207,10 @@ namespace BnB_ChipLibraryGui
 
         public bool NaviIncreaseStat(StatNames stat)
         {
-            if (NaviStats[(int)stat] < 5)
+            if (statData.NaviStats[(int)stat] < 5)
             {
-                NaviStats[(int)stat]++;
-                if (stat == StatNames.Mind) HandSizeChanged.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)NaviStats[(int)StatNames.Mind]));
+                statData.NaviStats[(int)stat]++;
+                if (stat == StatNames.Mind) HandSizeChanged.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)statData.NaviStats[(int)StatNames.Mind]));
                 return true;
             }
             return false;
@@ -184,10 +218,10 @@ namespace BnB_ChipLibraryGui
 
         public bool NaviDecreaseStat(StatNames stat)
         {
-            if (NaviStats[(int)stat] != 1)
+            if (statData.NaviStats[(int)stat] != 1)
             {
-                NaviStats[(int)stat]--;
-                if (stat == StatNames.Mind) HandSizeChanged.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)NaviStats[(int)StatNames.Mind]));
+                statData.NaviStats[(int)stat]--;
+                if (stat == StatNames.Mind) HandSizeChanged.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)statData.NaviStats[(int)StatNames.Mind]));
                 return true;
             }
             return false;
@@ -195,9 +229,9 @@ namespace BnB_ChipLibraryGui
 
         public bool OpDecreaseStat(StatNames stat)
         {
-            if (OperatorStats[(int)stat] != 1)
+            if (statData.OperatorStats[(int)stat] != 1)
             {
-                OperatorStats[(int)stat]--;
+                statData.OperatorStats[(int)stat]--;
                 return true;
             }
             return false;
@@ -207,32 +241,40 @@ namespace BnB_ChipLibraryGui
         {
             IFormatter formatter = new BinaryFormatter();
             var stream = new FileStream("./stats.dat", FileMode.Create);
-            formatter.Serialize(stream, lazy.Value);
+            formatter.Serialize(stream, lazy.Value.statData);
             stream.Dispose();
         }
 
-        private static PlayerStats LoadUP()
+        private static StatData LoadUP()
         {
-            IFormatter formatter = new BinaryFormatter();
-            var stream = new FileStream("./stats.dat", FileMode.Open, FileAccess.Read);
-            PlayerStats stats = (PlayerStats)formatter.Deserialize(stream);
-            stream.Dispose();
-            return stats;
+            FileStream stream = null;
+            try
+            {
+                IFormatter formatter = new BinaryFormatter();
+                stream = new FileStream("./stats.dat", FileMode.Open, FileAccess.Read);
+                StatData stats = (StatData)formatter.Deserialize(stream);
+                //stream.Dispose();
+                return stats;
+            }
+            finally
+            {
+                stream?.Dispose();
+            }
         }
 
         public byte IncCustomPlus()
         {
-            CustomPlusInst++;
-            HandSizeChanged.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)NaviStats[(int)StatNames.Mind]));
-            return CustomPlusInst;
+            statData.CustomPlusInst++;
+            HandSizeChanged.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)statData.NaviStats[(int)StatNames.Mind]));
+            return statData.CustomPlusInst;
         }
 
         public byte DecCustomPlus()
         {
-            if (CustomPlusInst == 0) return CustomPlusInst;
-            else CustomPlusInst--;
-            HandSizeChanged.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)NaviStats[(int)StatNames.Mind]));
-            return CustomPlusInst;
+            if (statData.CustomPlusInst == 0) return statData.CustomPlusInst;
+            else statData.CustomPlusInst--;
+            HandSizeChanged.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)statData.NaviStats[(int)StatNames.Mind]));
+            return statData.CustomPlusInst;
         }
     }
 }
