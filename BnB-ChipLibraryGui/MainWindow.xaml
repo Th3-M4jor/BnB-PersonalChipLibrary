@@ -16,15 +16,15 @@
         <TabItem Name="Pack" Header="Pack">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="202" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="193" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <DataGrid Name="UserChips" AutoGenerateColumns="false" SelectionMode="Single"
                   HorizontalAlignment="Left" Margin="0,0,0,5" Grid.Column="0" Grid.Row="0"
-                  Width="460" CanUserSortColumns="False" CanUserAddRows="False"
+                  Width="468" CanUserSortColumns="False" CanUserAddRows="False"
                   CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False"
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                     <DataGrid.Columns>
@@ -74,7 +74,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="Class" Binding="{Binding ChipClass}" IsReadOnly="True">
+                        <DataGridTextColumn Header="InHand" Binding="{Binding NumInHand}" IsReadOnly="True">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Center" />
@@ -108,7 +108,7 @@
                         </Style>
                     </DataGrid.RowStyle>
                 </DataGrid>
-                <Canvas HorizontalAlignment="Left" Height="451" VerticalAlignment="Top" Width="192" Grid.Column="1" Margin="0,2,0,0">
+                <Canvas HorizontalAlignment="Left" Height="451" VerticalAlignment="Top" Width="192" Grid.Column="1" Margin="0,2,0,-1">
                     <Label Content="Ranges" Canvas.Left="20" Canvas.Top="92" />
                     <StackPanel Name="SpecificRanges" Grid.Row="1" Height="85" Width="86" Canvas.Top="118" Canvas.Left="10">
                         <RadioButton GroupName="RangeOption" Name="AllRanges" Content="All" IsChecked="True" Checked="RangeClick" />

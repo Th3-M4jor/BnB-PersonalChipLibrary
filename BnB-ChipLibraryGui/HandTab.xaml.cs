@@ -20,11 +20,10 @@ namespace BnB_ChipLibraryGui
         public HandTab()
         {
             InitializeComponent();
-            txtNum.Text = 2 + "";
             this.ChipsInHand = new ObservableCollection<HandChip>();
             this.PlayerHand.ItemsSource = this.ChipsInHand;
             this.ChipsInHand.CollectionChanged += HandCollectionChanged;
-            _numValue = PlayerStats.Instance.GetNaviStat(StatNames.Mind) + (uint)PlayerStats.Instance.CustomPlusInst;
+            NumValue = PlayerStats.Instance.GetNaviStat(StatNames.Mind) + (uint)PlayerStats.Instance.CustomPlusInst;
             Players.Visibility = Visibility.Hidden;
             GroupRefreshButton.Visibility = Visibility.Hidden;
             GroupLeaveButton.Visibility = Visibility.Hidden;
@@ -39,6 +38,8 @@ namespace BnB_ChipLibraryGui
                 ChipsInHand.Add(chip);
             }
         }
+
+        public event EventHandler ChipHandUpdated;
 
         private uint _numValue;
 
@@ -156,7 +157,7 @@ namespace BnB_ChipLibraryGui
             {
                 this.Dispatcher.BeginInvoke((Action)(() =>
                 {
-                    (Window.GetWindow(this) as MainWindow).TabHand.IsSelected = true;
+                    //(Window.GetWindow(this) as MainWindow).TabHand.IsSelected = true;
                     (Window.GetWindow(this) as MainWindow).TabHand.Visibility = Visibility.Visible;
                 }));
             }
@@ -186,6 +187,7 @@ namespace BnB_ChipLibraryGui
                 SetTabVisibility(Visibility.Hidden);
             }
             //(Window.GetWindow(this) as MainWindow).HandUpdated();
+            ChipHandUpdated?.Invoke(this, new EventArgs());
             HandUpdate();
         }
 

@@ -15,7 +15,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="222" />
+            <ColumnDefinition Width="214" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="82" />
@@ -23,7 +23,7 @@
         </Grid.RowDefinitions>
         <DataGrid Name="PlayerHand" AutoGenerateColumns="false" SelectionMode="Single"
                   HorizontalAlignment="Left" Height="auto" VerticalAlignment="Stretch" Margin="0,0,0,5"
-                  Width="448" CanUserSortColumns="False" CanUserAddRows="False"
+                  Width="456" CanUserSortColumns="False" CanUserAddRows="False"
                   CanUserDeleteRows="False" CanUserResizeColumns="False" CanUserResizeRows="False"
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.RowSpan="2">
             <DataGrid.Columns>
@@ -110,9 +110,9 @@
 
         <StackPanel Orientation="Horizontal" Name="MaxHandSize" Grid.Column="1" Margin="10,40,119,19" Grid.Row="0">
             <Label Content="HandSize" />
-            <TextBox x:Name="txtNum" x:FieldModifier="private" Width="auto" Text="2" IsReadOnly="True" TextAlignment="Center" />
+            <TextBox x:Name="txtNum" x:FieldModifier="private" Width="auto" Text="" IsReadOnly="True" TextAlignment="Center" />
         </StackPanel>
-        <Label Content="Size" HorizontalAlignment="Center" Margin="19,10,153,0" VerticalAlignment="Top" Width="50" Height="25" Grid.Column="1" />
+        <Label Content="Size" HorizontalAlignment="Center" Margin="14,10,150,0" VerticalAlignment="Top" Width="50" Height="25" Grid.Column="1" />
         <Button Name="RemoveFromHand" Content="Remove" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="RemoveFromHand_Click" Height="20" />
         <DataGrid Name="Players" Grid.Column="1" HorizontalAlignment="Left" Height="373" Margin="10,35,0,0" Grid.Row="1" VerticalAlignment="Top" Width="192" AutoGenerateColumns="False" IsReadOnly="True" CanUserSortColumns="False"
                   CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False"
@@ -144,7 +144,7 @@
                 </Style>
             </DataGrid.Resources>
         </DataGrid>
-        <Button Content="Refresh" Name="GroupRefreshButton" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="Refresh_Click" />
-        <Button Content="Leave" Name="GroupLeaveButton" Grid.Column="1" HorizontalAlignment="Left" Margin="127,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="Leave_Click" />
+        <Button Content="Refresh" Name="GroupRefreshButton" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="Refresh_Click" Height="20" />
+        <Button Content="Leave" Name="GroupLeaveButton" Grid.Column="1" HorizontalAlignment="Left" Margin="127,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="Leave_Click" Height="20" />
     </Grid>
 </UserControl>

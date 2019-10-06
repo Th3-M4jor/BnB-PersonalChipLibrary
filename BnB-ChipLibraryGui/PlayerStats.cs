@@ -36,7 +36,7 @@ namespace BnB_ChipLibraryGui
         public byte WPNLvLPlusInst { get => statData.WPNLvLPlusInst; set => statData.WPNLvLPlusInst = value; }
 
         [Serializable]
-        private struct StatData
+        private class StatData
         {
             public string NaviName { get; set; }
             public Chip.ChipElements NaviElement { get; set; }
@@ -51,7 +51,7 @@ namespace BnB_ChipLibraryGui
             public byte CustomPlusInst { get; set; }
         }
 
-        private StatData statData;
+        private readonly StatData statData;
 
         public event EventHandler<HandSizeChangedEventArgs> HandSizeChanged;
 
@@ -210,7 +210,7 @@ namespace BnB_ChipLibraryGui
             if (statData.NaviStats[(int)stat] < 5)
             {
                 statData.NaviStats[(int)stat]++;
-                if (stat == StatNames.Mind) HandSizeChanged.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)statData.NaviStats[(int)StatNames.Mind]));
+                if (stat == StatNames.Mind) HandSizeChanged?.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)statData.NaviStats[(int)StatNames.Mind]));
                 return true;
             }
             return false;
@@ -221,7 +221,7 @@ namespace BnB_ChipLibraryGui
             if (statData.NaviStats[(int)stat] != 1)
             {
                 statData.NaviStats[(int)stat]--;
-                if (stat == StatNames.Mind) HandSizeChanged.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)statData.NaviStats[(int)StatNames.Mind]));
+                if (stat == StatNames.Mind) HandSizeChanged?.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)statData.NaviStats[(int)StatNames.Mind]));
                 return true;
             }
             return false;
@@ -265,7 +265,7 @@ namespace BnB_ChipLibraryGui
         public byte IncCustomPlus()
         {
             statData.CustomPlusInst++;
-            HandSizeChanged.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)statData.NaviStats[(int)StatNames.Mind]));
+            HandSizeChanged?.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)statData.NaviStats[(int)StatNames.Mind]));
             return statData.CustomPlusInst;
         }
 
@@ -273,7 +273,7 @@ namespace BnB_ChipLibraryGui
         {
             if (statData.CustomPlusInst == 0) return statData.CustomPlusInst;
             else statData.CustomPlusInst--;
-            HandSizeChanged.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)statData.NaviStats[(int)StatNames.Mind]));
+            HandSizeChanged?.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)statData.NaviStats[(int)StatNames.Mind]));
             return statData.CustomPlusInst;
         }
     }

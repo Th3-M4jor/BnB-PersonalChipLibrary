@@ -62,7 +62,7 @@ namespace BnB_ChipLibraryGui
                         this.TabHand.Visibility = Visibility.Visible;
                     }));
                 }
-
+                this.HandWindowObject.ChipHandUpdated += this.HandUpdated;
                 searchWindow = new SearchWindow
                 {
                     Owner = this
@@ -98,22 +98,30 @@ namespace BnB_ChipLibraryGui
             FoundChips.Text = message;
         }
 
+        private void HandUpdated(object sender, EventArgs e)
+        {
+            LoadChips();
+        }
+
         private void AddChip()
         {
-            if (!(UserChips.SelectedItem is Chip selected)) return;
-            try
+            if (UserChips.SelectedItem is Chip selected)
             {
-                if (selected.ChipCount <= 0 || selected.NumInHand >= selected.ChipCount || selected.UsedInBattle >= selected.ChipCount)
+                try
+                {
+                    if (selected.ChipCount <= 0 || selected.NumInHand >= selected.ChipCount || selected.UsedInBattle >= selected.ChipCount)
+                    {
+                        MessageBox.Show("Cannot add another copy of " + selected.Name + " to your hand", "AddToHand", MessageBoxButton.OK);
+                        return;
+                    }
+
+                    this.HandWindowObject.AddChip(selected);
+                    //LoadChips();
+                }
+                catch (ArgumentOutOfRangeException)
                 {
                     MessageBox.Show("Cannot add another copy of " + selected.Name + " to your hand", "AddToHand", MessageBoxButton.OK);
-                    return;
                 }
-
-                this.HandWindowObject.AddChip(selected);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                MessageBox.Show("Cannot add another copy of " + selected.Name + " to your hand", "AddToHand", MessageBoxButton.OK);
             }
         }
 
@@ -182,13 +190,12 @@ namespace BnB_ChipLibraryGui
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender != null && UserChips.SelectedItems != null && UserChips.SelectedItems.Count == 1)
+            if (sender != null && UserChips.SelectedItems != null
+                && UserChips.SelectedItems.Count == 1
+                && UserChips.ItemContainerGenerator.ContainerFromItem(UserChips.SelectedItem) is DataGridRow dgr
+                && !dgr.IsMouseOver)
             {
-                if (!(UserChips.ItemContainerGenerator.ContainerFromItem(UserChips.SelectedItem) is DataGridRow dgr)) return;
-                if (!dgr.IsMouseOver)
-                {
-                    dgr.IsSelected = false;
-                }
+                dgr.IsSelected = false;
             }
         }
 
