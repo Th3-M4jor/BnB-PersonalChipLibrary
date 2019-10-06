@@ -236,8 +236,8 @@ namespace BnB_ChipLibraryGui
                     var stream = isoStore.OpenFile("chips.json", FileMode.Open);
                     StreamReader reader = new StreamReader(stream);
                     string json = reader.ReadToEnd();
-                    reader.Close();
-                    stream.Close();
+                    reader.Dispose();
+                    //stream.Dispose();
                     return json;
                 }
                 else return string.Empty;

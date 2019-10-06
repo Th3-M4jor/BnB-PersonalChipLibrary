@@ -78,15 +78,14 @@ namespace BnB_ChipLibraryGui
             {
                 if (elem.Length == 1)
                 {
-                    if (images[(int)elem[0]].IsFrozen == false)
-                        throw new Exception();
+                    //if (images[(int)elem[0]].IsFrozen == false) throw new BadImageFormatException();
 
                     return images[(int)elem[0]];
                 }
                 else
                 {
                     var res = GetCombinedImage(elem);
-                    if (res.IsFrozen == false) throw new Exception();
+                    //if (res.IsFrozen == false) throw new BadImageFormatException();
                     return res;
                 }
             }

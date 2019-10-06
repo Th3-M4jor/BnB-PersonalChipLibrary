@@ -15,7 +15,7 @@ namespace BnB_ChipLibraryGui
     /// <summary>
     /// Interaction logic for HandTab.xaml
     /// </summary>
-    public partial class HandTab : UserControl
+    public partial class HandTab : UserControl, IDisposable
     {
         public HandTab()
         {
@@ -52,9 +52,9 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        private void HandSizeChanged(object sender, uint size)
+        private void HandSizeChanged(object sender, HandSizeChangedEventArgs size)
         {
-            this.NumValue = size;
+            this.NumValue = size.NewHandSize;
         }
 
         //private List<HandChip> ChipsInHand;
@@ -220,5 +220,43 @@ namespace BnB_ChipLibraryGui
                 MessageBox.Show("No chip is currently selected!");
             }
         }
+
+        #region IDisposable Support
+
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    this.netLock.Dispose();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        ~HandTab()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(false);
+        }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion IDisposable Support
     }
 }
