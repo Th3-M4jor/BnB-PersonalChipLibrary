@@ -21,10 +21,10 @@
             <RowDefinition Height="45" />
             <RowDefinition Height="45" />
             <RowDefinition Height="59" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="45" />
             <RowDefinition Height="45" />
-            <RowDefinition Height="45" />
-            <RowDefinition Height="274*" />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <TextBox Name="NaviName" HorizontalAlignment="Left" Height="23" Margin="10,26,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" TextAlignment="Center" Grid.Column="0" TextChanged="NaviName_TextChanged" Grid.Row="0" />
         <Label Content="Navi Name" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Grid.Column="0" TextBlock.TextAlignment="Center" HorizontalContentAlignment="Center" Width="120" Height="26" Grid.Row="0" />
@@ -89,13 +89,13 @@
             <Button x:Name="SpeedUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
             <Button x:Name="SpeedDown" x:FieldModifier="private" Content="˅" Width="15" Click="CmdDown_Click" />
         </StackPanel>
-        <Label Content="Speed" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="2" HorizontalContentAlignment="Center" Width="62" Height="26" Grid.Row="2" />
+        <Label Content="Speed" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="2" HorizontalContentAlignment="Center" Width="62" Height="26" Grid.Row="2" />
         <StackPanel Orientation="Horizontal" x:Name="StaminaPanel" Grid.Row="2" HorizontalAlignment="Center" Width="62" Grid.Column="3" Height="20" VerticalAlignment="Bottom">
             <TextBox x:Name="Stamina" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
             <Button x:Name="StaminaUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
             <Button x:Name="StaminaDown" x:FieldModifier="private" Content="˅" Width="15" Click="CmdDown_Click" />
         </StackPanel>
-        <Label Content="Stamina" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="3" HorizontalContentAlignment="Center" Width="62" Height="26" Grid.Row="2" />
+        <Label Content="Stamina" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="3" HorizontalContentAlignment="Center" Width="62" Height="26" Grid.Row="2" />
         <StackPanel Orientation="Horizontal" x:Name="CharmPanel" Grid.Row="3" HorizontalAlignment="Center" Width="62" Grid.Column="1" Height="20" VerticalAlignment="Bottom">
             <TextBox x:Name="Charm" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
             <Button x:Name="CharmUp" x:FieldModifier="private" Content="˄" Width="15" Click="CmdUp_Click" />
@@ -193,6 +193,26 @@
             <TextBox x:Name="CustomCt" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
             <Button x:Name="CustomUp" x:FieldModifier="private" Content="˄" Width="15" Click="CustomUp_Click" />
             <Button x:Name="CDown" x:FieldModifier="private" Content="˅" Width="15" Click="CustomDown_Click" />
+        </StackPanel>
+        <Label Content="HP+ inst" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="5" HorizontalContentAlignment="Center" Width="204" Height="26" Grid.Row="1" Margin="0,0,-18,0" />
+        <StackPanel Orientation="Horizontal" x:Name="HPUPPanel" Grid.Row="1" HorizontalAlignment="Center" Width="62" Grid.Column="5" VerticalAlignment="Bottom" Height="20">
+            <TextBox x:Name="HPPCt" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
+            <Button x:Name="HPPlusUp" x:FieldModifier="private" Content="˄" Width="15" Click="HPPlusUp_Click" />
+            <Button x:Name="HPPLusDown" x:FieldModifier="private" Content="˅" Width="15" Click="HPPlusDown_Click" />
+        </StackPanel>
+        <Label Content="HP from dice" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="4" HorizontalContentAlignment="Center" Width="83" Height="26" Grid.Row="1" />
+        <StackPanel Orientation="Horizontal" x:Name="HPFromDice" Grid.Row="1" HorizontalAlignment="Center" Width="62" Grid.Column="4" VerticalAlignment="Bottom" Height="20">
+            <TextBox x:Name="HPDiceCt" x:FieldModifier="private" Width="32" Text="0" IsReadOnly="True" />
+            <Button x:Name="HPDiceUp" x:FieldModifier="private" Content="˄" Width="15" Click="HPDiceUp_Click" />
+            <Button x:Name="HPDiceDown" x:FieldModifier="private" Content="˅" Width="15" Click="HPDiceDown_Click" />
+        </StackPanel>
+        <Label Content="Total HP" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="4" HorizontalContentAlignment="Center" Width="62" Height="26" Grid.Row="2" />
+        <TextBox Width="32" Height="20" Name="NaviHP" VerticalAlignment="Bottom" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Text="0" Grid.Column="4" Grid.Row="2" />
+        <Label Content="HP Mem inst" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="4" HorizontalContentAlignment="Center" Width="83" Height="26" Grid.Row="0" />
+        <StackPanel Orientation="Horizontal" x:Name="HPMem" Grid.Row="0" HorizontalAlignment="Center" Width="62" Grid.Column="4" VerticalAlignment="Center" Height="20">
+            <TextBox x:Name="HPMemCt" x:FieldModifier="private" Width="32" Text="1" IsReadOnly="True" />
+            <Button x:Name="HPMemUp" x:FieldModifier="private" Content="˄" Width="15" Click="HPMemUp_Click" />
+            <Button x:Name="HPMemDown" x:FieldModifier="private" Content="˅" Width="15" Click="HPMemDown_Click" />
         </StackPanel>
     </Grid>
 </UserControl>

@@ -34,6 +34,10 @@ namespace BnB_ChipLibraryGui
         public byte ATKPlusInst { get => statData.ATKPlusInst; set => statData.ATKPlusInst = value; }
         public byte HPPlusInst { get => statData.HPPlusInst; set => statData.HPPlusInst = value; }
         public byte WPNLvLPlusInst { get => statData.WPNLvLPlusInst; set => statData.WPNLvLPlusInst = value; }
+        public uint NaviHPFromDice { get => statData.NaviHPFromDice; set => statData.NaviHPFromDice = value; }
+        public byte HPMemInst { get => statData.HPMemInst; set => statData.HPMemInst = value; }
+
+        public uint NaviHPMax => (uint)(NaviHPFromDice + (statData.NaviSkills[(int)Chip.ChipSkills.Stamina] / 2 * HPMemInst) + (HPPlusInst * HPDieFromElement(NaviElement)));
 
         [Serializable]
         private class StatData
@@ -49,6 +53,9 @@ namespace BnB_ChipLibraryGui
             public byte HPPlusInst { get; set; }
             public byte WPNLvLPlusInst { get; set; }
             public byte CustomPlusInst { get; set; }
+            public uint OperatorHPTotal { get; set; }
+            public uint NaviHPFromDice { get; set; }
+            public byte HPMemInst { get; set; }
         }
 
         private readonly StatData statData;
@@ -68,51 +75,45 @@ namespace BnB_ChipLibraryGui
         private PlayerStats()
         {
             statData = new StatData();
-            if (!File.Exists("./stats.dat")) //save file doesn't exist
+            if (File.Exists("./stats.dat")) //check save file exists
             {
-                statData.NaviSkills = new byte[9];
-                statData.NaviStats = new byte[3] { 1, 1, 1 }; //initialize stats to 1
-                statData.OperatorSkills = new byte[9];
-                statData.OperatorStats = new byte[3] { 1, 1, 1 };
-                statData.NaviElement = Chip.ChipElements.Null;
-                statData.NaviName = "";
-                statData.OperatorName = "";
-                statData.ATKPlusInst = 0;
-                statData.HPPlusInst = 0;
-                statData.WPNLvLPlusInst = 0;
-                statData.CustomPlusInst = 0;
-                return;
+                try
+                {
+                    var currStats = LoadUP();
+                    statData.NaviElement = currStats.NaviElement;
+                    statData.NaviName = currStats.NaviName;
+                    statData.NaviSkills = currStats.NaviSkills;
+                    statData.NaviStats = currStats.NaviStats;
+                    statData.OperatorName = currStats.OperatorName;
+                    statData.OperatorSkills = currStats.OperatorSkills;
+                    statData.OperatorStats = currStats.OperatorStats;
+                    statData.ATKPlusInst = currStats.ATKPlusInst;
+                    statData.HPPlusInst = currStats.HPPlusInst;
+                    statData.WPNLvLPlusInst = currStats.WPNLvLPlusInst;
+                    statData.NaviHPFromDice = currStats.NaviHPFromDice;
+                    statData.HPMemInst = currStats.HPMemInst;
+                    return;
+                }
+                catch (Exception e) when (e is SerializationException)
+                {
+                    MessageBox.Show("Unable to load Player Stats, resetting to zero");
+                    File.Delete("./stats.dat");
+                }
             }
-            try
-            {
-                var currStats = LoadUP();
-                statData.NaviElement = currStats.NaviElement;
-                statData.NaviName = currStats.NaviName;
-                statData.NaviSkills = currStats.NaviSkills;
-                statData.NaviStats = currStats.NaviStats;
-                statData.OperatorName = currStats.OperatorName;
-                statData.OperatorSkills = currStats.OperatorSkills;
-                statData.OperatorStats = currStats.OperatorStats;
-                statData.ATKPlusInst = currStats.ATKPlusInst;
-                statData.HPPlusInst = currStats.HPPlusInst;
-                statData.WPNLvLPlusInst = currStats.WPNLvLPlusInst;
-            }
-            catch (Exception e) when (e is SerializationException)
-            {
-                MessageBox.Show("Unable to load Player Stats, resetting to zero");
-                File.Delete("./stats.dat");
-                statData.NaviSkills = new byte[9];
-                statData.NaviStats = new byte[3] { 1, 1, 1 }; //initialize stats to 1
-                statData.OperatorSkills = new byte[9];
-                statData.OperatorStats = new byte[3] { 1, 1, 1 };
-                statData.NaviElement = Chip.ChipElements.Null;
-                statData.NaviName = "";
-                statData.OperatorName = "";
-                statData.ATKPlusInst = 0;
-                statData.HPPlusInst = 0;
-                statData.WPNLvLPlusInst = 0;
-                statData.CustomPlusInst = 0;
-            }
+
+            statData.NaviSkills = new byte[9];
+            statData.NaviStats = new byte[3] { 1, 1, 1 }; //initialize stats to 1
+            statData.OperatorSkills = new byte[9];
+            statData.OperatorStats = new byte[3] { 1, 1, 1 };
+            statData.NaviElement = Chip.ChipElements.Null;
+            statData.NaviName = "";
+            statData.OperatorName = "";
+            statData.ATKPlusInst = 0;
+            statData.HPPlusInst = 0;
+            statData.WPNLvLPlusInst = 0;
+            statData.CustomPlusInst = 0;
+            statData.NaviHPFromDice = 0;
+            statData.HPMemInst = 1;
         }
 
         public void ElementChanged(int element)
@@ -275,6 +276,75 @@ namespace BnB_ChipLibraryGui
             else statData.CustomPlusInst--;
             HandSizeChanged?.Invoke(this, new HandSizeChangedEventArgs(CustomPlusInst + (uint)statData.NaviStats[(int)StatNames.Mind]));
             return statData.CustomPlusInst;
+        }
+
+        public byte IncHPPlus()
+        {
+            HPPlusInst++;
+            return HPPlusInst;
+        }
+
+        public byte DecHPPlus()
+        {
+            if (HPPlusInst == 0) return HPPlusInst;
+            else HPPlusInst++;
+            return HPPlusInst;
+        }
+
+        public uint IncHPFromDice()
+        {
+            NaviHPFromDice++;
+            return NaviHPFromDice;
+        }
+
+        public uint DecHPFromDice()
+        {
+            if (NaviHPFromDice == 0) return NaviHPFromDice;
+            else NaviHPFromDice++;
+            return NaviHPFromDice;
+        }
+
+        public byte IncHPMem()
+        {
+            if (HPMemInst == 20) return HPMemInst;
+            else HPMemInst++;
+            return HPMemInst;
+        }
+
+        public byte DecHPMem()
+        {
+            if (HPMemInst == 1) return HPMemInst;
+            else HPMemInst--;
+            return HPMemInst;
+        }
+
+        public byte HPDieFromElement(Chip.ChipElements elem)
+        {
+            switch (elem)
+            {
+                case Chip.ChipElements.Fire:
+                case Chip.ChipElements.Wind:
+                case Chip.ChipElements.Invis:
+                    return 6;
+
+                case Chip.ChipElements.Elec:
+                case Chip.ChipElements.Cursor:
+                case Chip.ChipElements.Recovery:
+                    return 8;
+
+                case Chip.ChipElements.Aqua:
+                case Chip.ChipElements.Sword:
+                case Chip.ChipElements.Null:
+                    return 10;
+
+                case Chip.ChipElements.Wood:
+                case Chip.ChipElements.Break:
+                case Chip.ChipElements.Object:
+                    return 12;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 }

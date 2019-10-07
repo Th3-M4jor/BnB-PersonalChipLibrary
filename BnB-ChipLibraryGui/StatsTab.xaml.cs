@@ -243,5 +243,41 @@ namespace BnB_ChipLibraryGui
         {
             CustomCt.Text = PlayerStats.Instance.DecCustomPlus().ToString();
         }
+
+        private void HPPlusUp_Click(object sender, RoutedEventArgs e)
+        {
+            HPPCt.Text = PlayerStats.Instance.IncHPPlus().ToString();
+            NaviHP.Text = PlayerStats.Instance.NaviHPMax.ToString();
+        }
+
+        private void HPPlusDown_Click(object sender, RoutedEventArgs e)
+        {
+            HPPCt.Text = PlayerStats.Instance.DecHPPlus().ToString();
+            NaviHP.Text = PlayerStats.Instance.NaviHPMax.ToString();
+        }
+
+        private void HPDiceDown_Click(object sender, RoutedEventArgs e)
+        {
+            HPDiceCt.Text = PlayerStats.Instance.DecHPFromDice().ToString();
+            NaviHP.Text = PlayerStats.Instance.NaviHPMax.ToString();
+        }
+
+        private void HPDiceUp_Click(object sender, RoutedEventArgs e)
+        {
+            HPDiceCt.Text = PlayerStats.Instance.IncHPFromDice().ToString();
+            NaviHP.Text = PlayerStats.Instance.NaviHPMax.ToString();
+        }
+
+        private void HPMemUp_Click(object sender, RoutedEventArgs e)
+        {
+            HPPCt.Text = PlayerStats.Instance.IncHPMem().ToString();
+            NaviHP.Text = PlayerStats.Instance.NaviHPMax.ToString();
+        }
+
+        private void HPMemDown_Click(object sender, RoutedEventArgs e)
+        {
+            HPPCt.Text = PlayerStats.Instance.DecHPMem().ToString();
+            NaviHP.Text = PlayerStats.Instance.NaviHPMax.ToString();
+        }
     }
 }
