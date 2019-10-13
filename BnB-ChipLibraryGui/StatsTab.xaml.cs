@@ -69,9 +69,10 @@ namespace BnB_ChipLibraryGui
                 }
             }
 
-            /*this.Mind.Text = PlayerStats.Instance.GetNaviStat(StatNames.Mind).ToString();
-            this.Body.Text = PlayerStats.Instance.GetNaviStat(StatNames.Body).ToString();
-            this.Spirit.Text = PlayerStats.Instance.GetNaviStat(StatNames.Spirit).ToString();*/
+            this.HPPCt.Text = PlayerStats.Instance.HPPlusInst.ToString();
+            this.HPMemCt.Text = PlayerStats.Instance.HPMemInst.ToString();
+            this.CustomCt.Text = PlayerStats.Instance.CustomPlusInst.ToString();
+            this.NaviHP.Text = PlayerStats.Instance.NaviHPMax.ToString();
         }
 
         private void ElementBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -113,6 +114,11 @@ namespace BnB_ChipLibraryGui
             {
                 MainWindow.ErrorWindow();
             }
+
+            if (naviSkill == Chip.ChipSkills.Stamina)
+            {
+                NaviHP.Text = PlayerStats.Instance.NaviHPMax.ToString();
+            }
         }
 
         private void CmdDown_Click(object sender, RoutedEventArgs e)
@@ -128,6 +134,10 @@ namespace BnB_ChipLibraryGui
             else
             {
                 MainWindow.ErrorWindow();
+            }
+            if (naviSkill == Chip.ChipSkills.Stamina)
+            {
+                NaviHP.Text = PlayerStats.Instance.NaviHPMax.ToString();
             }
         }
 
@@ -270,13 +280,13 @@ namespace BnB_ChipLibraryGui
 
         private void HPMemUp_Click(object sender, RoutedEventArgs e)
         {
-            HPPCt.Text = PlayerStats.Instance.IncHPMem().ToString();
+            HPMemCt.Text = PlayerStats.Instance.IncHPMem().ToString();
             NaviHP.Text = PlayerStats.Instance.NaviHPMax.ToString();
         }
 
         private void HPMemDown_Click(object sender, RoutedEventArgs e)
         {
-            HPPCt.Text = PlayerStats.Instance.DecHPMem().ToString();
+            HPMemCt.Text = PlayerStats.Instance.DecHPMem().ToString();
             NaviHP.Text = PlayerStats.Instance.NaviHPMax.ToString();
         }
     }

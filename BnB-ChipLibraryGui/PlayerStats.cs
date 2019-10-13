@@ -287,7 +287,7 @@ namespace BnB_ChipLibraryGui
         public byte DecHPPlus()
         {
             if (HPPlusInst == 0) return HPPlusInst;
-            else HPPlusInst++;
+            else HPPlusInst--;
             return HPPlusInst;
         }
 
@@ -300,7 +300,7 @@ namespace BnB_ChipLibraryGui
         public uint DecHPFromDice()
         {
             if (NaviHPFromDice == 0) return NaviHPFromDice;
-            else NaviHPFromDice++;
+            else NaviHPFromDice--;
             return NaviHPFromDice;
         }
 

@@ -206,7 +206,7 @@
             <Button x:Name="HPDiceUp" x:FieldModifier="private" Content="˄" Width="15" Click="HPDiceUp_Click" />
             <Button x:Name="HPDiceDown" x:FieldModifier="private" Content="˅" Width="15" Click="HPDiceDown_Click" />
         </StackPanel>
-        <Label Content="Total HP" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="4" HorizontalContentAlignment="Center" Width="62" Height="26" Grid.Row="2" />
+        <Label Content="Max HP" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="4" HorizontalContentAlignment="Center" Width="62" Height="26" Grid.Row="2" />
         <TextBox Width="32" Height="20" Name="NaviHP" VerticalAlignment="Bottom" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Text="0" Grid.Column="4" Grid.Row="2" />
         <Label Content="HP Mem inst" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="4" HorizontalContentAlignment="Center" Width="83" Height="26" Grid.Row="0" />
         <StackPanel Orientation="Horizontal" x:Name="HPMem" Grid.Row="0" HorizontalAlignment="Center" Width="62" Grid.Column="4" VerticalAlignment="Center" Height="20">
