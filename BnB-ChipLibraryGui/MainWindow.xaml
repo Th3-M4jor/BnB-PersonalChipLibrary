@@ -26,7 +26,7 @@
                   HorizontalAlignment="Left" Margin="0,0,0,5" Grid.Column="0" Grid.Row="0"
                   Width="468" CanUserSortColumns="False" CanUserAddRows="False"
                   CanUserDeleteRows="False" CanUserResizeColumns="True" CanUserResizeRows="False"
-                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CellEditEnding="UserChips_CellEditEnding">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True"
                                     HeaderStyle="{StaticResource CenterGridHeaderStyle}" Width="Auto">

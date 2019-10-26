@@ -84,7 +84,7 @@ namespace BnB_ChipLibraryGui
             else return null;
         }
 
-        public Task<IOrderedEnumerable<Chip>> GetList(ChipListOptions AllOrOwned, LibrarySortOptions sortOptions, Chip.ChipRanges rangeOption, bool invert, bool hideUsed = false)
+        public Task<List<Chip>> GetList(ChipListOptions AllOrOwned, LibrarySortOptions sortOptions, Chip.ChipRanges rangeOption, bool invert, bool hideUsed = false)
         {
             return Task.Run(() =>
             {
@@ -115,37 +115,37 @@ namespace BnB_ChipLibraryGui
                 switch (sortOptions)
                 {
                     case LibrarySortOptions.AvgDamage:
-                        if (invert) return toReturn.OrderBy(a => a.AverageDamage).ThenBy(a => a.Type).ThenBy(a => a.Name);
-                        return toReturn.OrderByDescending(a => a.AverageDamage).ThenBy(a => a.Type).ThenBy(a => a.Name);
+                        if (invert) return toReturn.OrderBy(a => a.AverageDamage).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
+                        return toReturn.OrderByDescending(a => a.AverageDamage).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
 
                     case LibrarySortOptions.Owned:
-                        if (invert) return toReturn.OrderBy(a => a.ChipType).ThenBy(a => a.ChipCount).ThenBy(a => a.Name);
-                        return toReturn.OrderBy(a => a.ChipType).ThenByDescending(a => a.ChipCount).ThenBy(a => a.Name);
+                        if (invert) return toReturn.OrderBy(a => a.ChipType).ThenBy(a => a.ChipCount).ThenBy(a => a.Name).ToList();
+                        return toReturn.OrderBy(a => a.ChipType).ThenByDescending(a => a.ChipCount).ThenBy(a => a.Name).ToList();
 
                     case LibrarySortOptions.Element:
-                        if (invert) return toReturn.OrderByDescending(a => a.ChipElement[0]).ThenBy(a => a.Type).ThenBy(a => a.Name);
-                        return toReturn.OrderBy(a => a.ChipElement[0]).ThenBy(a => a.Type).ThenBy(a => a.Name);
+                        if (invert) return toReturn.OrderByDescending(a => a.ChipElement[0]).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
+                        return toReturn.OrderBy(a => a.ChipElement[0]).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
 
                     case LibrarySortOptions.MaxDamage:
-                        if (invert) return toReturn.OrderBy(a => a.MaxDamage).ThenBy(a => a.Name);
-                        return toReturn.OrderByDescending(a => a.MaxDamage).ThenBy(a => a.Name);
+                        if (invert) return toReturn.OrderBy(a => a.MaxDamage).ThenBy(a => a.Name).ToList();
+                        return toReturn.OrderByDescending(a => a.MaxDamage).ThenBy(a => a.Name).ToList();
 
                     case LibrarySortOptions.Skill:
-                        if (invert) return toReturn.OrderByDescending(a => a.ChipSkill).ThenBy(a => a.Type).ThenBy(a => a.Name);
-                        return toReturn.OrderBy(a => a.ChipSkill).ThenBy(a => a.Type).ThenBy(a => a.Name);
+                        if (invert) return toReturn.OrderByDescending(a => a.ChipSkill).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
+                        return toReturn.OrderBy(a => a.ChipSkill).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
 
                     case LibrarySortOptions.Range:
-                        if (invert) return toReturn.OrderByDescending(a => a.ChipRange).ThenBy(a => a.Type).ThenBy(a => a.Name);
-                        return toReturn.OrderBy(a => a.ChipRange).ThenBy(a => a.Type).ThenBy(a => a.Name);
+                        if (invert) return toReturn.OrderByDescending(a => a.ChipRange).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
+                        return toReturn.OrderBy(a => a.ChipRange).ThenBy(a => a.Type).ThenBy(a => a.Name).ToList();
 
                     case LibrarySortOptions.Used:
-                        if (invert) return toReturn.OrderByDescending(a => a.UsedInBattle).ThenByDescending(a => a.Type).ThenBy(a => a.Name);
-                        return toReturn.OrderBy(a => a.UsedInBattle).ThenByDescending(a => a.Type).ThenBy(a => a.Name);
+                        if (invert) return toReturn.OrderByDescending(a => a.UsedInBattle).ThenByDescending(a => a.Type).ThenBy(a => a.Name).ToList();
+                        return toReturn.OrderBy(a => a.UsedInBattle).ThenByDescending(a => a.Type).ThenBy(a => a.Name).ToList();
 
                     case LibrarySortOptions.Name:
                     default:
-                        if (invert) return toReturn.OrderByDescending(a => a.ChipType).ThenByDescending(a => a.Name);
-                        return toReturn.OrderBy(a => a.ChipType).ThenBy(a => a.Name);
+                        if (invert) return toReturn.OrderByDescending(a => a.ChipType).ThenByDescending(a => a.Name).ToList();
+                        return toReturn.OrderBy(a => a.ChipType).ThenBy(a => a.Name).ToList();
                 }
             });
         }

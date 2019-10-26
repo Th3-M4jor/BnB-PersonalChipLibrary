@@ -475,6 +475,11 @@ namespace BnB_ChipLibraryGui
             return (playerHand, chipsOwned);
         }
 
+        private void UserChips_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            LoadChips();
+        }
+
         public static void ErrorWindow(
             [CallerLineNumber] int lineNumber = 0,
             [CallerMemberName] string caller = null
