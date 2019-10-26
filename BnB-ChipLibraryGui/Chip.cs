@@ -71,7 +71,30 @@ namespace BnB_ChipLibraryGui
         }
 
         public sbyte ChipCount { get; set; }
-        public SolidColorBrush ChipColor { get; private set; }
+
+        public SolidColorBrush ChipColor
+        {
+            get
+            {
+                if (UsedInBattle >= ChipCount && ChipCount != 0)
+                {
+                    return Brushes.Gray;
+                }
+
+                switch (this.ChipType)
+                {
+                    case ChipTypes.Mega:
+                        return MegaChipColor;
+
+                    case ChipTypes.Giga:
+                        return GigaChipColor;
+
+                    default:
+                        return Brushes.White;
+                }
+            }
+        }// private set; }
+
         public ChipElements[] ChipElement { get; private set; }
         public ChipRanges ChipRange { get; private set; }
         public ChipSkills ChipSkill { get; private set; }
@@ -178,7 +201,7 @@ namespace BnB_ChipLibraryGui
                     this.ChipType = (ChipTypes)Enum.Parse(typeof(ChipTypes), value);
                 }
 
-                switch (this.ChipType)
+                /*switch (this.ChipType)
                 {
                     case ChipTypes.Standard:
                         this.ChipColor = Brushes.White;
@@ -191,7 +214,7 @@ namespace BnB_ChipLibraryGui
                     case ChipTypes.Giga:
                         this.ChipColor = GigaChipColor;
                         break;
-                }
+                }*/
             }
         }
 

@@ -68,7 +68,7 @@ namespace BnB_ChipLibraryGui
                     MainWindow.ErrorWindow();
                 }
             }
-
+            this.HPDiceCt.Text = PlayerStats.Instance.NaviHPFromDice.ToString();
             this.HPPCt.Text = PlayerStats.Instance.HPPlusInst.ToString();
             this.HPMemCt.Text = PlayerStats.Instance.HPMemInst.ToString();
             this.CustomCt.Text = PlayerStats.Instance.CustomPlusInst.ToString();

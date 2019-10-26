@@ -26,12 +26,14 @@ namespace BnB_ChipLibraryGui
 
         public Chip.ChipRanges RangeOption { get; private set; }
         public bool SortDesc { get; private set; }
+        public bool HideUsedChips { get; private set; }
         public ChipLibrary.LibrarySortOptions SortOption { get; private set; }
         public bool InGroup { get; private set; }
 
         public MainWindow()
         {
             this.SortDesc = false;
+            this.HideUsedChips = false;
             this.SortOption = ChipLibrary.LibrarySortOptions.Name;
             this.RangeOption = Chip.ChipRanges.All;
             InitializeComponent();
@@ -79,7 +81,7 @@ namespace BnB_ChipLibraryGui
             {
                 listAll = ChipLibrary.ChipListOptions.DisplayOwned;
             }
-            var res = await ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc);
+            var res = await ChipLibrary.Instance.GetList(listAll, this.SortOption, this.RangeOption, this.SortDesc, this.HideUsedChips);
             UserChips.ItemsSource = res;
         }
 
@@ -300,6 +302,12 @@ namespace BnB_ChipLibraryGui
             LoadChips();
         }
 
+        private void HideUsedBattleChips(object sender, RoutedEventArgs e)
+        {
+            this.HideUsedChips = !this.HideUsedChips;
+            LoadChips();
+        }
+
         private async void JoinClick(object sender, RoutedEventArgs e)
         {
             if (HandWindowObject.SessionClosed == false)
@@ -415,6 +423,10 @@ namespace BnB_ChipLibraryGui
 
                 case 6:
                     this.SortOption = ChipLibrary.LibrarySortOptions.Skill;
+                    break;
+
+                case 7:
+                    this.SortOption = ChipLibrary.LibrarySortOptions.Used;
                     break;
 
                 default:
