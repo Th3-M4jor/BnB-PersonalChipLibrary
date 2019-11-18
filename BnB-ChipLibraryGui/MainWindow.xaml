@@ -128,8 +128,12 @@
                     <CheckBox Name="ShowNotOwned" Content="Show Owned Chips Only" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="ShowOwned" Unchecked="ShowOwned" Grid.Row="1" IsChecked="False" Canvas.Top="289" Canvas.Left="10" />
                     <CheckBox x:Name="ReverseSort" Content="InvertSort" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SortReverse" Unchecked="SortReverse" Grid.Row="1" Canvas.Top="269" Canvas.Left="10" />
                     <CheckBox Name="HideUsed" Content="Hide Used Chips" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Canvas.Left="10" Canvas.Top="309" Checked="HideUsedBattleChips" Unchecked="HideUsedBattleChips" />
+                    <!--
+                    commented out joining a hand group because it doesn't work right now
+                    <Label Content="HandGroup" Canvas.Left="68" Canvas.Top="390" />
                     <Button Content="Create" Canvas.Left="107" Canvas.Top="421" Width="75" Click="CreateClick" />
                     <Button Content="Join" Canvas.Left="27" Canvas.Top="421" Width="75" Click="JoinClick" />
+                    -->
                     <ComboBox Name="CmbSortOption" Canvas.Left="10" Canvas.Top="242" Width="120" IsEditable="False" SelectionChanged="CmbSortOption_SelectionChanged">
                         <ComboBoxItem IsSelected="True">Name</ComboBoxItem>
                         <ComboBoxItem>AvgDamage</ComboBoxItem>
@@ -140,7 +144,7 @@
                         <ComboBoxItem>Skill</ComboBoxItem>
                         <ComboBoxItem>Used</ComboBoxItem>
                     </ComboBox>
-                    <Label Content="HandGroup" Canvas.Left="68" Canvas.Top="390" />
+                    
                 </Canvas>
             </Grid>
         </TabItem>
