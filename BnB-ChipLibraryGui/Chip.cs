@@ -166,7 +166,7 @@ namespace BnB_ChipLibraryGui
             }
         }
 
-        [JsonProperty("Skill")]
+        [JsonProperty("Skills")]
         public string[] Skill
         {
             set
