@@ -19,7 +19,7 @@ namespace BnB_ChipLibraryGui
 
         public enum ChipSkills
         {
-            Sense, Info, Coding, Strength, Speed, Stamina, Charm, Bravery, Affinity, Varies, None
+            Sense, Info, Coding, Strength, Speed, Stamina, Charm, Bravery, Affinity, Varies, Mind, Body, Spirit, None
         }
 
         public enum ChipTypes
